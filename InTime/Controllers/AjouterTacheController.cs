@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using InTime.Models;
 
 namespace InTime.Controllers
 {
@@ -24,6 +25,34 @@ namespace InTime.Controllers
 
                 ViewBag.trancheMin = new SelectList(trancheMin);
             ViewBag.trancheHeure = new SelectList(trancheHeure);
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(AjoutTache model)
+        {
+            string[] moisValid = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
+                                     "Août","Septembre","Octobre","Novembre","Décembre"};
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    int nAnne = Convert.ToInt32(model.m_annee);
+                    int nJour = Convert.ToInt32(model.m_jour);
+                    string strMois = model.m_mois;
+                }
+                catch (Exception ex)
+                {
+                    return View();
+                }
+
+
+
+
+
+            }
 
             return View();
         }
