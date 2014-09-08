@@ -32,24 +32,41 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(AjoutTache model)
         {
+            int nIndexMois = 0;
+            int nAnnee;
+            int nJour;
             string[] moisValid = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
                                      "Août","Septembre","Octobre","Novembre","Décembre"};
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    int nAnne = Convert.ToInt32(model.m_annee);
-                    int nJour = Convert.ToInt32(model.m_jour);
-                    string strMois = model.m_mois;
+                    nAnnee = Convert.ToInt32(model.m_annee);
+                    nJour = Convert.ToInt32(model.m_jour);
                 }
                 catch (Exception ex)
                 {
                     return View();
                 }
 
+                if (moisValid.Contains(model.m_mois))
+                {
+                    while (moisValid[nIndexMois] != model.m_mois)
+                    {
+                        ++nIndexMois;
+                    }
+                }
+                else
+                {
+                    return View();
+                }
+                    
 
-
+                //if (!DateTime.TryParse())
+                //if ((model.m_dtDebut = new DateTime(nAnnee,++nIndexMois,nJour,Convert.ToInt32(model.m_debHeure),
+                //    Convert.ToInt32(model.m_debMin),0)))
 
 
             }
