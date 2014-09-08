@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model InTime.Models.LoginModel
+
+<!DOCTYPE html>
 <html lang="fr">
     <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -21,9 +23,15 @@
                     </section>
                     <nav>
                         <ul id="menu">
+                            
                             <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
                             <li>@Html.ActionLink("À propos de", "About", "Home")</li>
                             <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                                @if(Model.UserName.ToString() == "Superuser" )
+                                { 
+                                 <li>@Html.ActionLink("Gérer", "Gérer", "Home")</li>
+                                }
+                            }
                         </ul>
                     </nav>
                 </div>

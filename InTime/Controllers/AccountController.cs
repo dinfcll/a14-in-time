@@ -35,6 +35,11 @@ namespace InTime.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
+            if ((ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))&& model.UserName=="Superuser")
+            {
+                
+            }
+            else
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
                 return RedirectToLocal(returnUrl);
@@ -266,6 +271,7 @@ namespace InTime.Controllers
                 using (UsersContext db = new UsersContext())
                 {
                     UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
+                    if(user.UserName=="")
                     // Vérifier si l'utilisateur n'existe pas déjà
                     if (user == null)
                     {
