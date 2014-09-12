@@ -14,6 +14,14 @@ namespace InTime
 
     public class MvcApplication : System.Web.HttpApplication
     {
+
+
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+
+            routes.MapRoute("Gerer", "gerer", new { Controller = "Gerer", action = "GererForm"});
+           
+        }
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
