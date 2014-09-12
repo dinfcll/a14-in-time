@@ -14,13 +14,6 @@
         private DateTime m_dtRappel;
 -->
 
-<script>
-    function DaysInMonth(month,Year)
-    {
-        return new Date(year, month, 0).getDate();
-    }
-</script>
-
 <p>
     Nom de la tâche : <br />
     @Html.TextBoxFor(model => model.m_strNomTache)
@@ -39,7 +32,8 @@
     @Html.ValidationMessageFor(model => model.m_jour)
 
     Mois :  
-    @Html.DropDownList("SelectionMois")
+    @Html.TextBoxFor(model => model.m_mois, new { style = "width: 100px;" })
+    @Html.ValidationMessageFor(model => model.m_mois)
 
     Année :
     @Html.TextBoxFor(model => model.m_annee, new { style = "width: 50px;" })

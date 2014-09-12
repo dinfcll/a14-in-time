@@ -22,15 +22,9 @@ namespace InTime.Controllers
             for (int i = 1; i < 25; ++i)
                 trancheHeure.Add(Convert.ToString(i));
 
-            string[] SelectionMois = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
-                                     "Août","Septembre","Octobre","Novembre","Décembre"};
-            var trancheMois = new List<string>();
-            trancheMois.AddRange(SelectionMois);
 
-
-            ViewBag.trancheMin = new SelectList(trancheMin);
+                ViewBag.trancheMin = new SelectList(trancheMin);
             ViewBag.trancheHeure = new SelectList(trancheHeure);
-            ViewBag.SelectionMois = new SelectList(trancheMois);
 
             return View();
         }
@@ -41,6 +35,8 @@ namespace InTime.Controllers
             int nIndexMois = 0;
             int nAnnee;
             int nJour;
+            string[] moisValid = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
+                                     "Août","Septembre","Octobre","Novembre","Décembre"};
 
 
             if (ModelState.IsValid)
@@ -55,17 +51,17 @@ namespace InTime.Controllers
                     return View();
                 }
 
-                //if (moisValid.Contains(model.m_mois))
-                //{
-                //    while (moisValid[nIndexMois] != model.m_mois)
-                //    {
-                //        ++nIndexMois;
-                //    }
-                //}
-                //else
-                //{
-                //    return View();
-                //}
+                if (moisValid.Contains(model.m_mois))
+                {
+                    while (moisValid[nIndexMois] != model.m_mois)
+                    {
+                        ++nIndexMois;
+                    }
+                }
+                else
+                {
+                    return View();
+                }
                     
 
                 //if (!DateTime.TryParse())
