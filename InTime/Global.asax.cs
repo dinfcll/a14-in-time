@@ -20,7 +20,7 @@ namespace InTime
         {
 
             routes.MapRoute("Gerer", "gerer", new { Controller = "Gerer", action = "GererForm"});
-           
+            routes.MapRoute("Tache", "tache", new { Controller = "Tache", action = "TacherForm" });
         }
         protected void Application_Start()
         {

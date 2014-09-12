@@ -4,14 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace InTime.Controllers
 {
-    public class GererController : Controller
+    public class TacheController : Controller
     {
         //
-        // GET: /Gerer/
+        // GET: /Tache/
 
-        public ActionResult GererForm()
+        public ActionResult TacheForm()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -19,8 +20,9 @@ namespace InTime.Controllers
             }
             else
             {
-                return View("~/Views/Home/Index.cshtml");
+                return View("Index");
             }
+
         }
 
     }
