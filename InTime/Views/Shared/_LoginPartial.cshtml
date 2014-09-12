@@ -4,6 +4,15 @@
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
             @Html.AntiForgeryToken()
             <a href="javascript:document.getElementById('logoutForm').submit()">Se déconnecter</a>
+            <nav>
+            <ul id="menu">
+                @if (User.Identity.Name == "Superuser")
+                { 
+                    <li>@Html.ActionLink("Gérer", "Gérer", "Home")</li>
+                }
+
+            </ul>
+            </nav>
         }
     </text>
 } else {

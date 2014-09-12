@@ -15,6 +15,8 @@ namespace InTime.Controllers
 {
     [Authorize]
     [InitializeSimpleMembership]
+
+    
     public class AccountController : Controller
     {
         //
@@ -35,11 +37,7 @@ namespace InTime.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
-            if ((ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))&& model.UserName=="Superuser")
-            {
-                
-            }
-            else
+
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
                 return RedirectToLocal(returnUrl);
