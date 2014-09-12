@@ -19,7 +19,7 @@ namespace InTime.Controllers
             }
             else
             {
-                return View("~/Views/Home/Index.cshtml");
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
 

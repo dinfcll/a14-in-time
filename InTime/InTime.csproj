@@ -305,6 +305,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Gerer\GererForm.cshtml" />
     <Content Include="Views\Tache\TacheForm.cshtml" />
+    <Content Include="Views\ErreurAuthentification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
