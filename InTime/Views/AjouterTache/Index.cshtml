@@ -20,28 +20,28 @@
     <br />
 
     Date : <br />
-    @Html.Label("Mois");
-    @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
-    @Html.ValidationMessage("Mois", "*")
+    Mois :
+    @Html.DropDownList("m_mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
+    @Html.ValidationMessage("m_mois", "*")
 
-    @Html.Label("Année")
+    Année :
     <select id="m_annee" name="m_annee"></select>
     @Html.ValidationMessage("m_année", "*")
 
 
-    @Html.Label("Jour")
+    Jour :
     <select id="m_jour" name="m_jour"></select>
     @Html.ValidationMessage("m_jour", "*")
     <br />
     
     Heure : <br />
-    Début : @Html.DropDownList("trancheHeure") @Html.DropDownList("trancheMin") 
-    Fin : @Html.DropDownList("trancheHeure") @Html.DropDownList("trancheMin") 
+    Début : @Html.DropDownList("trancheHeure")H @Html.DropDownList("trancheMin")Min <br />
+    Fin : @Html.DropDownList("trancheHeure")H @Html.DropDownList("trancheMin")Min
      <br />
 
 
     L'heure du rappel : <br />
-    @Html.DropDownList("trancheHeure") @Html.DropDownList("trancheMin")  
+    @Html.DropDownList("trancheHeure")H @Html.DropDownList("trancheMin")Min
     <br />
     
     Description de la tâche : <br /> 
@@ -60,7 +60,7 @@
 <script type="text/jscript">
     $(function () {
         $('#m_mois').change(function () {
-            $.getJSON('/DynamicDropDown/AnneeList/' + $('#m_mois').val(), function (data) {
+            $.getJSON('/AjouterTache/AnneeList/' + $('#m_mois').val(), function (data) {
                 var items = '<option>Choisir une année</option>';
                 $.each(data, function (i, annee) {
                     items += "<option value='" + annee.Value + "'>" + annee.Text + "</option>";
@@ -80,7 +80,7 @@
             var params = {};
             params.Year = $('#m_annee').val();
             params.Month = $('#m_mois').val();
-            $.getJSON('/DynamicDropDown/JourList/', params, function (data) {
+            $.getJSON('/AjouterTache/JourList/', params, function (data) {
                 var items = '<option>Choisir un jour</option>';
                 $.each(data, function (i, jour) {
                     items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";

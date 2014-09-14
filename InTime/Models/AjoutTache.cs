@@ -17,15 +17,11 @@ namespace InTime.Models
         [StringLength(30)]
         public string m_strLieu { get; set; }
 
-        [Required(ErrorMessage = "Obligatoire")]
-        [RegularExpression(@"^[0-9]{1-2}")]
+
         public string m_jour { get; set; }
 
-        [Required(ErrorMessage = "Obligatoire")]
         public string m_mois { get; set; }
       
-        [Required(ErrorMessage = "Obligatoire")]
-        [RegularExpression(@"^[0-9]{4}")]
         public string m_annee { get; set; }
 
         [StringLength(300,ErrorMessage="Votre texte est trop long")]
