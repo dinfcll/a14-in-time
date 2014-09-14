@@ -6,13 +6,6 @@
 
 <h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
 
-<!--
-        private string m_strNomTache;
-        private string m_strLieu;
-        private string m_strDescTache;
-        private DateTime m_dtHeure;
-        private DateTime m_dtRappel;
--->
 
 <p>
     Nom de la tâche : <br />
@@ -27,17 +20,18 @@
     <br />
 
     Date : <br />
-    Jour :  
-    @Html.TextBoxFor(model => model.m_jour, new { style = "width: 50px;" })
-    @Html.ValidationMessageFor(model => model.m_jour)
+    @Html.Label("Mois");
+    @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
+    @Html.ValidationMessage("Mois", "*")
 
-    Mois :  
-    @Html.TextBoxFor(model => model.m_mois, new { style = "width: 100px;" })
-    @Html.ValidationMessageFor(model => model.m_mois)
+    @Html.Label("Année")
+    <select id="m_annee" name="m_annee"></select>
+    @Html.ValidationMessage("m_année", "*")
 
-    Année :
-    @Html.TextBoxFor(model => model.m_annee, new { style = "width: 50px;" })
-    @Html.ValidationMessageFor(model => model.m_annee)
+
+    @Html.Label("Jour")
+    <select id="m_jour" name="m_jour"></select>
+    @Html.ValidationMessage("m_jour", "*")
     <br />
     
     Heure : <br />
@@ -58,3 +52,41 @@
     <input type="submit" value="Enregistrer" />
     <input type="reset" value="Recommencer" /> 
 </p>
+
+
+
+<!--  Initialise notre DropDownList contenant les annees  -->
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
+    $(function () {
+        $('#m_mois').change(function () {
+            $.getJSON('/DynamicDropDown/AnneeList/' + $('#m_mois').val(), function (data) {
+                var items = '<option>Choisir une année</option>';
+                $.each(data, function (i, annee) {
+                    items += "<option value='" + annee.Value + "'>" + annee.Text + "</option>";
+                });
+                $('#m_annee').html(items);
+            });
+        });
+    });
+</script>
+
+
+<!--   Initialise notre DropDownList contenant les jours possible   -->
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
+    $(function () {
+        $('#m_annee').change(function () {
+            var params = {};
+            params.Year = $('#m_annee').val();
+            params.Month = $('#m_mois').val();
+            $.getJSON('/DynamicDropDown/JourList/', params, function (data) {
+                var items = '<option>Choisir un jour</option>';
+                $.each(data, function (i, jour) {
+                    items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+                });
+                $('#m_jour').html(items);
+            });
+        });
+    });
+</script>

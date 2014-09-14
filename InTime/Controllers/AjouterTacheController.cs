@@ -17,57 +17,75 @@ namespace InTime.Controllers
             var trancheMin = new List<string>();
             string[] tempsMin = { "0", "15", "30", "45", "60" };
             trancheMin.AddRange(tempsMin);
+            ViewBag.trancheMin = new SelectList(trancheMin);
 
             var trancheHeure = new List<string>();
             for (int i = 1; i < 25; ++i)
                 trancheHeure.Add(Convert.ToString(i));
-
-
-                ViewBag.trancheMin = new SelectList(trancheMin);
             ViewBag.trancheHeure = new SelectList(trancheHeure);
+
+
+            List<SelectListItem> mois = new List<SelectListItem>();
+            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
+            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
+            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
+            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
+            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
+            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
+            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
+            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
+            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
+            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
+            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
+            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
+            ViewBag.MoisAnnee = new SelectList(mois, "Value", "Text");
 
             return View();
         }
 
+
+        //Retourne une liste contenant des annees.
+        public JsonResult AnneeList(string Id)
+        {
+            List<SelectListItem> annee = new List<SelectListItem>();
+            if (!String.IsNullOrEmpty(Id))
+            {
+                int nYear = DateTime.Now.Year;
+                for (int i = nYear; i <= nYear + 2; ++i)
+                {
+                    //annee.Add(new District { StateName = "Bihar", DistrictName = Convert.ToString(i)});
+                    annee.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
+                }
+            }
+
+
+            return Json(new SelectList(annee.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
+        }
+
+
+        //Retourne une liste contenant les jours du mois et de l'annee selectionne
+        public JsonResult JourList(string Year, string Month)
+        {
+            List<SelectListItem> jours = new List<SelectListItem>();
+            if (!String.IsNullOrEmpty(Month))
+            {
+                int nDays = DateTime.DaysInMonth(Convert.ToInt32(Year), Convert.ToInt32(Month));
+                for (int i = 1; i <= nDays; ++i)
+                {
+                    //annee.Add(new District { StateName = "Bihar", DistrictName = Convert.ToString(i)});
+                    jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
+                }
+            }
+
+            return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
+        }
+
+
         [HttpPost]
         public ActionResult Index(AjoutTache model)
         {
-            int nIndexMois = 0;
-            int nAnnee;
-            int nJour;
-            string[] moisValid = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
-                                     "Août","Septembre","Octobre","Novembre","Décembre"};
-
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    nAnnee = Convert.ToInt32(model.m_annee);
-                    nJour = Convert.ToInt32(model.m_jour);
-                }
-                catch (Exception ex)
-                {
-                    return View();
-                }
-
-                if (moisValid.Contains(model.m_mois))
-                {
-                    while (moisValid[nIndexMois] != model.m_mois)
-                    {
-                        ++nIndexMois;
-                    }
-                }
-                else
-                {
-                    return View();
-                }
-                    
-
-                //if (!DateTime.TryParse())
-                //if ((model.m_dtDebut = new DateTime(nAnnee,++nIndexMois,nJour,Convert.ToInt32(model.m_debHeure),
-                //    Convert.ToInt32(model.m_debMin),0)))
-
 
             }
 
