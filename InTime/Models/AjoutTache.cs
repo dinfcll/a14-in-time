@@ -34,3 +34,4 @@ namespace InTime.Models
         public string m_rappelMin { get; set; }
     }
 }
+
