@@ -9,8 +9,12 @@ namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
+
         public ActionResult Index()
         {
+            //TODO :
+            //Aller chercher l'information dans la base de donnee
+
             var tache1 = new AjoutTache()
             {
                 m_strNomTache = "Test",
@@ -24,11 +28,8 @@ namespace InTime.Controllers
                 m_finMin = "30",
                 m_rappelHeure = "",
                 m_rappelMin = "",
-                m_strLieu = "Bureau"
+                m_strLieu = "Bureau",
             };
-
-            //TODO :
-            //Aller chercher l'information dans la base de donnee
 
             return View(tache1);
         }
