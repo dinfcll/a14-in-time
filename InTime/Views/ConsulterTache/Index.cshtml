@@ -1,0 +1,68 @@
+﻿@model InTime.Models.AjoutTache
+@{
+    ViewBag.Title = "Consultation de votre tâche";
+}
+
+<h2>Voici votre tâche</h2>
+
+<p>
+    Nom de la tâche : <br />
+    @Html.Display(Model.m_strNomTache);
+    <br />
+
+    <!--
+    Nom du lieu : <br />
+    Html.TextBoxFor(model => model.m_strLieu)
+    Html.ValidationMessageFor(model => model.m_strLieu, "*")
+    <br />
+
+    Date : <br />
+    Mois :
+    Html.DropDownList("m_mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
+    <script type="text/javascript">
+        document.getElementById("m_mois").selectedIndex = 0
+    </script>
+    Html.ValidationMessage("Mois", "*")
+
+    Année :
+    <select id="m_annee" name="m_annee"></select>
+    Html.ValidationMessage("Annee", "*")
+
+
+    Jour :
+    <select id="m_jour" name="m_jour"></select>
+    Html.ValidationMessage("Jour", "*")
+    <br />
+
+    Heure : <br />
+    Début : Html.DropDownList("m_debHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_debHeure" })
+    Html.ValidationMessage("dbTacheHeure", "*")
+    H
+    Html.DropDownList("m_debMin", ViewBag.trancheMin as SelectList, "", new { id = "m_debMin" })
+    Html.ValidationMessage("dbTacheMinute", "*")
+    Min
+    <br />
+
+    Fin : Html.DropDownList("m_finHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_finHeure" })
+    Html.ValidationMessage("finTacheHeure", "*")
+    H
+    Html.DropDownList("m_finMin", ViewBag.trancheMin as SelectList, "", new { id = "m_finMin" })
+    Html.ValidationMessage("finTacheMinute", "*")
+    Min
+    <br />
+
+
+    L'heure du rappel : <br />
+    Html.DropDownList("m_rappelHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_rappelHeure" })
+    Html.ValidationMessage("rapTacheHeure", "*")
+    H
+    Html.DropDownList("m_rappelMin", ViewBag.trancheMin as SelectList, "", new { id = "m_rappelMin" })
+    Html.ValidationMessage("rapTacheMinute", "*")
+    Min
+    <br />
+
+    Description de la tâche : <br />
+    Html.TextAreaFor(model => model.m_strDescTache, "*")
+    <br />
+        -->
+</p>
