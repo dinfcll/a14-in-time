@@ -14,14 +14,19 @@ namespace InTime.Controllers
 
         public ActionResult TacheForm()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && User.Identity.Name!= "Superuser")
             {
                 return View();
             }
             else
-            {
-                return View("~/Views/ErreurAuthentification.cshtml");
-            }
+                if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+                {
+                    return RedirectToAction("GererForm", "Gerer");
+                }
+                else
+                {
+                    return View("~/Views/ErreurAuthentification.cshtml");
+                }
 
         }
 
