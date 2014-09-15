@@ -1,0 +1,109 @@
+﻿@model InTime.Models.AjoutTache
+
+@{
+    ViewBag.Title = "Ajouter une nouvelle tâche";
+}
+
+@Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+
+<h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
+
+@using (Html.BeginForm())
+{ 
+<p>
+    Nom de la tâche : <br />
+    @Html.TextBoxFor(model => model.m_strNomTache)
+    @Html.ValidationMessageFor(model => model.m_strNomTache,"*")
+    <br />
+
+
+    Nom du lieu : <br /> 
+    @Html.TextBoxFor(model => model.m_strLieu)
+    @Html.ValidationMessageFor(model => model.m_strLieu,"*")
+    <br />
+
+    Date : <br />
+    Mois :
+    @Html.DropDownList("m_mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
+    @Html.ValidationMessage("Mois","*")
+
+    Année :
+    <select id="m_annee" name="m_annee"></select>
+    @Html.ValidationMessage("Annee","*")
+
+
+    Jour :
+    <select id="m_jour" name="m_jour"></select>
+    @Html.ValidationMessage("Jour","*")
+    <br />
+    
+    Heure : <br />
+    Début : @Html.DropDownList("m_debHeure", ViewBag.trancheHeure as SelectList,"", new { id = "m_debHeure" })
+    @Html.ValidationMessage("dbTacheHeure","*")
+    H 
+    @Html.DropDownList("m_debMin", ViewBag.trancheMin as SelectList,"", new { id = "m_debMin" })
+    @Html.ValidationMessage("dbTacheMinute", "*")
+    Min
+     <br />
+
+    Fin : @Html.DropDownList("m_finHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_finHeure" })
+    @Html.ValidationMessage("finTacheHeure", "*")
+    H 
+    @Html.DropDownList("m_finMin", ViewBag.trancheMin as SelectList, "", new { id = "m_finMin" })
+    @Html.ValidationMessage("finTacheMinute", "*")
+    Min
+     <br />
+
+
+    L'heure du rappel : <br />
+    @Html.DropDownList("m_rappelHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_rappelHeure" })
+    @Html.ValidationMessage("rapTacheHeure","*")
+    H 
+    @Html.DropDownList("m_rappelMin", ViewBag.trancheMin as SelectList, "", new { id = "m_rappelMin" })
+    @Html.ValidationMessage("rapTacheMinute","*")
+    Min
+    <br />
+    
+    Description de la tâche : <br /> 
+    @Html.TextAreaFor(model => model.m_strDescTache,"*")
+    <br />
+    
+    <input type="submit" value="Enregistrer" />
+</p>
+}
+
+<!--  Initialise notre DropDownList contenant les annees  -->
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
+    $(function () {
+        $('#m_mois').change(function () {
+            $.getJSON('/AjouterTache/AnneeList/' + $('#m_mois').val(), function (data) {
+                var items = '<option>Choisir une année</option>';
+                $.each(data, function (i, annee) {
+                    items += "<option value='" + annee.Value + "'>" + annee.Text + "</option>";
+                });
+                $('#m_annee').html(items);
+            });
+        });
+    });
+</script>
+
+
+<!--   Initialise notre DropDownList contenant les jours possible   -->
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
+    $(function () {
+        $('#m_annee').change(function () {
+            var params = {};
+            params.Year = $('#m_annee').val();
+            params.Month = $('#m_mois').val();
+            $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+                var items = '<option>Choisir un jour</option>';
+                $.each(data, function (i, jour) {
+                    items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+                });
+                $('#m_jour').html(items);
+            });
+        });
+    });
+</script>
