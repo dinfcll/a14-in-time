@@ -13,7 +13,7 @@ namespace InTime.Controllers
 
         public ActionResult GererForm()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && User.Identity.Name=="Superuser")
             {
                 return View();
             }
