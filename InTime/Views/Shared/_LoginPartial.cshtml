@@ -6,7 +6,7 @@
             <a href="javascript:document.getElementById('logoutForm').submit()">Se déconnecter</a>
             <nav>
             <ul id="menu">
-                @if (User.Identity.Name == "Superuser")
+                @if (User.Identity.Name == "Superuser") //Si l'utilisateur est connecté en tant que Superuser
                 { 
                     <li>@Html.ActionLink("Gérer", "GererForm", "Gerer")</li>
                 }

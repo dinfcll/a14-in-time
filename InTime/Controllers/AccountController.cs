@@ -184,7 +184,6 @@ namespace InTime.Controllers
                 {
                     state.Errors.Clear();
                 }
-
                 if (ModelState.IsValid)
                 {
                     try
@@ -279,7 +278,6 @@ namespace InTime.Controllers
 
                         OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
                         OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-
                         return RedirectToLocal(returnUrl);
                     }
                     else
@@ -288,7 +286,6 @@ namespace InTime.Controllers
                     }
                 }
             }
-
             ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(provider).DisplayName;
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
@@ -319,7 +316,6 @@ namespace InTime.Controllers
             foreach (OAuthAccount account in accounts)
             {
                 AuthenticationClientData clientData = OAuthWebSecurity.GetOAuthClientData(account.Provider);
-
                 externalLogins.Add(new ExternalLogin
                 {
                     Provider = account.Provider,
@@ -359,7 +355,6 @@ namespace InTime.Controllers
                 Provider = provider;
                 ReturnUrl = returnUrl;
             }
-
             public string Provider { get; private set; }
             public string ReturnUrl { get; private set; }
 
