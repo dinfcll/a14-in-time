@@ -25,6 +25,9 @@
     Date : <br />
     Mois :
     @Html.DropDownList("m_mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
+    <script type="text/javascript">
+        document.getElementById("m_mois").selectedIndex = 0
+    </script>
     @Html.ValidationMessage("Mois","*")
 
     Année :
