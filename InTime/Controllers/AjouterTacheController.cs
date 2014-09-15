@@ -89,7 +89,9 @@ namespace InTime.Controllers
         {
 
             //Validations
-            if (model.m_mois == null || model.m_annee == null || model.m_jour == null)
+            if ((model.m_mois == null || model.m_mois.Contains("Choisir"))||
+                (model.m_annee == null || model.m_annee.Contains("Choisir")) ||
+                (model.m_jour == null || model.m_jour.Contains("Choisir")))
             {
                 ModelState.AddModelError("Mois", "Veuillez completer la date correctement.");
                 ModelState.AddModelError("Annee", "");
