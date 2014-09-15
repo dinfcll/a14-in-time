@@ -11,7 +11,6 @@ namespace InTime.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "Soyez toujours à l'heure pour un rendez-vous! ";
-
             return View();
         }
 
