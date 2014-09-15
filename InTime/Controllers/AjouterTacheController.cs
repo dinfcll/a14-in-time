@@ -40,14 +40,12 @@ namespace InTime.Controllers
                 trancheHeure.Add(Convert.ToString(i));
             ViewBag.trancheHeure = new SelectList(trancheHeure);
 
-
             ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
             return View();
         }
 
 
-        //Retourne une liste contenant des annees.
         public JsonResult AnneeList(string Id)
         {
             List<SelectListItem> annee = new List<SelectListItem>();
@@ -56,7 +54,6 @@ namespace InTime.Controllers
                 int nYear = DateTime.Now.Year;
                 for (int i = nYear; i <= nYear + 2; ++i)
                 {
-                    //annee.Add(new District { StateName = "Bihar", DistrictName = Convert.ToString(i)});
                     annee.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
                 }
             }
@@ -66,8 +63,7 @@ namespace InTime.Controllers
         }
 
 
-        //Retourne une liste contenant les jours du mois et de l'annee selectionne
-        public JsonResult JourList(string Year, string Month)
+        public JsonResult JourDuMois(string Year, string Month)
         {
             List<SelectListItem> jours = new List<SelectListItem>();
             if (!String.IsNullOrEmpty(Month))
@@ -75,7 +71,6 @@ namespace InTime.Controllers
                 int nDays = DateTime.DaysInMonth(Convert.ToInt32(Year), Convert.ToInt32(Month));
                 for (int i = 1; i <= nDays; ++i)
                 {
-                    //annee.Add(new District { StateName = "Bihar", DistrictName = Convert.ToString(i)});
                     jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
                 }
             }
@@ -83,41 +78,42 @@ namespace InTime.Controllers
             return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
         }
 
-
-        [HttpPost]
-        public ActionResult Index(AjoutTache model)
+        public void Validations(AjoutTache model)
         {
+            const string strValidationMotContain = "Choisir";
 
-            //Validations
-            if ((model.m_mois == null || model.m_mois.Contains("Choisir"))||
-                (model.m_annee == null || model.m_annee.Contains("Choisir")) ||
-                (model.m_jour == null || model.m_jour.Contains("Choisir")))
+            if ((model.m_mois == null || model.m_mois.Contains(strValidationMotContain)) ||
+                (model.m_annee == null || model.m_annee.Contains(strValidationMotContain)) ||
+                (model.m_jour == null || model.m_jour.Contains(strValidationMotContain)))
             {
-                ModelState.AddModelError("Mois", "Veuillez completer la date correctement.");
+                ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
                 ModelState.AddModelError("Annee", "");
                 ModelState.AddModelError("Jour", "");
             }
 
             if (model.m_debHeure == null || model.m_debMin == null)
             {
-                ModelState.AddModelError("dbTacheHeure", "Veuillez completer l'heure de début correctement.");
+                ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
                 ModelState.AddModelError("dbTacheMinute", "");
             }
-
             if (model.m_finHeure == null || model.m_finMin == null)
             {
-                ModelState.AddModelError("finTacheHeure", "Veuillez completer l'heure de fin correctement.");
+                ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
                 ModelState.AddModelError("finTacheMinute", "");
             }
 
             if (model.m_rappelHeure != null && model.m_rappelMin == null)
             {
-                ModelState.AddModelError("rapTacheHeure", "Veuillez completer l'heure de rappel correctement.");
+                ModelState.AddModelError("rapTacheHeure", "Veuillez compléter l'heure de rappel correctement.");
                 ModelState.AddModelError("rapTacheMinute", "");
             }
+        }
 
+        [HttpPost]
+        public ActionResult Index(AjoutTache model)
+        {
+            Validations(model);
 
-            //Traitement si le formulaire n'est pas bien rempli.
             if (!ModelState.IsValid)
             {
                 var trancheMin = new List<string>();
@@ -134,16 +130,22 @@ namespace InTime.Controllers
 
                 return View("Index");
             }
+            else
+            {
+                //TODO :
+                //- Completer la fonctionnalite InsertionTache(...)
+                //- Appeler la fonctionnalite InsertionTache(...)
+            }
 
             return RedirectToAction("Index", "AjouterTache");
         }
 
-
-        //Action qui se produit suite \ l'appuie du bouton enregistrer
-        private void InsertionTache(string m_strNomTache,string m_strLieu,string m_strDescTache,DateTime m_dtHeure,DateTime m_dtRappel)
+        private void InsertionTache(AjoutTache Model)
         {
-
+            // TODO :
+            //- Effectue la connexion avec la base de donnée
+            //- Enregistrer les informations dans la base de donnée
+            //- Indiquer à l'utilisateur que l'enregistrement a été réussi
         }
-
     }
 }

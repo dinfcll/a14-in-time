@@ -17,7 +17,6 @@ namespace InTime.Models
         [StringLength(30)]
         public string m_strLieu { get; set; }
 
-
         public string m_jour { get; set; }
 
         public string m_mois { get; set; }

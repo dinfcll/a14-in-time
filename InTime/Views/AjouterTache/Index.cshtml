@@ -68,11 +68,9 @@
     @Html.TextAreaFor(model => model.m_strDescTache,"*")
     <br />
     
-    
     <input type="submit" value="Enregistrer" />
 </p>
 }
-
 
 <!--  Initialise notre DropDownList contenant les annees  -->
 @Scripts.Render("~/bundles/jquery")
@@ -99,7 +97,7 @@
             var params = {};
             params.Year = $('#m_annee').val();
             params.Month = $('#m_mois').val();
-            $.getJSON('/AjouterTache/JourList/', params, function (data) {
+            $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
                 var items = '<option>Choisir un jour</option>';
                 $.each(data, function (i, jour) {
                     items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
