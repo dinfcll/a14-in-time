@@ -9,8 +9,24 @@ namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
     {
-        //
-        // GET: /AjouterTache/
+        public List<SelectListItem> Les_Mois ()
+        {
+            List<SelectListItem> mois = new List<SelectListItem>();
+            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
+            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
+            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
+            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
+            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
+            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
+            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
+            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
+            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
+            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
+            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
+            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
+            return mois;
+        }
+
 
         public ActionResult Index(string Min,string Heure)
         {
@@ -25,20 +41,7 @@ namespace InTime.Controllers
             ViewBag.trancheHeure = new SelectList(trancheHeure);
 
 
-            List<SelectListItem> mois = new List<SelectListItem>();
-            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
-            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
-            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
-            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
-            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
-            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
-            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
-            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
-            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
-            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
-            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
-            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
-            ViewBag.MoisAnnee = new SelectList(mois, "Value", "Text");
+            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
             return View();
         }
@@ -84,12 +87,53 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(AjoutTache model)
         {
-            if (ModelState.IsValid)
-            {
 
+            //Validations
+            if (model.m_mois == null || model.m_annee == null || model.m_jour == null)
+            {
+                ModelState.AddModelError("Mois", "Veuillez completer la date correctement.");
+                ModelState.AddModelError("Annee", "");
+                ModelState.AddModelError("Jour", "");
             }
 
-            return View();
+            if (model.m_debHeure == null || model.m_debMin == null)
+            {
+                ModelState.AddModelError("dbTacheHeure", "Veuillez completer l'heure de début correctement.");
+                ModelState.AddModelError("dbTacheMinute", "");
+            }
+
+            if (model.m_finHeure == null || model.m_finMin == null)
+            {
+                ModelState.AddModelError("finTacheHeure", "Veuillez completer l'heure de fin correctement.");
+                ModelState.AddModelError("finTacheMinute", "");
+            }
+
+            if (model.m_rappelHeure != null && model.m_rappelMin == null)
+            {
+                ModelState.AddModelError("rapTacheHeure", "Veuillez completer l'heure de rappel correctement.");
+                ModelState.AddModelError("rapTacheMinute", "");
+            }
+
+
+            //Traitement si le formulaire n'est pas bien rempli.
+            if (!ModelState.IsValid)
+            {
+                var trancheMin = new List<string>();
+                string[] tempsMin = { "0", "15", "30", "45", "60" };
+                trancheMin.AddRange(tempsMin);
+                ViewBag.trancheMin = new SelectList(trancheMin);
+
+                var trancheHeure = new List<string>();
+                for (int i = 0; i < 25; ++i)
+                    trancheHeure.Add(Convert.ToString(i));
+                ViewBag.trancheHeure = new SelectList(trancheHeure);
+
+                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+                return View("Index");
+            }
+
+            return RedirectToAction("Index", "AjouterTache");
         }
 
 

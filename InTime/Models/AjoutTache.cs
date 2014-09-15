@@ -9,11 +9,11 @@ namespace InTime.Models
 {
     public class AjoutTache
     {
-        [Required(ErrorMessage = "Obligatoire")]
+        [Required(ErrorMessage = "Vous devez donner un nom à votre tâche")]
         [StringLength(30)]
         public string m_strNomTache {get; set;}
 
-        [Required(ErrorMessage = "Obligatoire")]
+        [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâche")]
         [StringLength(30)]
         public string m_strLieu { get; set; }
 
@@ -24,7 +24,7 @@ namespace InTime.Models
       
         public string m_annee { get; set; }
 
-        [StringLength(300,ErrorMessage="Votre texte est trop long")]
+        [StringLength(300, ErrorMessage = "La description de la tâche est trop long")]
         public string m_strDescTache { get; set; }
 
         public string m_debHeure { get; set; }
@@ -33,8 +33,5 @@ namespace InTime.Models
         public string m_finMin { get; set; }
         public string m_rappelHeure { get; set; }
         public string m_rappelMin { get; set; }
-        public DateTime m_dtDebut { get; set; }
-        public DateTime m_dtFin { get; set; }
-        public DateTime m_dtRappel { get; set; }
     }
 }
