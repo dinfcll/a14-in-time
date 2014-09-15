@@ -25,6 +25,7 @@ namespace InTime.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public string UserName { get; set; }
+        
     }
 
     public class RegisterExternalLoginModel
@@ -60,6 +61,7 @@ namespace InTime.Models
         [Required]
         [Display(Name = "Nom d'utilisateur")]
         public string UserName { get; set; }
+        
 
         [Required]
         [DataType(DataType.Password)]
@@ -70,6 +72,7 @@ namespace InTime.Models
         public bool RememberMe { get; set; }
     }
 
+    
     public class RegisterModel
     {
         [Required]
@@ -86,6 +89,17 @@ namespace InTime.Models
         [Display(Name = "Confirmer le mot de passe ")]
         [Compare("Password", ErrorMessage = "Le mot de passe et le mot de passe de confirmation ne correspondent pas.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        public string Prénom { get; set; }
+
+        [Required]
+        public string Nom { get; set; }
+
+        [Required]
+        [RegularExpression(@".*@.*")]
+        public string Email { get; set; }
+
     }
 
     public class ExternalLogin

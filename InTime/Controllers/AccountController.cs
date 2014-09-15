@@ -15,6 +15,8 @@ namespace InTime.Controllers
 {
     [Authorize]
     [InitializeSimpleMembership]
+
+    
     public class AccountController : Controller
     {
         //
@@ -35,6 +37,7 @@ namespace InTime.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
+
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
                 return RedirectToLocal(returnUrl);
@@ -181,7 +184,6 @@ namespace InTime.Controllers
                 {
                     state.Errors.Clear();
                 }
-
                 if (ModelState.IsValid)
                 {
                     try
@@ -266,6 +268,7 @@ namespace InTime.Controllers
                 using (UsersContext db = new UsersContext())
                 {
                     UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
+                    if(user.UserName=="")
                     // Vérifier si l'utilisateur n'existe pas déjà
                     if (user == null)
                     {
@@ -275,7 +278,6 @@ namespace InTime.Controllers
 
                         OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
                         OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-
                         return RedirectToLocal(returnUrl);
                     }
                     else
@@ -284,7 +286,6 @@ namespace InTime.Controllers
                     }
                 }
             }
-
             ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(provider).DisplayName;
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
@@ -315,7 +316,6 @@ namespace InTime.Controllers
             foreach (OAuthAccount account in accounts)
             {
                 AuthenticationClientData clientData = OAuthWebSecurity.GetOAuthClientData(account.Provider);
-
                 externalLogins.Add(new ExternalLogin
                 {
                     Provider = account.Provider,
@@ -355,7 +355,6 @@ namespace InTime.Controllers
                 Provider = provider;
                 ReturnUrl = returnUrl;
             }
-
             public string Provider { get; private set; }
             public string ReturnUrl { get; private set; }
 

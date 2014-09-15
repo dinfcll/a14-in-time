@@ -183,7 +183,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjouterTacheController.cs" />
+    <Compile Include="Controllers\GererController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TacheController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -304,6 +306,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\AjouterTache\Index.cshtml" />
+    <Content Include="Views\Gerer\GererForm.cshtml" />
+    <Content Include="Views\Tache\TacheForm.cshtml" />
+    <Content Include="Views\ErreurAuthentification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
