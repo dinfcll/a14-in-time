@@ -15,9 +15,9 @@ namespace InTime.Controllers
         public ActionResult Index()
         {
             //TODO :
-            //Aller chercher l'information dans la base de donnee
+            //Aller chercher l'information dans la base de données 
 
-            var tache1 = new AjoutTache()
+            var tache = new AjoutTache()
             {
                 m_strNomTache = "Test",
                 m_strDescTache = "C'est un test",
@@ -33,15 +33,19 @@ namespace InTime.Controllers
                 m_strLieu = "Bureau",
             };
 
-            DateTime DateDebut = new DateTime(Convert.ToInt32(tache1.m_annee), Convert.ToInt32(tache1.m_mois), Convert.ToInt32(tache1.m_jour),
-                Convert.ToInt32(tache1.m_debHeure), Convert.ToInt32(tache1.m_debMin), 0);
+            DateTime DateDebut = new DateTime(
+                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
+                );
             ViewBag.DateDebut = DateDebut.ToString(culture);
 
-            DateTime DateFin = new DateTime(Convert.ToInt32(tache1.m_annee), Convert.ToInt32(tache1.m_mois), Convert.ToInt32(tache1.m_jour),
-                Convert.ToInt32(tache1.m_finHeure), Convert.ToInt32(tache1.m_finMin), 0);
+            DateTime DateFin = new DateTime(
+                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
+                );
             ViewBag.DateFin = DateFin.ToString(culture);
 
-            TimeSpan tsRappel = new TimeSpan(Convert.ToInt32(tache1.m_rappelHeure),Convert.ToInt32(tache1.m_rappelMin),0);
+            TimeSpan tsRappel = new TimeSpan(Convert.ToInt32(tache.m_rappelHeure),Convert.ToInt32(tache.m_rappelMin),0);
             DateTime DateRappel = DateDebut.Subtract(tsRappel);
 
             if (DateRappel == DateDebut)
@@ -52,7 +56,7 @@ namespace InTime.Controllers
             {
                 ViewBag.DateRappel = DateRappel.ToString(culture);
             }
-            ViewData["Tache"] = tache1;
+            ViewData["Tache"] = tache;
 
             return View();
         }
