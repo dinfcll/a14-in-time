@@ -8,6 +8,20 @@
 
 @{
     var tache = (AjoutTache)ViewData["Tache"];
+    var heureRappel = "";
+    
+    if (tache.m_rappelHeure != "" && tache.m_rappelMin != "")
+    {
+        heureRappel = tache.m_rappelHeure + ":" + tache.m_rappelMin;
+    }
+    else
+    {
+        if (tache.m_rappelHeure == "" && tache.m_rappelMin != "")
+        {
+            heureRappel = tache.m_rappelMin;
+        }
+    }
+
 }
 
 <p>
@@ -15,71 +29,12 @@
     <br />
     Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new {  @readonly = "readonly" })
     <br />
-    Date : @Html.TextBox("Date", "", new { id = "Date", @readonly = "readonly" })
-    <script>
-        var Date = new Date(@tache.m_annee,1,@tache.m_jour);    
-        document.getElementById("Date").innerHTML = "Test";
-    </script>
+    Début  de la tâche : @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { @readonly = "readonly" })
     <br />
-    om du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { @readonly = "readonly" })
+    Fin de la tâche : @Html.TextBox("Fin", (string)ViewBag.DateFin, new { @readonly = "readonly" })
     <br />
-    om du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { @readonly = "readonly" })
+    Rappel : @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { @readonly = "readonly" })
     <br />
-
-
-    <!--
-    Nom du lieu : <br />
-    Html.TextBoxFor(model => model.m_strLieu)
-    Html.ValidationMessageFor(model => model.m_strLieu, "*")
+    Description de la tâche : @Html.TextBox("Desc", tache.m_strDescTache, new { @readonly = "readonly" })
     <br />
-
-    Date : <br />
-    Mois :
-    Html.DropDownList("m_mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "m_mois" })
-    <script type="text/javascript">
-        document.getElementById("m_mois").selectedIndex = 0
-    </script>
-    Html.ValidationMessage("Mois", "*")
-
-    Année :
-    <select id="m_annee" name="m_annee"></select>
-    Html.ValidationMessage("Annee", "*")
-
-
-    Jour :
-    <select id="m_jour" name="m_jour"></select>
-    Html.ValidationMessage("Jour", "*")
-    <br />
-
-    Heure : <br />
-    Début : Html.DropDownList("m_debHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_debHeure" })
-    Html.ValidationMessage("dbTacheHeure", "*")
-    H
-    Html.DropDownList("m_debMin", ViewBag.trancheMin as SelectList, "", new { id = "m_debMin" })
-    Html.ValidationMessage("dbTacheMinute", "*")
-    Min
-    <br />
-
-    Fin : Html.DropDownList("m_finHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_finHeure" })
-    Html.ValidationMessage("finTacheHeure", "*")
-    H
-    Html.DropDownList("m_finMin", ViewBag.trancheMin as SelectList, "", new { id = "m_finMin" })
-    Html.ValidationMessage("finTacheMinute", "*")
-    Min
-    <br />
-
-
-    L'heure du rappel : <br />
-    Html.DropDownList("m_rappelHeure", ViewBag.trancheHeure as SelectList, "", new { id = "m_rappelHeure" })
-    Html.ValidationMessage("rapTacheHeure", "*")
-    H
-    Html.DropDownList("m_rappelMin", ViewBag.trancheMin as SelectList, "", new { id = "m_rappelMin" })
-    Html.ValidationMessage("rapTacheMinute", "*")
-    Min
-    <br />
-
-    Description de la tâche : <br />
-    Html.TextAreaFor(model => model.m_strDescTache, "*")
-    <br />
-        -->
 </p>

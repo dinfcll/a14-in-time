@@ -31,7 +31,7 @@ namespace InTime.Controllers
         public ActionResult Index(string Min,string Heure)
         {
             var trancheMin = new List<string>();
-            string[] tempsMin = { "0", "15", "30", "45", "60" };
+            string[] tempsMin = { "00", "15", "30", "45", "60" };
             trancheMin.AddRange(tempsMin);
             ViewBag.trancheMin = new SelectList(trancheMin);
 
@@ -96,6 +96,7 @@ namespace InTime.Controllers
                 ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
                 ModelState.AddModelError("dbTacheMinute", "");
             }
+
             if (model.m_finHeure == null || model.m_finMin == null)
             {
                 ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
