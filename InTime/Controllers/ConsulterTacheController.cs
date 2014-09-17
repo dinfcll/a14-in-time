@@ -10,6 +10,7 @@ namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
+        CultureInfo culture = new CultureInfo("fr-CA");
 
         public ActionResult Index()
         {
@@ -34,11 +35,11 @@ namespace InTime.Controllers
 
             DateTime DateDebut = new DateTime(Convert.ToInt32(tache1.m_annee), Convert.ToInt32(tache1.m_mois), Convert.ToInt32(tache1.m_jour),
                 Convert.ToInt32(tache1.m_debHeure), Convert.ToInt32(tache1.m_debMin), 0);
-            ViewBag.DateDebut = DateDebut.ToString(CultureInfo.CreateSpecificCulture("fr-CA"));
+            ViewBag.DateDebut = DateDebut.ToString(culture);
 
             DateTime DateFin = new DateTime(Convert.ToInt32(tache1.m_annee), Convert.ToInt32(tache1.m_mois), Convert.ToInt32(tache1.m_jour),
                 Convert.ToInt32(tache1.m_finHeure), Convert.ToInt32(tache1.m_finMin), 0);
-            ViewBag.DateFin = DateFin.ToString(CultureInfo.CreateSpecificCulture("fr-CA"));
+            ViewBag.DateFin = DateFin.ToString(culture);
 
             TimeSpan tsRappel = new TimeSpan(Convert.ToInt32(tache1.m_rappelHeure),Convert.ToInt32(tache1.m_rappelMin),0);
             DateTime DateRappel = DateDebut.Subtract(tsRappel);
@@ -49,7 +50,7 @@ namespace InTime.Controllers
             }
             else
             {
-                ViewBag.DateRappel = DateRappel.ToString(CultureInfo.CreateSpecificCulture("fr-CA"));
+                ViewBag.DateRappel = DateRappel.ToString(culture);
             }
             ViewData["Tache"] = tache1;
 
