@@ -31,7 +31,9 @@ namespace InTime.Controllers
                 m_strLieu = "Bureau",
             };
 
-            return View(tache1);
+            ViewData["Tache"] = tache1;
+
+            return View();
         }
 
     }

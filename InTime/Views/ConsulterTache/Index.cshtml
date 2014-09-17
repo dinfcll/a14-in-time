@@ -1,4 +1,4 @@
-﻿@model InTime.Models.AjoutTache
+﻿@using InTime.Models
 
 @{
     ViewBag.Title = "Consultation de votre tâche";
@@ -6,10 +6,26 @@
 
 <h2>Voici votre tâche</h2>
 
+@{
+    var tache = (AjoutTache)ViewData["Tache"];
+}
+
 <p>
-    Nom de la tâche :
+    Nom de la tâche : @Html.TextBox("Nom",tache.m_strNomTache, new { @readonly="readonly" })
     <br />
+    Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new {  @readonly = "readonly" })
     <br />
+    Date : @Html.TextBox("Date", "", new { id = "Date", @readonly = "readonly" })
+    <script>
+        var Date = new Date(@tache.m_annee,1,@tache.m_jour);    
+        document.getElementById("Date").innerHTML = "Test";
+    </script>
+    <br />
+    om du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { @readonly = "readonly" })
+    <br />
+    om du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { @readonly = "readonly" })
+    <br />
+
 
     <!--
     Nom du lieu : <br />
