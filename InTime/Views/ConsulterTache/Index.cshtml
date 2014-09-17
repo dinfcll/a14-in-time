@@ -1,0 +1,40 @@
+﻿@using InTime.Models
+
+@{
+    ViewBag.Title = "Consultation de votre tâche";
+}
+
+<h2>Voici votre tâche</h2>
+
+@{
+    var tache = (AjoutTache)ViewData["Tache"];
+    var heureRappel = "";
+    
+    if (tache.m_rappelHeure != "" && tache.m_rappelMin != "")
+    {
+        heureRappel = tache.m_rappelHeure + ":" + tache.m_rappelMin;
+    }
+    else
+    {
+        if (tache.m_rappelHeure == "" && tache.m_rappelMin != "")
+        {
+            heureRappel = tache.m_rappelMin;
+        }
+    }
+
+}
+
+<p>
+    Nom de la tâche : @Html.TextBox("Nom",tache.m_strNomTache, new { @readonly="readonly" })
+    <br />
+    Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new {  @readonly = "readonly" })
+    <br />
+    Début  de la tâche : @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { @readonly = "readonly" })
+    <br />
+    Fin de la tâche : @Html.TextBox("Fin", (string)ViewBag.DateFin, new { @readonly = "readonly" })
+    <br />
+    Rappel : @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { @readonly = "readonly" })
+    <br />
+    Description de la tâche : @Html.TextBox("Desc", tache.m_strDescTache, new { @readonly = "readonly" })
+    <br />
+</p>

@@ -310,7 +310,7 @@
     <Content Include="Views\Gerer\GererForm.cshtml" />
     <Content Include="Views\Tache\TacheForm.cshtml" />
     <Content Include="Views\ErreurAuthentification.cshtml" />
-    <Content Include="Views\ConsulterTache\ConsulterTache.cshtml" />
+    <Content Include="Views\ConsulterTache\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
