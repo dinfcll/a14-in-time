@@ -7,21 +7,7 @@
 <h2>Voici votre tâche</h2>
 
 @{
-    var tache = (AjoutTache)ViewData["Tache"];
-    var heureRappel = "";
-    
-    if (tache.m_rappelHeure != "" && tache.m_rappelMin != "")
-    {
-        heureRappel = tache.m_rappelHeure + ":" + tache.m_rappelMin;
-    }
-    else
-    {
-        if (tache.m_rappelHeure == "" && tache.m_rappelMin != "")
-        {
-            heureRappel = tache.m_rappelMin;
-        }
-    }
-
+    var tache = (Tache)ViewData["Tache"];
 }
 
 <p>

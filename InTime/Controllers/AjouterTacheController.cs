@@ -78,7 +78,7 @@ namespace InTime.Controllers
             return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
         }
 
-        public void Validations(AjoutTache model)
+        public void Validations(Tache model)
         {
             const string strValidationMotContain = "Choisir";
 
@@ -111,7 +111,7 @@ namespace InTime.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(AjoutTache model)
+        public ActionResult Index(Tache model)
         {
             Validations(model);
 
@@ -141,7 +141,7 @@ namespace InTime.Controllers
             return RedirectToAction("Index", "AjouterTache");
         }
 
-        private void InsertionTache(AjoutTache Model)
+        private void InsertionTache(Tache Model)
         {
             // TODO :
             //- Effectue la connexion avec la base de donnée

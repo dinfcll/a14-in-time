@@ -17,7 +17,7 @@ namespace InTime.Controllers
             //TODO :
             //Aller chercher l'information dans la base de données 
 
-            var tache = new AjoutTache()
+            var tache = new Tache()
             {
                 m_strNomTache = "Test",
                 m_strDescTache = "C'est un test",
