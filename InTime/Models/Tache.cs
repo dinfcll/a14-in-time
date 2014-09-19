@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InTime.Models
 {
-    public class AjoutTache
+    public class Tache
     {
         [Required(ErrorMessage = "Vous devez donner un nom à votre tâche")]
         [StringLength(30)]

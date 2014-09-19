@@ -183,6 +183,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjouterTacheController.cs" />
+    <Compile Include="Controllers\ConsulterTacheController.cs" />
     <Compile Include="Controllers\GererController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TacheController.cs" />
@@ -191,7 +192,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\AjoutTache.cs" />
+    <Compile Include="Models\Tache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +310,7 @@
     <Content Include="Views\Gerer\GererForm.cshtml" />
     <Content Include="Views\Tache\TacheForm.cshtml" />
     <Content Include="Views\ErreurAuthentification.cshtml" />
+    <Content Include="Views\ConsulterTache\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
