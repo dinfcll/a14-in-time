@@ -9,6 +9,11 @@ namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
     {
+        int StrToInt(string nombre)
+        {
+            return Convert.ToInt32(nombre);
+        }
+
         public List<SelectListItem> Les_Mois ()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
@@ -68,7 +73,7 @@ namespace InTime.Controllers
             List<SelectListItem> jours = new List<SelectListItem>();
             if (!String.IsNullOrEmpty(Month))
             {
-                int nDays = DateTime.DaysInMonth(Convert.ToInt32(Year), Convert.ToInt32(Month));
+                int nDays = DateTime.DaysInMonth(StrToInt(Year), StrToInt(Month));
                 for (int i = 1; i <= nDays; ++i)
                 {
                     jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
@@ -77,6 +82,28 @@ namespace InTime.Controllers
 
             return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
         }
+
+        public void ValHeureFinDebut(ref Tache model)
+        {
+            const string strMessageErreur = "Vos heures ne sont pas valide";
+
+            if (model.m_debHeure != null && model.m_debMin != null)
+            {
+                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
+                {
+                    ModelState.AddModelError("", strMessageErreur);
+                }
+                else 
+                {
+                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
+                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
+                    {
+                        ModelState.AddModelError("",strMessageErreur);
+                    }
+                }
+            }
+        }
+
 
         public void Validations(Tache model)
         {
@@ -101,6 +128,10 @@ namespace InTime.Controllers
             {
                 ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
                 ModelState.AddModelError("finTacheMinute", "");
+            } 
+            else
+            {
+                ValHeureFinDebut(ref model);
             }
 
             if (model.m_rappelHeure != null && model.m_rappelMin == null)
@@ -118,7 +149,7 @@ namespace InTime.Controllers
             if (!ModelState.IsValid)
             {
                 var trancheMin = new List<string>();
-                string[] tempsMin = { "0", "15", "30", "45", "60" };
+                string[] tempsMin = { "00", "15", "30", "45", "60" };
                 trancheMin.AddRange(tempsMin);
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
