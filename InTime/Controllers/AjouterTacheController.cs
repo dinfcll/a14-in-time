@@ -51,36 +51,27 @@ namespace InTime.Controllers
         }
 
 
-        public JsonResult AnneeList(string Id)
+        public JsonResult JourDuMois(int Year, string Month)
         {
-            List<SelectListItem> annee = new List<SelectListItem>();
-            if (!String.IsNullOrEmpty(Id))
-            {
-                int nYear = DateTime.Now.Year;
-                for (int i = nYear; i <= nYear + 2; ++i)
-                {
-                    annee.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
-                }
-            }
-
-
-            return Json(new SelectList(annee.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
-        }
-
-
-        public JsonResult JourDuMois(string Year, string Month)
-        {
-            List<SelectListItem> jours = new List<SelectListItem>();
             if (!String.IsNullOrEmpty(Month))
             {
-                int nDays = DateTime.DaysInMonth(StrToInt(Year), StrToInt(Month));
-                for (int i = 1; i <= nDays; ++i)
+                List<SelectListItem> jours = new List<SelectListItem>();
+                if (!String.IsNullOrEmpty(Month))
                 {
-                    jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
+                    int nDays = DateTime.DaysInMonth(Year, StrToInt(Month));
+                    for (int i = 1; i <= nDays; ++i)
+                    {
+                        jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
+                    }
                 }
-            }
 
-            return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
+                return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+
+                return Json(null, JsonRequestBehavior.DenyGet);
+            }
         }
 
         public void ValHeureFinDebut(ref Tache model)
