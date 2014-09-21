@@ -48,10 +48,18 @@
 
 
             $('.ui-spinner-up').click(function () {
-                    annee = $("#spinner").val();
+                if (annee != 2114)
+                    {
+                        annee += 1;
+                        JourDuMois();
+                    }
             });
             $('.ui-spinner-down').click(function () {
-                    annee = $("#spinner").val();
+                if (annee != 2014)
+                    {
+                        annee -= 1;
+                        JourDuMois();
+                    }
             });       
         </script>
 
@@ -96,21 +104,28 @@
 }
 
 
+<script>
+    var JourDuMois = function()
+    {
+        var params = {};
+        params.Year = annee;
+        params.Month = $('#m_mois').val();
+        $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+            var items = '<option>Choisir un jour</option>';
+            $.each(data, function (i, jour) {
+                items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+            });
+            $('#m_jour').html(items);
+        });
+    }
+</script>
+
 <!--   Initialise notre DropDownList contenant les jours possible   -->
 @Scripts.Render("~/bundles/jquery")
 <script>
     $(function () {
         $('#m_mois').change(function () {
-            var params = {};
-            params.Year = annee;
-            params.Month = $('#m_mois').val();
-            $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
-                var items = '<option>Choisir un jour</option>';
-                $.each(data, function (i, jour) {
-                    items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
-                });
-                $('#m_jour').html(items);
-            });
+            JourDuMois();
         });
     });
 </script>
