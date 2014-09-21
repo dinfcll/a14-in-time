@@ -38,12 +38,21 @@
         <input readonly id="spinner" width="20">
 
         <script>
-        $("#spinner").spinner();
-        $("#spinner").spinner("option", "culture", "fr");
-        $("#spinner").spinner("option", "max", 2114);
-        $("#spinner").spinner("option", "min", 2014);
-        $("#spinner").spinner("value", 2014);
-        $("#spinner").width(50);
+            var annee = 2014;
+            $("#spinner").spinner();
+            $("#spinner").spinner("option", "culture", "fr");
+            $("#spinner").spinner("option", "max", 2114);
+            $("#spinner").spinner("option", "min", 2014);
+            $("#spinner").spinner("value", 2014);
+            $("#spinner").width(50);
+
+
+            $('.ui-spinner-up').click(function () {
+                    annee = $("#spinner").val();
+            });
+            $('.ui-spinner-down').click(function () {
+                    annee = $("#spinner").val();
+            });       
         </script>
 
         Jour :
@@ -89,11 +98,11 @@
 
 <!--   Initialise notre DropDownList contenant les jours possible   -->
 @Scripts.Render("~/bundles/jquery")
-<script type="text/jscript">
+<script>
     $(function () {
         $('#m_mois').change(function () {
             var params = {};
-            params.Year = $('#spinner').spinner("value");
+            params.Year = annee;
             params.Month = $('#m_mois').val();
             $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
                 var items = '<option>Choisir un jour</option>';
