@@ -47,7 +47,9 @@ namespace InTime.Controllers
                     );
                 ViewBag.DateFin = DateFin.ToString(culture);
 
-                TimeSpan tsRappel = new TimeSpan(Convert.ToInt32(tache.m_rappelHeure), Convert.ToInt32(tache.m_rappelMin), 0);
+                TimeSpan tsRappel = new TimeSpan(
+                    Convert.ToInt32(tache.m_rappelHeure), Convert.ToInt32(tache.m_rappelMin), 0
+                    );
                 DateTime DateRappel = DateDebut.Subtract(tsRappel);
 
                 if (DateRappel == DateDebut)
