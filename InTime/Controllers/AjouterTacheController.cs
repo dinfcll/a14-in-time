@@ -33,7 +33,7 @@ namespace InTime.Controllers
         }
 
 
-        public ActionResult Index(string Validation)
+        public ActionResult Index(string strMessValidation)
         {
             var trancheMin = new List<string>();
             string[] tempsMin = { "00", "15", "30", "45", "60" };
@@ -47,7 +47,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
-            ViewBag.Reussi = Validation;
+            ViewBag.Reussi = strMessValidation;
 
             return View();
         }

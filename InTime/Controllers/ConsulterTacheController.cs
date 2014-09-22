@@ -13,7 +13,60 @@ namespace InTime.Controllers
         CultureInfo culture = new CultureInfo("fr-CA");
 
 
-        public string TempsRappel(DateTime rappel)
+        public ActionResult Index()
+        {
+            //TODO :
+            //Aller chercher l'information dans la base de données 
+
+            var tache = new Tache()
+            {
+                m_strNomTache = "Test",
+                m_strDescTache = "C'est un test",
+                m_annee = "2015",
+                m_mois = "11",
+                m_jour = "15",
+                m_debHeure = "9",
+                m_debMin = "0",
+                m_finHeure = "17",
+                m_finMin = "30",
+                m_rappelHeure = "0",
+                m_rappelMin = "30",
+                m_strLieu = "Bureau",
+            };
+            ViewData["Tache"] = tache;
+
+            DateTime DateDebut = new DateTime(
+                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
+                );
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+
+            DateTime DateFin = new DateTime(
+                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
+                );
+            ViewBag.DateFin = DateFin.ToString(culture);
+
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.m_rappelHeure),Convert.ToInt32(tache.m_rappelMin),0
+                );
+            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+            string strTempsRappel = TempsRappel(DateRappel);
+
+            if (DateRappel == DateDebut)
+            {
+                ViewBag.DateRappel = "Aucun";
+            }
+            else
+            {
+                ViewBag.DateRappel = strTempsRappel;
+            }
+
+            return View();
+        }
+
+
+        private string TempsRappel(DateTime rappel)
         {
             string strPhrase = "Il vous reste ";
 
@@ -57,56 +110,6 @@ namespace InTime.Controllers
 
                 return strPhrase;
             }
-        }
-
-        public ActionResult Index()
-        {
-            //TODO :
-            //Aller chercher l'information dans la base de données 
-
-            var tache = new Tache()
-            {
-                m_strNomTache = "Test",
-                m_strDescTache = "C'est un test",
-                m_annee = "2015",
-                m_mois = "11",
-                m_jour = "15",
-                m_debHeure = "9",
-                m_debMin = "0",
-                m_finHeure = "17",
-                m_finMin = "30",
-                m_rappelHeure = "0",
-                m_rappelMin = "30",
-                m_strLieu = "Bureau",
-            };
-
-            DateTime DateDebut = new DateTime(
-                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
-                );
-            ViewBag.DateDebut = DateDebut.ToString(culture);
-
-            DateTime DateFin = new DateTime(
-                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
-                );
-            ViewBag.DateFin = DateFin.ToString(culture);
-
-            TimeSpan tsRappel = new TimeSpan(Convert.ToInt32(tache.m_rappelHeure),Convert.ToInt32(tache.m_rappelMin),0);
-            DateTime DateRappel = DateDebut.Subtract(tsRappel);
-            string strTempsRappel = TempsRappel(DateRappel);
-
-            if (DateRappel == DateDebut)
-            {
-                ViewBag.DateRappel = "Aucun";
-            }
-            else
-            {
-                ViewBag.DateRappel = strTempsRappel;
-            }
-            ViewData["Tache"] = tache;
-
-            return View();
         }
     }
 }
