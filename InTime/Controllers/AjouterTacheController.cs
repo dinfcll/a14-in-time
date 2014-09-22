@@ -35,19 +35,27 @@ namespace InTime.Controllers
 
         public ActionResult Index(string Min,string Heure)
         {
-            var trancheMin = new List<string>();
-            string[] tempsMin = { "00", "15", "30", "45", "60" };
-            trancheMin.AddRange(tempsMin);
-            ViewBag.trancheMin = new SelectList(trancheMin);
 
-            var trancheHeure = new List<string>();
-            for (int i = 1; i < 25; ++i)
-                trancheHeure.Add(Convert.ToString(i));
-            ViewBag.trancheHeure = new SelectList(trancheHeure);
+            if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+            {
+                var trancheMin = new List<string>();
+                string[] tempsMin = { "00", "15", "30", "45", "60" };
+                trancheMin.AddRange(tempsMin);
+                ViewBag.trancheMin = new SelectList(trancheMin);
 
-            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+                var trancheHeure = new List<string>();
+                for (int i = 1; i < 25; ++i)
+                    trancheHeure.Add(Convert.ToString(i));
+                ViewBag.trancheHeure = new SelectList(trancheHeure);
 
-            return View();
+                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+                return View();
+            }
+            else
+            {
+                return View("~/Views/ErreurAuthentification.cshtml");
+            }
         }
 
 
@@ -144,32 +152,39 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(Tache model)
         {
-            Validations(model);
-
-            if (!ModelState.IsValid)
+            if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
             {
-                var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45", "60" };
-                trancheMin.AddRange(tempsMin);
-                ViewBag.trancheMin = new SelectList(trancheMin);
+                Validations(model);
 
-                var trancheHeure = new List<string>();
-                for (int i = 0; i < 25; ++i)
-                    trancheHeure.Add(Convert.ToString(i));
-                ViewBag.trancheHeure = new SelectList(trancheHeure);
+                if (!ModelState.IsValid)
+                {
+                    var trancheMin = new List<string>();
+                    string[] tempsMin = { "00", "15", "30", "45", "60" };
+                    trancheMin.AddRange(tempsMin);
+                    ViewBag.trancheMin = new SelectList(trancheMin);
 
-                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+                    var trancheHeure = new List<string>();
+                    for (int i = 0; i < 25; ++i)
+                        trancheHeure.Add(Convert.ToString(i));
+                    ViewBag.trancheHeure = new SelectList(trancheHeure);
 
-                return View("Index");
+                    ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+                    return View("Index");
+                }
+                else
+                {
+                    //TODO :
+                    //- Completer la fonctionnalite InsertionTache(...)
+                    //- Appeler la fonctionnalite InsertionTache(...)
+                }
             }
             else
             {
-                //TODO :
-                //- Completer la fonctionnalite InsertionTache(...)
-                //- Appeler la fonctionnalite InsertionTache(...)
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
 
-            return RedirectToAction("Index", "AjouterTache");
+                return RedirectToAction("Index", "AjouterTache");
         }
 
         private void InsertionTache(Tache Model)
