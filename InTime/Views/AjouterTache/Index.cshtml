@@ -1,14 +1,26 @@
 ﻿@model InTime.Models.Tache
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+<header>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+</header>
 
 @{
     ViewBag.Title = "Ajouter une nouvelle tâche";
 }
 
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+
+
+<div>
+    @{
+        if (ViewBag.Reussi == "Reussi")
+        {
+            <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
+        }
+    }
+</div>
 
 <h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
 
@@ -35,16 +47,16 @@
         @Html.ValidationMessage("Mois", "*")
 
         Année :
-        <input readonly id="spinner" width="20">
+        <input readonly id="m_annee" name="m_annee" width="20">
 
         <script>
             var annee = 2014;
-            $("#spinner").spinner();
-            $("#spinner").spinner("option", "culture", "fr");
-            $("#spinner").spinner("option", "max", 2114);
-            $("#spinner").spinner("option", "min", 2014);
-            $("#spinner").spinner("value", 2014);
-            $("#spinner").width(50);
+            $("#m_annee").spinner();
+            $("#m_annee").spinner("option", "culture", "fr");
+            $("#m_annee").spinner("option", "max", 2114);
+            $("#m_annee").spinner("option", "min", 2014);
+            $("#m_annee").spinner("value", 2014);
+            $("#m_annee").width(50);
 
 
             $('.ui-spinner-up').click(function () {

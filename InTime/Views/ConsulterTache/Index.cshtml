@@ -24,17 +24,29 @@
         var tache = (Tache)ViewData["Tache"];
     }
     <p>
-        Nom de la tâche : @Html.TextBox("Nom", tache.m_strNomTache, new { id = "Consultation" })
+        Nom de la tâche :
         <br />
-        Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { id = "Consultation" })
+         @Html.TextBox("Nom", tache.m_strNomTache, new { id = "Consultation" })
         <br />
-        Début  de la tâche : @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
+        Nom du lieu :
         <br />
-        Fin de la tâche : @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
+         @Html.TextBox("Nom", tache.m_strLieu, new { id = "Consultation" })
         <br />
-        Rappel : @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation" })
+        Début  de la tâche :
         <br />
-        Description de la tâche : @Html.TextBox("Desc", tache.m_strDescTache, new { id = "Consultation" })
+         @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
+        <br />
+        Fin de la tâche :
+        <br />
+         @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
+        <br />
+        Rappel :
+        <br />
+         @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation", @style="width: 500px;" })
+        <br />
+        Description de la tâche :
+        <br />
+         @Html.TextArea("Desc", tache.m_strDescTache, new { id = "Consultation" })
         <br />
     </p>
 

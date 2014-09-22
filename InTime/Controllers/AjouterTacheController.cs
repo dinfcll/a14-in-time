@@ -33,7 +33,7 @@ namespace InTime.Controllers
         }
 
 
-        public ActionResult Index(string Min,string Heure)
+        public ActionResult Index(string Validation)
         {
             var trancheMin = new List<string>();
             string[] tempsMin = { "00", "15", "30", "45", "60" };
@@ -46,6 +46,8 @@ namespace InTime.Controllers
             ViewBag.trancheHeure = new SelectList(trancheHeure);
 
             ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+            ViewBag.Reussi = Validation;
 
             return View();
         }
@@ -101,7 +103,7 @@ namespace InTime.Controllers
             const string strValidationMotContain = "Choisir";
 
             if ((model.m_mois == null || model.m_mois.Contains(strValidationMotContain)) ||
-                (model.m_annee == null || model.m_annee.Contains(strValidationMotContain)) ||
+                (model.m_annee == null) ||
                 (model.m_jour == null || model.m_jour.Contains(strValidationMotContain)))
             {
                 ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
@@ -160,7 +162,8 @@ namespace InTime.Controllers
                 //- Appeler la fonctionnalite InsertionTache(...)
             }
 
-            return RedirectToAction("Index", "AjouterTache");
+            var message = "Reussi";
+            return RedirectToAction("Index", "AjouterTache", new {   Validation = message   });
         }
 
         private void InsertionTache(Tache Model)

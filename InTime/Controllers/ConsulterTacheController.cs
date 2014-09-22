@@ -22,21 +22,24 @@ namespace InTime.Controllers
             else
             {
                 TimeSpan tsTempsRestant = rappel - DateTime.Now;
-                if (tsTempsRestant.Days > 365)
+                int nNombreJourRestant = tsTempsRestant.Days;
+                if (nNombreJourRestant > 365)
                 {
                     int nAnnee = (tsTempsRestant.Days / 365);
+                    nNombreJourRestant -= (nAnnee * 365);
                     strPhrase += String.Format("{0} {1} ", nAnnee, nAnnee == 1 ? "an" : "ans");
                 }
 
-                if (tsTempsRestant.Days > 30)
+                if (nNombreJourRestant > 30)
                 {
-                    int nMois = (tsTempsRestant.Days / 30);
+                    int nMois = (nNombreJourRestant / 30);
+                    nNombreJourRestant -= (nMois * 30);
                     strPhrase += String.Format("{0} mois ", nMois);
                 }
 
-                if (tsTempsRestant.Days > 0)
+                if (nNombreJourRestant > 0)
                 {
-                    int nJours = tsTempsRestant.Days;
+                    int nJours = nNombreJourRestant;
                     strPhrase += String.Format("{0} {1} ", nJours, nJours == 1 ? "jour" : "jours");
                 }
 
@@ -50,12 +53,6 @@ namespace InTime.Controllers
                 {
                     int nMinute = tsTempsRestant.Minutes;
                     strPhrase += String.Format("{0} {1} ", nMinute, nMinute == 1 ? "minute" : "minutes");
-                }
-
-                if (tsTempsRestant.Seconds > 0)
-                {
-                    int nSecondes = tsTempsRestant.Seconds;
-                    strPhrase += String.Format("{0} {1} ", nSecondes, nSecondes == 1 ? "seconde": "secondes");
                 }
 
                 return strPhrase;
@@ -72,7 +69,7 @@ namespace InTime.Controllers
                 m_strNomTache = "Test",
                 m_strDescTache = "C'est un test",
                 m_annee = "2015",
-                m_mois = "10",
+                m_mois = "11",
                 m_jour = "15",
                 m_debHeure = "9",
                 m_debMin = "0",
@@ -111,6 +108,5 @@ namespace InTime.Controllers
 
             return View();
         }
-
     }
 }
