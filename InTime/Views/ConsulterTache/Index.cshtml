@@ -4,23 +4,41 @@
     ViewBag.Title = "Consultation de votre tâche";
 }
 
-<h2>Voici votre tâche</h2>
+<html>
 
-@{
-    var tache = (Tache)ViewData["Tache"];
-}
+<head>
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+    $(window).load(function () {
+        $(function () {
+            $("[id^=Consultation").attr('readonly', 'true');
+            $("[id^=Consultation").css('background-color', '#DEDEDE');
+        });
+    });
+    </script>
+</head>
+<body>
+    <h2>Voici votre tâche</h2>
 
-<p>
-    Nom de la tâche : @Html.TextBox("Nom",tache.m_strNomTache, new { @readonly="readonly" })
-    <br />
-    Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new {  @readonly = "readonly" })
-    <br />
-    Début  de la tâche : @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { @readonly = "readonly" })
-    <br />
-    Fin de la tâche : @Html.TextBox("Fin", (string)ViewBag.DateFin, new { @readonly = "readonly" })
-    <br />
-    Rappel : @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { @readonly = "readonly" })
-    <br />
-    Description de la tâche : @Html.TextBox("Desc", tache.m_strDescTache, new { @readonly = "readonly" })
-    <br />
-</p>
+    @{
+        var tache = (Tache)ViewData["Tache"];
+    }
+    <p>
+        Nom de la tâche : @Html.TextBox("Nom", tache.m_strNomTache, new { id = "Consultation" })
+        <br />
+        Nom du lieu : @Html.TextBox("Nom", tache.m_strLieu, new { id = "Consultation" })
+        <br />
+        Début  de la tâche : @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
+        <br />
+        Fin de la tâche : @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
+        <br />
+        Rappel : @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation" })
+        <br />
+        Description de la tâche : @Html.TextBox("Desc", tache.m_strDescTache, new { id = "Consultation" })
+        <br />
+    </p>
+
+</body>
+</html>
+
+
