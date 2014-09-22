@@ -91,7 +91,7 @@ namespace InTime.Models
         public string ConfirmPassword { get; set; }
 
         [Required]
-        public string Prénom { get; set; }
+        public string Prenom { get; set; }
 
         [Required]
         public string Nom { get; set; }
