@@ -36,7 +36,7 @@ namespace InTime.Controllers
         public ActionResult Index(string Min,string Heure)
         {
 
-            if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+            if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
                 string[] tempsMin = { "00", "15", "30", "45", "60" };
@@ -152,7 +152,7 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(Tache model)
         {
-            if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+            if (User.Identity.IsAuthenticated)
             {
                 Validations(model);
 
