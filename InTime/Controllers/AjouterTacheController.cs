@@ -45,7 +45,9 @@ namespace InTime.Controllers
 
                 var trancheHeure = new List<string>();
                 for (int i = 1; i < 25; ++i)
+                {
                     trancheHeure.Add(Convert.ToString(i));
+                }
                 ViewBag.trancheHeure = new SelectList(trancheHeure);
 
                 ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
@@ -91,64 +93,6 @@ namespace InTime.Controllers
             return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
         }
 
-        public void ValHeureFinDebut(ref Tache model)
-        {
-            const string strMessageErreur = "Vos heures ne sont pas valide";
-
-            if (model.m_debHeure != null && model.m_debMin != null)
-            {
-                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
-                {
-                    ModelState.AddModelError("", strMessageErreur);
-                }
-                else 
-                {
-                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
-                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
-                    {
-                        ModelState.AddModelError("",strMessageErreur);
-                    }
-                }
-            }
-        }
-
-
-        public void Validations(Tache model)
-        {
-            const string strValidationMotContain = "Choisir";
-
-            if ((model.m_mois == null || model.m_mois.Contains(strValidationMotContain)) ||
-                (model.m_annee == null || model.m_annee.Contains(strValidationMotContain)) ||
-                (model.m_jour == null || model.m_jour.Contains(strValidationMotContain)))
-            {
-                ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
-                ModelState.AddModelError("Annee", "");
-                ModelState.AddModelError("Jour", "");
-            }
-
-            if (model.m_debHeure == null || model.m_debMin == null)
-            {
-                ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
-                ModelState.AddModelError("dbTacheMinute", "");
-            }
-
-            if (model.m_finHeure == null || model.m_finMin == null)
-            {
-                ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
-                ModelState.AddModelError("finTacheMinute", "");
-            } 
-            else
-            {
-                ValHeureFinDebut(ref model);
-            }
-
-            if (model.m_rappelHeure != null && model.m_rappelMin == null)
-            {
-                ModelState.AddModelError("rapTacheHeure", "Veuillez compléter l'heure de rappel correctement.");
-                ModelState.AddModelError("rapTacheMinute", "");
-            }
-        }
-
         [HttpPost]
         public ActionResult Index(Tache model)
         {
@@ -174,9 +118,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    //TODO :
-                    //- Completer la fonctionnalite InsertionTache(...)
-                    //- Appeler la fonctionnalite InsertionTache(...)
+                    InsertionTache(model);
                 }
             }
             else
@@ -185,6 +127,63 @@ namespace InTime.Controllers
             }
 
                 return RedirectToAction("Index", "AjouterTache");
+        }
+
+        private void Validations(Tache model)
+        {
+            const string strValidationMotContain = "Choisir";
+
+            if ((model.m_mois == null || model.m_mois.Contains(strValidationMotContain)) ||
+                (model.m_annee == null || model.m_annee.Contains(strValidationMotContain)) ||
+                (model.m_jour == null || model.m_jour.Contains(strValidationMotContain)))
+            {
+                ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
+                ModelState.AddModelError("Annee", "");
+                ModelState.AddModelError("Jour", "");
+            }
+
+            if (model.m_debHeure == null || model.m_debMin == null)
+            {
+                ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
+                ModelState.AddModelError("dbTacheMinute", "");
+            }
+
+            if (model.m_finHeure == null || model.m_finMin == null)
+            {
+                ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
+                ModelState.AddModelError("finTacheMinute", "");
+            }
+            else
+            {
+                ValHeureFinDebut(ref model);
+            }
+
+            if (model.m_rappelHeure != null && model.m_rappelMin == null)
+            {
+                ModelState.AddModelError("rapTacheHeure", "Veuillez compléter l'heure de rappel correctement.");
+                ModelState.AddModelError("rapTacheMinute", "");
+            }
+        }
+
+        private void ValHeureFinDebut(ref Tache model)
+        {
+            const string strMessageErreur = "Vos heures ne sont pas valide";
+
+            if (model.m_debHeure != null && model.m_debMin != null)
+            {
+                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
+                {
+                    ModelState.AddModelError("", strMessageErreur);
+                }
+                else
+                {
+                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
+                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
+                    {
+                        ModelState.AddModelError("", strMessageErreur);
+                    }
+                }
+            }
         }
 
         private void InsertionTache(Tache Model)
