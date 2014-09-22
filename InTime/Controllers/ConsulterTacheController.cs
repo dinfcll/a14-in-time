@@ -71,7 +71,9 @@ namespace InTime.Controllers
             string strPhrase = "Il vous reste ";
 
             if (rappel < DateTime.Now)
+            {
                 return "La date de rappel est dépassée.";
+            }
             else
             {
                 TimeSpan tsTempsRestant = rappel - DateTime.Now;

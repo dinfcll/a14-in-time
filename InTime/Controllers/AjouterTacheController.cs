@@ -47,7 +47,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
-            ViewBag.Reussi = strMessValidation;
+            ViewBag.Message = strMessValidation;
 
             return View();
         }
@@ -163,7 +163,7 @@ namespace InTime.Controllers
             }
 
             var message = "Reussi";
-            return RedirectToAction("Index", "AjouterTache", new {   Validation = message   });
+            return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
         }
 
         private void InsertionTache(Tache Model)
