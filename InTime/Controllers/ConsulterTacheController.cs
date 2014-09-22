@@ -18,51 +18,59 @@ namespace InTime.Controllers
             //TODO :
             //Aller chercher l'information dans la base de données 
 
-            var tache = new Tache()
+            if (User.Identity.IsAuthenticated)
             {
-                m_strNomTache = "Test",
-                m_strDescTache = "C'est un test",
-                m_annee = "2015",
-                m_mois = "11",
-                m_jour = "15",
-                m_debHeure = "9",
-                m_debMin = "0",
-                m_finHeure = "17",
-                m_finMin = "30",
-                m_rappelHeure = "0",
-                m_rappelMin = "30",
-                m_strLieu = "Bureau",
-            };
-            ViewData["Tache"] = tache;
+                var tache = new Tache()
+                {
+                    m_strNomTache = "Test",
+                    m_strDescTache = "C'est un test",
+                    m_annee = "2015",
+                    m_mois = "11",
+                    m_jour = "22",
+                    m_debHeure = "9",
+                    m_debMin = "0",
+                    m_finHeure = "17",
+                    m_finMin = "30",
+                    m_rappelHeure = "0",
+                    m_rappelMin = "30",
+                    m_strLieu = "Bureau",
+                };
+                ViewData["Tache"] = tache;
 
-            DateTime DateDebut = new DateTime(
-                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
-                );
-            ViewBag.DateDebut = DateDebut.ToString(culture);
+                DateTime DateDebut = new DateTime(
+                    Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                    Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
+                    );
+                ViewBag.DateDebut = DateDebut.ToString(culture);
 
-            DateTime DateFin = new DateTime(
-                Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
-                );
-            ViewBag.DateFin = DateFin.ToString(culture);
+                DateTime DateFin = new DateTime(
+                    Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
+                    Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
+                    );
+                ViewBag.DateFin = DateFin.ToString(culture);
 
-            TimeSpan tsRappel = new TimeSpan(
-                Convert.ToInt32(tache.m_rappelHeure),Convert.ToInt32(tache.m_rappelMin),0
-                );
-            DateTime DateRappel = DateDebut.Subtract(tsRappel);
-            string strTempsRappel = TempsRappel(DateRappel);
+                TimeSpan tsRappel = new TimeSpan(
+                    Convert.ToInt32(tache.m_rappelHeure), Convert.ToInt32(tache.m_rappelMin), 0
+                    );
+                DateTime DateRappel = DateDebut.Subtract(tsRappel);
 
-            if (DateRappel == DateDebut)
-            {
-                ViewBag.DateRappel = "Aucun";
+
+                if (DateRappel == DateDebut)
+                {
+                    ViewBag.DateRappel = "Aucun";
+                }
+                else
+                {
+                    ViewBag.DateRappel = TempsRappel(DateRappel);
+                }
+                ViewData["Tache"] = tache;
+
+                return View();
             }
             else
             {
-                ViewBag.DateRappel = strTempsRappel;
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
-
-            return View();
         }
 
 
@@ -110,7 +118,7 @@ namespace InTime.Controllers
                     strPhrase += String.Format("{0} {1} ", nMinute, nMinute == 1 ? "minute" : "minutes");
                 }
 
-                return strPhrase;
+                return strPhrase + "avant le rappel.";
             }
         }
     }

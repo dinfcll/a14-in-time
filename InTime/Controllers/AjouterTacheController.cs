@@ -35,23 +35,31 @@ namespace InTime.Controllers
 
         public ActionResult Index(string strMessValidation)
         {
-            var trancheMin = new List<string>();
-            string[] tempsMin = { "00", "15", "30", "45", "60" };
-            trancheMin.AddRange(tempsMin);
-            ViewBag.trancheMin = new SelectList(trancheMin);
 
-            var trancheHeure = new List<string>();
-            for (int i = 1; i < 25; ++i)
-                trancheHeure.Add(Convert.ToString(i));
-            ViewBag.trancheHeure = new SelectList(trancheHeure);
+            if (User.Identity.IsAuthenticated)
+            {
+                var trancheMin = new List<string>();
+                string[] tempsMin = { "00", "15", "30", "45", "60" };
+                trancheMin.AddRange(tempsMin);
+                ViewBag.trancheMin = new SelectList(trancheMin);
 
-            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+                var trancheHeure = new List<string>();
+                for (int i = 1; i < 25; ++i)
+                {
+                    trancheHeure.Add(Convert.ToString(i));
+                }
+                ViewBag.trancheHeure = new SelectList(trancheHeure);
 
-            ViewBag.Message = strMessValidation;
+                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
-            return View();
+                ViewBag.Message = strMessValidation;
+                return View();
+            }
+            else
+            {
+                return View("~/Views/ErreurAuthentification.cshtml");
+            }
         }
-
 
         public JsonResult JourDuMois(int Year, string Month)
         {
@@ -76,29 +84,43 @@ namespace InTime.Controllers
             }
         }
 
-        public void ValHeureFinDebut(ref Tache model)
+        [HttpPost]
+        public ActionResult Index(Tache model)
         {
-            const string strMessageErreur = "Vos heures ne sont pas valide";
-
-            if (model.m_debHeure != null && model.m_debMin != null)
+            if (User.Identity.IsAuthenticated)
             {
-                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
+                Validations(model);
+
+                if (!ModelState.IsValid)
                 {
-                    ModelState.AddModelError("", strMessageErreur);
+                    var trancheMin = new List<string>();
+                    string[] tempsMin = { "00", "15", "30", "45", "60" };
+                    trancheMin.AddRange(tempsMin);
+                    ViewBag.trancheMin = new SelectList(trancheMin);
+
+                    var trancheHeure = new List<string>();
+                    for (int i = 0; i < 25; ++i)
+                        trancheHeure.Add(Convert.ToString(i));
+                    ViewBag.trancheHeure = new SelectList(trancheHeure);
+
+                    ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+                    return View("Index");
                 }
-                else 
+                else
                 {
-                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
-                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
-                    {
-                        ModelState.AddModelError("",strMessageErreur);
-                    }
+                    InsertionTache(model);
+                    var message = "Reussi";
+                    return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
                 }
+            }
+            else
+            {
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
 
-
-        public void Validations(Tache model)
+        private void Validations(Tache model)
         {
             const string strValidationMotContain = "Choisir";
 
@@ -121,7 +143,7 @@ namespace InTime.Controllers
             {
                 ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
                 ModelState.AddModelError("finTacheMinute", "");
-            } 
+            }
             else
             {
                 ValHeureFinDebut(ref model);
@@ -134,36 +156,25 @@ namespace InTime.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult Index(Tache model)
+        private void ValHeureFinDebut(ref Tache model)
         {
-            Validations(model);
+            const string strMessageErreur = "Vos heures ne sont pas valide";
 
-            if (!ModelState.IsValid)
+            if (model.m_debHeure != null && model.m_debMin != null)
             {
-                var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45", "60" };
-                trancheMin.AddRange(tempsMin);
-                ViewBag.trancheMin = new SelectList(trancheMin);
-
-                var trancheHeure = new List<string>();
-                for (int i = 0; i < 25; ++i)
-                    trancheHeure.Add(Convert.ToString(i));
-                ViewBag.trancheHeure = new SelectList(trancheHeure);
-
-                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
-
-                return View("Index");
+                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
+                {
+                    ModelState.AddModelError("", strMessageErreur);
+                }
+                else
+                {
+                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
+                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
+                    {
+                        ModelState.AddModelError("", strMessageErreur);
+                    }
+                }
             }
-            else
-            {
-                //TODO :
-                //- Completer la fonctionnalite InsertionTache(...)
-                //- Appeler la fonctionnalite InsertionTache(...)
-            }
-
-            var message = "Reussi";
-            return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
         }
 
         private void InsertionTache(Tache Model)
