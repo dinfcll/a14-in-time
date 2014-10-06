@@ -4,11 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
 namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
     {
+        int m_Inc = 1;
         int StrToInt(string nombre)
         {
             return Convert.ToInt32(nombre);
@@ -183,6 +187,32 @@ namespace InTime.Controllers
             //- Effectue la connexion avec la base de donnée
             //- Enregistrer les informations dans la base de donnée
             //- Indiquer à l'utilisateur que l'enregistrement a été réussi
+            SqlConnection con = null;
+            try
+            {
+                string cs =@"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+                con = new SqlConnection(cs);
+                con.Open();
+                //Recherche du Id de l'utilisateur connecté
+                string SqlrId= string.Format("SELECT * FROM UserProfile where UserName='{0}'",User.Identity.Name);
+                SqlCommand cmdId = new SqlCommand(SqlrId,con);
+                int id = (Int32)cmdId.ExecuteScalar();
+
+                //Requête Insert
+                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')",
+                    id,Model.m_strNomTache, Model.m_strLieu, Model.m_strDescTache, Model.m_mois, Model.m_jour, Model.m_debHeure, Model.m_finHeure, Model.m_debMin, Model.m_finMin, Model.m_rappelHeure, Model.m_rappelMin);
+                SqlCommand cmd=new SqlCommand(SqlInsert,con);
+                cmd.ExecuteNonQuery();
+
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                con.Close();
+            }
         }
     }
 }
