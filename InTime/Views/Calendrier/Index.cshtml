@@ -4,30 +4,42 @@
 
 
 <head>
-    
-    <link rel='stylesheet' href="@Url.Content("~/Content/fullcalendar.js")" />
-        <script src="@Url.Content("~/Scripts/jquery.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/moment.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/fullcalendar.js")"></script>
-    @RenderSection("JavaScript", required: false)
-    @RenderSection("CSS", required: false)
 
+    <title>Calendrier</title>
     <script>
         $(document).ready(function () {
 
             // page is now ready, initialize the calendar...
-
             $('#calendar').fullCalendar({
                 // put your options and callbacks here
-            })
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay',
+                },
+                defaultView: 'agendaDay',
+                editable: true,
+                allDaySlot: false,
+                selectable: true,
+                slotMinutes: 15,
+                monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
+                    "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+                monthNamesShort:['Janv','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],
+                dayNames: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+                dayNamesShort: ['Lun','Mar','Mer','Jeu','Vend','Sam','Dim'],
+                buttonText: {
+                    today:'Aujourd\'hui',
+                    month:'Mois',
+                    week:'Semaine',
+                    day:'Jour'
+                }
+            });
 
         });
     </script>
 </head>
 
 <body>
-    <h2>Index</h2>
-
     <div id='calendar'></div>
 </body>
 

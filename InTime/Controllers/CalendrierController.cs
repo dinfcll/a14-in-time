@@ -13,7 +13,14 @@ namespace InTime.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                return View();
+            }
+            else
+            {
+                return View("~/Views/ErreurAuthentification.cshtml");
+            }
         }
 
     }
