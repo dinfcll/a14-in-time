@@ -1,0 +1,17 @@
+﻿CREATE TABLE [dbo].[Table]
+(
+	[IdTache] INT NOT NULL PRIMARY KEY, 
+    [UserId] INT NOT NULL, 
+    [NomTache] VARCHAR(50) NOT NULL, 
+    [Lieu] VARCHAR(50) NOT NULL, 
+    [Description] VARCHAR(MAX) NULL, 
+    [Mois] NVARCHAR(10) NOT NULL, 
+    [Jour] VARCHAR(2) NOT NULL, 
+    [HDebut] VARCHAR(2) NOT NULL, 
+    [HFin] VARCHAR(2) NOT NULL, 
+    [mDebut] VARCHAR(2) NOT NULL, 
+    [mFin] VARCHAR(2) NOT NULL, 
+    [HRappel] VARCHAR(2) NULL, 
+    [mRappel] VARCHAR(2) NULL, 
+    CONSTRAINT [FK_UserProfile_Taches] FOREIGN KEY ([UserId]) REFERENCES dbo.[UserProfile](UserId) 
+)
