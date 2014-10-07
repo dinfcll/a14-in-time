@@ -8,9 +8,6 @@ namespace InTime.Controllers
 {
     public class CalendrierController : Controller
     {
-        //
-        // GET: /Calendrier/
-
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
