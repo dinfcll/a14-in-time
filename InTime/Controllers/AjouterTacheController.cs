@@ -12,7 +12,6 @@ namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
     {
-        int m_Inc = 1;
         int StrToInt(string nombre)
         {
             return Convert.ToInt32(nombre);
@@ -172,11 +171,12 @@ namespace InTime.Controllers
                 }
             }
         }
-        private void ConnexionBD(SqlConnection con)
+        private SqlConnection ConnexionBD(SqlConnection con)
         {
             string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
             con = new SqlConnection(cs);
             con.Open();
+            return con;
         }
         private int RechercheID(SqlConnection con)
         {
@@ -191,12 +191,12 @@ namespace InTime.Controllers
             SqlConnection con = null;
             try
             {
-                ConnexionBD(con);
+                con = ConnexionBD(con);
                 int id = RechercheID(con);
 
                 //Requête Insert
-                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')",
-                    id,Model.m_strNomTache, Model.m_strLieu, Model.m_strDescTache, Model.m_mois, Model.m_jour, Model.m_debHeure, Model.m_finHeure, Model.m_debMin, Model.m_finMin, Model.m_rappelHeure, Model.m_rappelMin);
+                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
+                    id,Model.m_strNomTache, Model.m_strLieu, Model.m_strDescTache, Model.m_mois, Model.m_jour, Model.m_debHeure, Model.m_finHeure, Model.m_debMin, Model.m_finMin, Model.m_rappelHeure, Model.m_rappelMin, Model.m_annee);
                 SqlCommand cmd=new SqlCommand(SqlInsert,con);
                 cmd.ExecuteNonQuery();
             }
