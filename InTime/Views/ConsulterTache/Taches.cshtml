@@ -1,4 +1,4 @@
-﻿@model IEnumerable<InTime.Models.Tache>
+﻿@model InTime.Models.Tache
 
 @{
     ViewBag.Title = "Taches";
@@ -27,7 +27,7 @@
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+    @foreach (InTime.Models.Tache item in ViewBag.Taches)
     {
         <tr>
             <td>

@@ -44,7 +44,7 @@ namespace InTime.Models
         public string mRappel { get; set; }
     }
 
-    public class TacheDBContext: DbContext
+    public class InTime: DbContext
     {
         public DbSet<Tache> Taches { get; set; }
     }

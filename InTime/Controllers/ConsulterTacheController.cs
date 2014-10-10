@@ -16,13 +16,16 @@ namespace InTime.Controllers
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-        private TacheDBContext db = new TacheDBContext();
+        private InTime.Models.InTime db = new InTime.Models.InTime();
 
         public ActionResult Taches()
         {
+            if (User.Identity.IsAuthenticated)
+                {
             SqlConnection con = null;
             try
             {
+                var lstTache = new List<Tache>();
                 string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
                 con = new SqlConnection(cs);
                 con.Open();
@@ -31,11 +34,38 @@ namespace InTime.Controllers
                 SqlCommand cmdId = new SqlCommand(SqlrId, con);
                 int id = (Int32)cmdId.ExecuteScalar();
 
-                var query = from o in db.Taches
-                            where o.UserId == Convert.ToInt32(SqlrId)
-                            select o;
+                string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
+                SqlCommand cmdQuery = new SqlCommand(queryString,con);
+                SqlDataReader reader = cmdQuery.ExecuteReader();
 
-                return View(query);
+                List<IDataRecord> datadb = new List<IDataRecord>();
+                while(reader.Read())
+                {
+                    datadb.Add((IDataRecord)reader);
+                    Object[] values = new Object[reader.FieldCount];
+                    int fieldCounts = reader.GetValues(values);
+                    var tache = new Tache()
+                    {
+                        IdTache = Convert.ToInt32(values[0]),
+                        UserId = Convert.ToInt32(values[1]),
+                        NomTache = Convert.ToString(values[2]),
+                        Lieu = Convert.ToString(values[3]),
+                        Description = Convert.ToString(values[4]),
+                        Mois = Convert.ToString(values[5]),
+                        Jour = Convert.ToString(values[6]),
+                        HDebut = Convert.ToString(values[7]),
+                        HFin = Convert.ToString(values[8]),
+                        mDebut = Convert.ToString(values[9]),
+                        mFin = Convert.ToString(values[10]),
+                        HRappel = Convert.ToString(values[11]),
+                        mRappel = Convert.ToString(values[12]),
+                        Annee = Convert.ToString(values[13])
+                    };
+                    lstTache.Add(tache);
+                }
+
+                ViewBag.Taches = lstTache;
+                return View();
 
             }
             catch (Exception ex)
@@ -44,7 +74,12 @@ namespace InTime.Controllers
             }
             finally
             {
-                con.Close();
+                  con.Close();
+            }
+                }
+            else
+            {
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
 
@@ -58,11 +93,64 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    Tache tache = db.Taches.Find(id);
+                    SqlConnection con = null;
+                    Tache tache = null;
+                    try
+                    {
+                       
+                        string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+                        con = new SqlConnection(cs);
+                        con.Open();
+
+                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
+                        SqlCommand cmdQuery = new SqlCommand(queryString, con);
+                        SqlDataReader reader = cmdQuery.ExecuteReader();
+
+                        List<IDataRecord> datadb = new List<IDataRecord>();
+                        while (reader.Read())
+                        {
+                            datadb.Add((IDataRecord)reader);
+                            Object[] values = new Object[reader.FieldCount];
+                            int fieldCounts = reader.GetValues(values);
+                            tache = new Tache()
+                            {
+                                IdTache = Convert.ToInt32(values[0]),
+                                UserId = Convert.ToInt32(values[1]),
+                                NomTache = Convert.ToString(values[2]),
+                                Lieu = Convert.ToString(values[3]),
+                                Description = Convert.ToString(values[4]),
+                                Mois = Convert.ToString(values[5]),
+                                Jour = Convert.ToString(values[6]),
+                                HDebut = Convert.ToString(values[7]),
+                                HFin = Convert.ToString(values[8]),
+                                mDebut = Convert.ToString(values[9]),
+                                mFin = Convert.ToString(values[10]),
+                                HRappel = Convert.ToString(values[11]),
+                                mRappel = Convert.ToString(values[12]),
+                                Annee = Convert.ToString(values[13])
+                            };
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
+                    finally
+                    {
+                        con.Close();
+                    }
+
                     if (tache == null)
                     {
                         return HttpNotFound();
                     }
+
+                    if (tache.HFin == "24")
+                        tache.HFin = "0";
+
+                    if (tache.HDebut == "24")
+                        tache.HFin = "0";
 
                     DateTime DateDebut = new DateTime(
                         Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),

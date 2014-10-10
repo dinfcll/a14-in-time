@@ -136,7 +136,7 @@ namespace InTime.Controllers
                 ModelState.AddModelError("Jour", "");
             }
 
-            if (model.HDebut == null || model.mDebut != null)
+            if (model.HDebut == null || model.mDebut == null)
             {
                 ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
                 ModelState.AddModelError("dbTacheMinute", "");
