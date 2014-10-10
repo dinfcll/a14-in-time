@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
 namespace InTime.Controllers
 {
@@ -13,7 +16,6 @@ namespace InTime.Controllers
         {
             return Convert.ToInt32(nombre);
         }
-
         public List<SelectListItem> Les_Mois ()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
@@ -31,11 +33,8 @@ namespace InTime.Controllers
             mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
             return mois;
         }
-
-
         public ActionResult Index(string strMessValidation)
         {
-
             if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
@@ -60,7 +59,6 @@ namespace InTime.Controllers
                 return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
-
         public JsonResult JourDuMois(int Year, string Month)
         {
             if (!String.IsNullOrEmpty(Month))
@@ -83,7 +81,6 @@ namespace InTime.Controllers
                 return Json(null, JsonRequestBehavior.DenyGet);
             }
         }
-
         [HttpPost]
         public ActionResult Index(Tache model)
         {
@@ -119,7 +116,6 @@ namespace InTime.Controllers
                 return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
-
         private void Validations(Tache model)
         {
             const string strValidationMotContain = "Choisir";
@@ -155,7 +151,6 @@ namespace InTime.Controllers
                 ModelState.AddModelError("rapTacheMinute", "");
             }
         }
-
         private void ValHeureFinDebut(ref Tache model)
         {
             const string strMessageErreur = "Vos heures ne sont pas valide";
@@ -176,13 +171,43 @@ namespace InTime.Controllers
                 }
             }
         }
-
+        private SqlConnection ConnexionBD(SqlConnection con)
+        {
+            string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+            con = new SqlConnection(cs);
+            con.Open();
+            return con;
+        }
+        private int RechercheID(SqlConnection con)
+        {
+            //Recherche du Id de l'utilisateur connecté
+            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
+            SqlCommand cmdId = new SqlCommand(SqlrId, con);
+            int id = (Int32)cmdId.ExecuteScalar();
+            return id;
+        }
         private void InsertionTache(Tache Model)
         {
-            // TODO :
-            //- Effectue la connexion avec la base de donnée
-            //- Enregistrer les informations dans la base de donnée
-            //- Indiquer à l'utilisateur que l'enregistrement a été réussi
+            SqlConnection con = null;
+            try
+            {
+                con = ConnexionBD(con);
+                int id = RechercheID(con);
+
+                //Requête Insert
+                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
+                    id,Model.m_strNomTache, Model.m_strLieu, Model.m_strDescTache, Model.m_mois, Model.m_jour, Model.m_debHeure, Model.m_finHeure, Model.m_debMin, Model.m_finMin, Model.m_rappelHeure, Model.m_rappelMin, Model.m_annee);
+                SqlCommand cmd=new SqlCommand(SqlInsert,con);
+                cmd.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                con.Close();
+            }
         }
     }
 }
