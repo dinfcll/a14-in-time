@@ -16,7 +16,8 @@ namespace InTime.Controllers
         {
             return Convert.ToInt32(nombre);
         }
-        public List<SelectListItem> Les_Mois ()
+
+        public List<SelectListItem> Les_Mois()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
             mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
@@ -33,8 +34,11 @@ namespace InTime.Controllers
             mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
             return mois;
         }
+
+
         public ActionResult Index(string strMessValidation)
         {
+
             if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
@@ -59,6 +63,7 @@ namespace InTime.Controllers
                 return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
+
         public JsonResult JourDuMois(int Year, string Month)
         {
             if (!String.IsNullOrEmpty(Month))
@@ -81,6 +86,7 @@ namespace InTime.Controllers
                 return Json(null, JsonRequestBehavior.DenyGet);
             }
         }
+
         [HttpPost]
         public ActionResult Index(Tache model)
         {
@@ -116,26 +122,27 @@ namespace InTime.Controllers
                 return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
+
         private void Validations(Tache model)
         {
             const string strValidationMotContain = "Choisir";
 
-            if ((model.m_mois == null || model.m_mois.Contains(strValidationMotContain)) ||
-                (model.m_annee == null) ||
-                (model.m_jour == null || model.m_jour.Contains(strValidationMotContain)))
+            if ((model.Mois == null || model.Mois.Contains(strValidationMotContain)) ||
+                (model.Annee == null) ||
+                (model.Jour == null || model.Jour.Contains(strValidationMotContain)))
             {
                 ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
                 ModelState.AddModelError("Annee", "");
                 ModelState.AddModelError("Jour", "");
             }
 
-            if (model.m_debHeure == null || model.m_debMin == null)
+            if (model.HDebut == null || model.mDebut != null)
             {
                 ModelState.AddModelError("dbTacheHeure", "Veuillez compléter l'heure de début correctement.");
                 ModelState.AddModelError("dbTacheMinute", "");
             }
 
-            if (model.m_finHeure == null || model.m_finMin == null)
+            if (model.HFin == null || model.mFin == null)
             {
                 ModelState.AddModelError("finTacheHeure", "Veuillez compléter l'heure de fin correctement.");
                 ModelState.AddModelError("finTacheMinute", "");
@@ -145,26 +152,27 @@ namespace InTime.Controllers
                 ValHeureFinDebut(ref model);
             }
 
-            if (model.m_rappelHeure != null && model.m_rappelMin == null)
+            if (model.HRappel != null && model.mRappel == null)
             {
                 ModelState.AddModelError("rapTacheHeure", "Veuillez compléter l'heure de rappel correctement.");
                 ModelState.AddModelError("rapTacheMinute", "");
             }
         }
+
         private void ValHeureFinDebut(ref Tache model)
         {
             const string strMessageErreur = "Vos heures ne sont pas valide";
 
-            if (model.m_debHeure != null && model.m_debMin != null)
+            if (model.HDebut != null && model.mDebut != null)
             {
-                if (StrToInt(model.m_debHeure) > StrToInt(model.m_finHeure))
+                if (StrToInt(model.HDebut) > StrToInt(model.HFin))
                 {
                     ModelState.AddModelError("", strMessageErreur);
                 }
                 else
                 {
-                    if (StrToInt(model.m_debHeure) == StrToInt(model.m_finHeure) &&
-                        StrToInt(model.m_debMin) >= StrToInt(model.m_finMin))
+                    if (StrToInt(model.HDebut) == StrToInt(model.HFin) &&
+                        StrToInt(model.mDebut) >= StrToInt(model.mFin))
                     {
                         ModelState.AddModelError("", strMessageErreur);
                     }
@@ -196,7 +204,7 @@ namespace InTime.Controllers
 
                 //Requête Insert
                 string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                    id,Model.m_strNomTache, Model.m_strLieu, Model.m_strDescTache, Model.m_mois, Model.m_jour, Model.m_debHeure, Model.m_finHeure, Model.m_debMin, Model.m_finMin, Model.m_rappelHeure, Model.m_rappelMin, Model.m_annee);
+                    id,Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
                 SqlCommand cmd=new SqlCommand(SqlInsert,con);
                 cmd.ExecuteNonQuery();
             }

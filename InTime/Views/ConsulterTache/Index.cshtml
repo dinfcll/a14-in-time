@@ -9,13 +9,14 @@
 <head>
     @Scripts.Render("~/bundles/jquery")
     <script>
-    $(window).load(function () {
-        $(function () {
-            $("[id^=Consultation").attr('readonly', 'true');
-            $("[id^=Consultation").css('background-color', '#DEDEDE');
+        $(window).load(function () {
+            $(function () {
+                $("[id^=Consultation").attr('readonly', 'true');
+                $("[id^=Consultation").css('background-color', '#DEDEDE');
+            });
         });
-    });
     </script>
+    <title>Consulter</title>
 </head>
 <body>
     <h2>Voici votre tâche</h2>
@@ -26,27 +27,27 @@
     <p>
         Nom de la tâche :
         <br />
-         @Html.TextBox("Nom", tache.m_strNomTache, new { id = "Consultation" })
+        @Html.TextBox("Nom", tache.NomTache, new { id = "Consultation" })
         <br />
         Nom du lieu :
         <br />
-         @Html.TextBox("Nom", tache.m_strLieu, new { id = "Consultation" })
+        @Html.TextBox("Nom", tache.Lieu, new { id = "Consultation" })
         <br />
         Début  de la tâche :
         <br />
-         @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
+        @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
         <br />
         Fin de la tâche :
         <br />
-         @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
+        @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
         <br />
         Rappel :
         <br />
-         @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation", @style="width: 500px;" })
+        @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation", @style = "width: 500px;" })
         <br />
         Description de la tâche :
         <br />
-         @Html.TextArea("Desc", tache.m_strDescTache, new { id = "Consultation" })
+        @Html.TextArea("Desc", tache.Description, new { id = "Consultation" })
         <br />
     </p>
 

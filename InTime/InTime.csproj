@@ -320,6 +320,7 @@
     <Content Include="Views\ErreurAuthentification.cshtml" />
     <Content Include="Views\ConsulterTache\Index.cshtml" />
     <Content Include="Views\Calendrier\Index.cshtml" />
+    <Content Include="Views\ConsulterTache\Taches.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

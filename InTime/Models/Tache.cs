@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -9,29 +10,43 @@ namespace InTime.Models
 {
     public class Tache
     {
+        public int IdTache;
+        public int UserId;
+
+
+        [Display(Name = "Nom de la tâche")]
         [Required(ErrorMessage = "Vous devez donner un nom à votre tâche")]
         [StringLength(30)]
-        public string m_strNomTache {get; set;}
+        public string NomTache { get; set; }
 
+        [Display(Name = "Nom du lieu")]
         [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâche")]
         [StringLength(30)]
-        public string m_strLieu { get; set; }
+        public string Lieu { get; set; }
 
-        public string m_jour { get; set; }
+        [Display(Name = "Jour")]
+        public string Jour { get; set; }
 
-        public string m_mois { get; set; }
-      
-        public string m_annee { get; set; }
+        [Display(Name = "Mois")]
+        public string Mois { get; set; }
+
+        [Display(Name = "Année")]
+        public string Annee { get; set; }
 
         [StringLength(300, ErrorMessage = "La description de la tâche est trop long")]
-        public string m_strDescTache { get; set; }
+        public string Description { get; set; }
 
-        public string m_debHeure { get; set; }
-        public string m_debMin { get; set; }
-        public string m_finHeure { get; set; }
-        public string m_finMin { get; set; }
-        public string m_rappelHeure { get; set; }
-        public string m_rappelMin { get; set; }
+        public string HDebut { get; set; }
+        public string mDebut { get; set; }
+        public string HFin { get; set; }
+        public string mFin { get; set; }
+        public string HRappel { get; set; }
+        public string mRappel { get; set; }
+    }
+
+    public class TacheDBContext: DbContext
+    {
+        public DbSet<Tache> Taches { get; set; }
     }
 }
 

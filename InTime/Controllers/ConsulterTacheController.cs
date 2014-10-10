@@ -1,76 +1,103 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
+using System.Data.Entity;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
 using System.Globalization;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
+        private TacheDBContext db = new TacheDBContext();
 
-
-        public ActionResult Index()
+        public ActionResult Taches()
         {
-            //TODO :
-            //Aller chercher l'information dans la base de données 
-
-            if (User.Identity.IsAuthenticated)
+            SqlConnection con = null;
+            try
             {
-                var tache = new Tache()
+                string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+                con = new SqlConnection(cs);
+                con.Open();
+                //Recherche du Id de l'utilisateur connecté
+                string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
+                SqlCommand cmdId = new SqlCommand(SqlrId, con);
+                int id = (Int32)cmdId.ExecuteScalar();
+
+                var query = from o in db.Taches
+                            where o.UserId == Convert.ToInt32(SqlrId)
+                            select o;
+
+                return View(query);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+
+        public ActionResult Index(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+                if (User.Identity.IsAuthenticated)
                 {
-                    m_strNomTache = "Test",
-                    m_strDescTache = "C'est un test",
-                    m_annee = "2015",
-                    m_mois = "11",
-                    m_jour = "22",
-                    m_debHeure = "9",
-                    m_debMin = "0",
-                    m_finHeure = "17",
-                    m_finMin = "30",
-                    m_rappelHeure = "0",
-                    m_rappelMin = "30",
-                    m_strLieu = "Bureau",
-                };
-                ViewData["Tache"] = tache;
+                    Tache tache = db.Taches.Find(id);
+                    if (tache == null)
+                    {
+                        return HttpNotFound();
+                    }
 
-                DateTime DateDebut = new DateTime(
-                    Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                    Convert.ToInt32(tache.m_debHeure), Convert.ToInt32(tache.m_debMin), 0
-                    );
-                ViewBag.DateDebut = DateDebut.ToString(culture);
+                    DateTime DateDebut = new DateTime(
+                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                        Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
+                        );
+                    ViewBag.DateDebut = DateDebut.ToString(culture);
 
-                DateTime DateFin = new DateTime(
-                    Convert.ToInt32(tache.m_annee), Convert.ToInt32(tache.m_mois), Convert.ToInt32(tache.m_jour),
-                    Convert.ToInt32(tache.m_finHeure), Convert.ToInt32(tache.m_finMin), 0
-                    );
-                ViewBag.DateFin = DateFin.ToString(culture);
+                    DateTime DateFin = new DateTime(
+                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                        Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
+                        );
+                    ViewBag.DateFin = DateFin.ToString(culture);
 
-                TimeSpan tsRappel = new TimeSpan(
-                    Convert.ToInt32(tache.m_rappelHeure), Convert.ToInt32(tache.m_rappelMin), 0
-                    );
-                DateTime DateRappel = DateDebut.Subtract(tsRappel);
+                    TimeSpan tsRappel = new TimeSpan(
+                        Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                        );
+                    DateTime DateRappel = DateDebut.Subtract(tsRappel);
 
 
-                if (DateRappel == DateDebut)
-                {
-                    ViewBag.DateRappel = "Aucun";
+                    if (DateRappel == DateDebut)
+                    {
+                        ViewBag.DateRappel = "Aucun";
+                    }
+                    else
+                    {
+                        ViewBag.DateRappel = TempsRappel(DateRappel);
+                    }
+                    ViewData["Tache"] = tache;
+
+                    return View();
                 }
                 else
                 {
-                    ViewBag.DateRappel = TempsRappel(DateRappel);
+                    return View("~/Views/ErreurAuthentification.cshtml");
                 }
-                ViewData["Tache"] = tache;
-
-                return View();
-            }
-            else
-            {
-                return View("~/Views/ErreurAuthentification.cshtml");
-            }
         }
 
 

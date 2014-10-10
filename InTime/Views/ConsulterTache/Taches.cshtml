@@ -1,0 +1,54 @@
+﻿@model IEnumerable<InTime.Models.Tache>
+
+@{
+    ViewBag.Title = "Taches";
+}
+
+<h2>Voici vos tâches</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NomTache)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Lieu)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Jour)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mois)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Annee)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomTache)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lieu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Jour)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mois)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Annee)
+            </td>
+            <td>
+                @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) |
+            </td>
+        </tr>
+    }
+
+</table>
