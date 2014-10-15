@@ -48,6 +48,12 @@
             <td>
                 @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) |
             </td>
+            <td>
+                @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache }) |
+            </td>
+            <td>
+                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache })
+            </td>
         </tr>
     }
 

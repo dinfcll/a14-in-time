@@ -82,8 +82,42 @@ namespace InTime.Controllers
                 return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
-
-
+        private SqlConnection ConnexionBD(SqlConnection con)
+        {
+            string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+            con = new SqlConnection(cs);
+            con.Open();
+            return con;
+        }
+        private int RechercheID(SqlConnection con)
+        {
+            //Recherche du Id de l'utilisateur connecté
+            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
+            SqlCommand cmdId = new SqlCommand(SqlrId, con);
+            int id = (Int32)cmdId.ExecuteScalar();
+            return id;
+        }
+        public ActionResult SuppTache(int? id)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = ConnexionBD(con);
+                int idUser = RechercheID(con);
+                string SqlDelete = string.Format("DELETE FROM Taches WHERE UserId={0} AND IdTache={1}", idUser, id);
+                SqlCommand cmd = new SqlCommand(SqlDelete, con);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                con.Close();    
+            }
+            return View("~/Views/ConsulterTache/Index.cshtml");
+        }
         public ActionResult Index(int? id)
         {
             if (id == null)
