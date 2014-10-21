@@ -27,27 +27,27 @@
     <p>
         Nom de la tâche :
         <br />
-        @Html.TextBox("Nom", tache.NomTache, new { id = "Consultation" })
+        @Html.TextBox("Nom", tache.NomTache, new { disabled = "disabled" })
         <br />
         Nom du lieu :
         <br />
-        @Html.TextBox("Nom", tache.Lieu, new { id = "Consultation" })
+        @Html.TextBox("Nom", tache.Lieu, new { disabled = "disabled" })
         <br />
         Début  de la tâche :
         <br />
-        @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Consultation" })
+        @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { disabled = "disabled" })
         <br />
         Fin de la tâche :
         <br />
-        @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Consultation" })
+        @Html.TextBox("Fin", (string)ViewBag.DateFin, new { disabled = "disabled" })
         <br />
         Rappel :
         <br />
-        @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Consultation", @style = "width: 500px;" })
+        @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { disabled = "disabled" , @style = "width: 500px;" })
         <br />
         Description de la tâche :
         <br />
-        @Html.TextArea("Desc", tache.Description, new { id = "Consultation" })
+        @Html.TextArea("Desc", tache.Description, new { disabled = "disabled" })
         <br />
     </p>
 
