@@ -66,7 +66,6 @@ namespace InTime.Controllers
 
                 ViewBag.Taches = lstTache;
                 return View();
-
             }
             catch (Exception ex)
             {
@@ -107,6 +106,7 @@ namespace InTime.Controllers
                 string SqlDelete = string.Format("DELETE FROM Taches WHERE UserId={0} AND IdTache={1}", idUser, id);
                 SqlCommand cmd = new SqlCommand(SqlDelete, con);
                 cmd.ExecuteNonQuery();
+                return RedirectToAction("Taches", "ConsulterTache");
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace InTime.Controllers
             {
                 con.Close();    
             }
-            return View("~/Views/ConsulterTache/Index.cshtml");
+            
         }
         public ActionResult Index(int? id)
         {
