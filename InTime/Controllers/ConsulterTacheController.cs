@@ -18,7 +18,7 @@ namespace InTime.Controllers
         CultureInfo culture = new CultureInfo("fr-CA");
         private InTime.Models.InTime db = new InTime.Models.InTime();
 
-        public ActionResult Taches()
+        public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
                 {
@@ -63,7 +63,7 @@ namespace InTime.Controllers
                     };
                     lstTache.Add(tache);
                 }
-
+                ViewBag.Message = strMessValidation;
                 ViewBag.Taches = lstTache;
                 return View();
             }
@@ -106,7 +106,8 @@ namespace InTime.Controllers
                 string SqlDelete = string.Format("DELETE FROM Taches WHERE UserId={0} AND IdTache={1}", idUser, id);
                 SqlCommand cmd = new SqlCommand(SqlDelete, con);
                 cmd.ExecuteNonQuery();
-                return RedirectToAction("Taches", "ConsulterTache");
+                var message = "Reussi";
+                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
             }
             catch (Exception ex)
             {

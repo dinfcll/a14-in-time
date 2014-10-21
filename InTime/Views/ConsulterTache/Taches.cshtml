@@ -4,6 +4,15 @@
     ViewBag.Title = "Taches";
 }
 
+<div>
+    @{
+        if (ViewBag.Message == "Reussi")
+        {
+            <h2><font color="green">Votre tâche a été supprimée.</font></h2>
+        }
+    }
+</div>
+
 <h2>Voici vos tâches</h2>
 
 
