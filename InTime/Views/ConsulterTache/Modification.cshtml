@@ -1,0 +1,65 @@
+﻿@using InTime.Models
+
+@{
+    ViewBag.Title = "Consultation de votre tâche";
+}
+@using (Html.BeginForm("Modification", "ConsulterTache", FormMethod.Post))
+{
+    <div>
+        @{
+            if (ViewBag.Message == "Reussi")
+            {
+                <h2><font color="green">Votre tâche a été supprimée.</font></h2>
+            }
+        }
+    </div>
+<head>
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        $(window).load(function () {
+            $(function () {
+                $("[id^=Consultation").attr('readonly', 'true');
+                $("[id^=Consultation").css('background-color', '#DEDEDE');
+            });
+        });
+    </script>
+    <title>Consulter</title>
+</head>
+<body>
+    <h2>Voici votre tâche</h2>
+
+    @{
+        var tache = (Tache)ViewData["Tache"];
+    }
+    <p>
+        Nom de la tâche :
+        <br />
+        @Html.TextBox("Nom", tache.NomTache, new { id = "Nom" })
+        <br />
+        Nom du lieu :
+        <br />
+        @Html.TextBox("Nom", tache.Lieu, new { id = "Lieu" })
+        <br />
+        Début  de la tâche :
+        <br />
+        @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { id = "Debut" })
+        <br />
+        Fin de la tâche :
+        <br />
+        @Html.TextBox("Fin", (string)ViewBag.DateFin, new { id = "Fin" })
+        <br />
+        Rappel :
+        <br />
+        @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { id = "Rappel" , @style = "width: 500px;" })
+        <br />
+        Description de la tâche :
+        <br />
+        @Html.TextArea("Desc", tache.Description, new { id = "Desc" })
+        <br />
+    </p>
+        <input type="submit" name="Modifier" value="Modifier"/>
+</body>
+}
+
+
+
