@@ -11,8 +11,7 @@ namespace InTime.Models
     public class UsersContext : DbContext
     {
         public UsersContext()
-            //: base("ConnString")
-            : base("DefaultConnection")
+            : base(Global.connectionString)
         {
         }
 

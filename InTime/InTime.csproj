@@ -193,6 +193,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Global.cs" />
     <Compile Include="Models\Tache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -26,13 +26,10 @@ namespace InTime.Controllers
             try
             {
                 var lstTache = new List<Tache>();
-                string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                con = new SqlConnection(cs);
-                con.Open();
+                con = Global.ConnexionBD(con);
+
                 //Recherche du Id de l'utilisateur connecté
-                string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-                SqlCommand cmdId = new SqlCommand(SqlrId, con);
-                int id = (Int32)cmdId.ExecuteScalar();
+                int id = Global.RechercheID(con,User.Identity.Name);
 
                 string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
                 SqlCommand cmdQuery = new SqlCommand(queryString,con);
@@ -48,9 +45,9 @@ namespace InTime.Controllers
                     {
                         IdTache = Convert.ToInt32(values[0]),
                         UserId = Convert.ToInt32(values[1]),
-                        NomTache = Convert.ToString(values[2]),
-                        Lieu = Convert.ToString(values[3]),
-                        Description = Convert.ToString(values[4]),
+                        NomTache = Global.RemettreApostrophe(Convert.ToString(values[2])),
+                        Lieu = Global.RemettreApostrophe(Convert.ToString(values[3])),
+                        Description = Global.RemettreApostrophe(Convert.ToString(values[4])),
                         Mois = Convert.ToString(values[5]),
                         Jour = Convert.ToString(values[6]),
                         HDebut = Convert.ToString(values[7]),
@@ -74,7 +71,8 @@ namespace InTime.Controllers
             }
             finally
             {
-                  con.Close();
+                if (con != null)
+                    con.Close();
             }
                 }
             else
@@ -97,10 +95,7 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
-                       
-                        string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                        con = new SqlConnection(cs);
-                        con.Open();
+                        con = Global.ConnexionBD(con);
 
                         string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
                         SqlCommand cmdQuery = new SqlCommand(queryString, con);
@@ -116,9 +111,9 @@ namespace InTime.Controllers
                             {
                                 IdTache = Convert.ToInt32(values[0]),
                                 UserId = Convert.ToInt32(values[1]),
-                                NomTache = Convert.ToString(values[2]),
-                                Lieu = Convert.ToString(values[3]),
-                                Description = Convert.ToString(values[4]),
+                                NomTache = Global.RemettreApostrophe(Convert.ToString(values[2])),
+                                Lieu = Global.RemettreApostrophe(Convert.ToString(values[3])),
+                                Description = Global.RemettreApostrophe(Convert.ToString(values[4])),
                                 Mois = Convert.ToString(values[5]),
                                 Jour = Convert.ToString(values[6]),
                                 HDebut = Convert.ToString(values[7]),
@@ -138,7 +133,8 @@ namespace InTime.Controllers
                     }
                     finally
                     {
-                        con.Close();
+                        if (con != null)
+                            con.Close();
                     }
 
                     if (tache == null)
@@ -164,6 +160,8 @@ namespace InTime.Controllers
                         );
                     ViewBag.DateFin = DateFin.ToString(culture);
 
+                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "0" : tache.HRappel;
+                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "0" : tache.mRappel;
                     TimeSpan tsRappel = new TimeSpan(
                         Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
                         );

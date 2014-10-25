@@ -179,32 +179,18 @@ namespace InTime.Controllers
                 }
             }
         }
-        private SqlConnection ConnexionBD(SqlConnection con)
-        {
-            string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-            con = new SqlConnection(cs);
-            con.Open();
-            return con;
-        }
-        private int RechercheID(SqlConnection con)
-        {
-            //Recherche du Id de l'utilisateur connecté
-            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-            SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            int id = (Int32)cmdId.ExecuteScalar();
-            return id;
-        }
+
         private void InsertionTache(Tache Model)
         {
             SqlConnection con = null;
             try
             {
-                con = ConnexionBD(con);
-                int id = RechercheID(con);
+                con = Global.ConnexionBD(con);
+                int id = Global.RechercheID(con,User.Identity.Name);
 
                 //Requête Insert
-                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                    id,Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
+                string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
+                    id, Global.EnleverApostrophe(Model.NomTache), Global.EnleverApostrophe(Model.Lieu), Global.EnleverApostrophe(Model.Description), Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
                 SqlCommand cmd=new SqlCommand(SqlInsert,con);
                 cmd.ExecuteNonQuery();
             }
@@ -214,7 +200,8 @@ namespace InTime.Controllers
             }
             finally
             {
-                con.Close();
+                if (con != null)
+                     con.Close();
             }
         }
     }
