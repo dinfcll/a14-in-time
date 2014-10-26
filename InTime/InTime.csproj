@@ -196,6 +196,7 @@
     <Compile Include="Models\Cookie.cs" />
     <Compile Include="Models\RequeteSql.cs" />
     <Compile Include="Models\Tache.cs" />
+    <Compile Include="Models\UrlErreur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
