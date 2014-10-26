@@ -16,4 +16,3 @@
     PRIMARY KEY CLUSTERED ([IdTache] ASC),
     CONSTRAINT [FK_UserProfile_Taches] FOREIGN KEY ([UserId]) REFERENCES [dbo].[UserProfile] ([UserId])
 );
-

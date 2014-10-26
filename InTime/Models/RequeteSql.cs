@@ -10,10 +10,11 @@ using System.Data;
 
 namespace InTime.Models
 {
-    public class Global
+    public class RequeteSql
     {
         //public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
+        //public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
+        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
 
         public const string PageErreurAuthen = @"~/Views/ErreurAuthentification.cshtml";
 
@@ -21,6 +22,7 @@ namespace InTime.Models
         {
             con = new SqlConnection(connectionString);
             con.Open();
+
             return con;
         }
 
@@ -30,6 +32,49 @@ namespace InTime.Models
             SqlCommand cmdId = new SqlCommand(SqlrId, con);
             int id = (Int32)cmdId.ExecuteScalar();
             return id;
+        }
+
+        public static SqlDataReader Select (string Query)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = RequeteSql.ConnexionBD(con);
+                SqlCommand cmdQuery = new SqlCommand(Query, con);
+                SqlDataReader reader = cmdQuery.ExecuteReader();
+                return reader;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (con!= null)
+                    con.Close();
+            }
+        }
+
+        public static bool ExecuteQuery(string Query)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = RequeteSql.ConnexionBD(con);
+                SqlCommand cmd = new SqlCommand(Query, con);
+                cmd.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                if (con != null)
+                    con.Close();
+            }
         }
 
         public static string EnleverApostrophe(string texte)

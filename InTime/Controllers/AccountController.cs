@@ -20,7 +20,7 @@ namespace InTime.Controllers
     [Authorize]
     [InitializeSimpleMembership]
 
-    
+
     public class AccountController : Controller
     {
         //
@@ -31,62 +31,6 @@ namespace InTime.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
-        }
-
-        public ActionResult Renseignements()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                SqlConnection con = null;
-                RegisterModel userProfile = null;
-                try
-                {
-
-                    con = Global.ConnexionBD(con);
-                    int id = Global.RechercheID(con, User.Identity.Name);
-
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", id);
-                    SqlCommand cmdQuery = new SqlCommand(queryString, con);
-                    SqlDataReader reader = cmdQuery.ExecuteReader();
-
-                    List<System.Data.IDataRecord> datadb = new List<IDataRecord>();
-                    while (reader.Read())
-                    {
-                        datadb.Add((IDataRecord)reader);
-                        Object[] values = new Object[reader.FieldCount];
-                        int fieldCounts = reader.GetValues(values);
-                        userProfile = new RegisterModel()
-                        {
-                            Nom = Convert.ToString(values[2]),
-                            Prenom = Convert.ToString(values[3]),
-                            Email = Convert.ToString(values[4])
-                        };
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.ToString());
-                }
-                finally
-                {
-                    if (con != null)
-                        con.Close();
-                }
-
-                if (userProfile == null)
-                {
-                    return HttpNotFound();
-                }
-                ViewData["utilisateur"] = userProfile;
-
-
-                return View();
-            }
-            else
-            {
-                return View(Global.PageErreurAuthen);
-            }
         }
 
         //
@@ -100,6 +44,31 @@ namespace InTime.Controllers
 
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
+                if (Request.Cookies[model.UserName] != null)
+                {
+                    var cookie = new HttpCookie(model.UserName);
+                    cookie.Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies.Add(cookie);
+                }
+
+                SqlConnection con = null;
+                try
+                {
+                    con = RequeteSql.ConnexionBD(con);
+                    int id = RequeteSql.RechercheID(con,model.UserName);
+
+                    Cookie.SetCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally
+                {
+                    if (con != null)
+                        con.Close();
+
+                }
                 return RedirectToLocal(returnUrl);
             }
 
@@ -116,7 +85,12 @@ namespace InTime.Controllers
         public ActionResult LogOff()
         {
             WebSecurity.Logout();
-
+            if (Request.Cookies[User.Identity.Name] != null)
+            {
+                var cookie = new HttpCookie(User.Identity.Name);
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(cookie);
+            }
             return RedirectToAction("Index", "Home");
         }
 
@@ -328,22 +302,22 @@ namespace InTime.Controllers
                 using (UsersContext db = new UsersContext())
                 {
                     UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
-                    if(user.UserName=="")
-                    // Vérifier si l'utilisateur n'existe pas déjà
-                    if (user == null)
-                    {
-                        // Insérer le nom dans la table des profils
-                        db.UserProfiles.Add(new UserProfile { UserName = model.UserName });
-                        db.SaveChanges();
+                    if (user.UserName == "")
+                        // Vérifier si l'utilisateur n'existe pas déjà
+                        if (user == null)
+                        {
+                            // Insérer le nom dans la table des profils
+                            db.UserProfiles.Add(new UserProfile { UserName = model.UserName });
+                            db.SaveChanges();
 
-                        OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
-                        OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-                        return RedirectToLocal(returnUrl);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("UserName", "Le nom d'utilisateur existe déjà. Entrez un nom d'utilisateur différent.");
-                    }
+                            OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
+                            OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
+                            return RedirectToLocal(returnUrl);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("UserName", "Le nom d'utilisateur existe déjà. Entrez un nom d'utilisateur différent.");
+                        }
                 }
             }
             ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(provider).DisplayName;
@@ -386,6 +360,130 @@ namespace InTime.Controllers
 
             ViewBag.ShowRemoveButton = externalLogins.Count > 1 || OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
             return PartialView("_RemoveExternalLoginsPartial", externalLogins);
+        }
+
+        public ActionResult Renseignements()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                SqlConnection con = null;
+                RegisterModel userProfile = null;
+                try
+                {
+
+                    con = RequeteSql.ConnexionBD(con);
+                    int id = RequeteSql.RechercheID(con, User.Identity.Name);
+
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", id);
+                    SqlCommand cmdQuery = new SqlCommand(queryString, con);
+                    SqlDataReader reader = cmdQuery.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Object[] values = new Object[reader.FieldCount];
+                        int fieldCounts = reader.GetValues(values);
+                        userProfile = new RegisterModel()
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4])
+                        };
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally
+                {
+                    if (con != null)
+                        con.Close();
+                }
+
+                if (userProfile == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewData["utilisateur"] = userProfile;
+
+
+                return View();
+            }
+            else
+            {
+                return View(RequeteSql.PageErreurAuthen);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Renseignements(RegisterModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                ModelState.Remove("Password");
+                ModelState.Remove("Username");
+                if (!ModelState.IsValid)
+                {
+                    RegisterModel userProfile = null;
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId={0}",
+                        Int32.Parse(Cookie.GetCookie(User.Identity.Name)));
+                    SqlDataReader reader = RequeteSql.Select(queryString);
+                    
+                    while (reader.Read())
+                    {
+                        Object[] values = new Object[reader.FieldCount];
+                        int fieldCounts = reader.GetValues(values);
+                        userProfile = new RegisterModel()
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4])
+                        };
+                    }
+
+                    if (userProfile == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    ViewData["utilisateur"] = userProfile;
+                    return View();
+                }
+                else
+                {
+                    bool reussi = ModifRenseig(model, Int32.Parse(Cookie.GetCookie(User.Identity.Name)));
+
+                    if (reussi)
+                    {
+                        ViewBag.Reussi = "Reussi";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Erreur", "Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.");
+                    }
+                    RegisterModel userProfile = new RegisterModel()
+                    {
+                        Nom = model.Nom,
+                        Prenom = model.Prenom,
+                        Email = model.Email
+                    };
+                    ViewData["utilisateur"] = userProfile;
+                    return View();
+                }
+            }
+            else
+            {
+                return View(RequeteSql.PageErreurAuthen);
+            }
+        }
+
+        private bool ModifRenseig(RegisterModel model, int UserId)
+        {
+             string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
+             RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
+             bool success = RequeteSql.ExecuteQuery(SqlUpdate);
+             return success;
         }
 
         #region Applications auxiliaires

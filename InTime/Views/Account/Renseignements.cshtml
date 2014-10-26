@@ -1,5 +1,50 @@
-﻿@{
+﻿@model InTime.Models.RegisterModel
+
+@{
     ViewBag.Title = "Renseignements";
 }
 
-<h2>Renseignements</h2>
+    <div>
+        @{
+            if (ViewBag.Reussi == "Reussi")
+            {
+                <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
+            }
+        }
+    </div>
+
+
+<body>
+    <h2>Vos renseignements personnels</h2>
+
+    @{
+        var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
+    }
+
+    @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+
+@using (Html.BeginForm())
+{ 
+    <article>
+        <p>
+            Votre prénom :
+            <br />
+            @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? ""} )
+            @Html.ValidationMessageFor(model => model.Prenom, "*")
+            <br />
+            Votre nom :
+            <br/>
+            @Html.TextBoxFor(model => model.Nom, new {  Value = information.Nom ?? ""})
+            @Html.ValidationMessageFor(model => model.Nom, "*")
+            <br/>
+            Votre adresse courriel :
+            <br/>
+            @Html.TextBoxFor(model => model.Email, new {  Value = information.Email ?? ""})
+            @Html.ValidationMessageFor(model => model.Email, "*")
+            <br/>
+
+            <input type="submit" value="Sauvegarder"/>
+        </p>
+    </article>
+    }
+</body>

@@ -26,10 +26,10 @@ namespace InTime.Controllers
             try
             {
                 var lstTache = new List<Tache>();
-                con = Global.ConnexionBD(con);
+                con = RequeteSql.ConnexionBD(con);
 
                 //Recherche du Id de l'utilisateur connecté
-                int id = Global.RechercheID(con,User.Identity.Name);
+                int id = RequeteSql.RechercheID(con,User.Identity.Name);
 
                 string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
                 SqlCommand cmdQuery = new SqlCommand(queryString,con);
@@ -45,9 +45,9 @@ namespace InTime.Controllers
                     {
                         IdTache = Convert.ToInt32(values[0]),
                         UserId = Convert.ToInt32(values[1]),
-                        NomTache = Global.RemettreApostrophe(Convert.ToString(values[2])),
-                        Lieu = Global.RemettreApostrophe(Convert.ToString(values[3])),
-                        Description = Global.RemettreApostrophe(Convert.ToString(values[4])),
+                        NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                        Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
+                        Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
                         Mois = Convert.ToString(values[5]),
                         Jour = Convert.ToString(values[6]),
                         HDebut = Convert.ToString(values[7]),
@@ -95,7 +95,7 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
-                        con = Global.ConnexionBD(con);
+                        con = RequeteSql.ConnexionBD(con);
 
                         string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
                         SqlCommand cmdQuery = new SqlCommand(queryString, con);
@@ -111,9 +111,9 @@ namespace InTime.Controllers
                             {
                                 IdTache = Convert.ToInt32(values[0]),
                                 UserId = Convert.ToInt32(values[1]),
-                                NomTache = Global.RemettreApostrophe(Convert.ToString(values[2])),
-                                Lieu = Global.RemettreApostrophe(Convert.ToString(values[3])),
-                                Description = Global.RemettreApostrophe(Convert.ToString(values[4])),
+                                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
+                                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
                                 Mois = Convert.ToString(values[5]),
                                 Jour = Convert.ToString(values[6]),
                                 HDebut = Convert.ToString(values[7]),
@@ -182,7 +182,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    return View(Global.PageErreurAuthen);
+                    return View(RequeteSql.PageErreurAuthen);
                 }
         }
 

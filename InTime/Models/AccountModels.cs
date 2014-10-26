@@ -11,7 +11,7 @@ namespace InTime.Models
     public class UsersContext : DbContext
     {
         public UsersContext()
-            : base(Global.connectionString)
+            : base(RequeteSql.connectionString)
         {
         }
 
