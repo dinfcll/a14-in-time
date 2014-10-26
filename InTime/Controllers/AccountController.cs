@@ -50,7 +50,7 @@ namespace InTime.Controllers
                     con = RequeteSql.ConnexionBD(con);
                     int id = RequeteSql.RechercheID(con,model.UserName);
 
-                    Cookie.SetCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
+                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
                 }
                 catch (Exception ex)
                 {
@@ -361,7 +361,7 @@ namespace InTime.Controllers
             {
                 RegisterModel userProfile = null;
 
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.GetCookie(User.Identity.Name));
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.ObtenirCookie(User.Identity.Name));
                     SqlDataReader reader = RequeteSql.Select(queryString);
 
                     while (reader.Read())
@@ -401,7 +401,7 @@ namespace InTime.Controllers
                 {
                     RegisterModel userProfile = null;
                     string queryString = string.Format("SELECT * FROM UserProfile where UserId={0}",
-                        Int32.Parse(Cookie.GetCookie(User.Identity.Name)));
+                        Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name)));
                     SqlDataReader reader = RequeteSql.Select(queryString);
                     
                     while (reader.Read())
@@ -427,7 +427,7 @@ namespace InTime.Controllers
                 else
                 {
 
-                    if (ModifRenseig(model, Int32.Parse(Cookie.GetCookie(User.Identity.Name))))
+                    if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
                     {
                         ViewBag.Message = "Reussi";
                     }

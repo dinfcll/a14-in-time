@@ -10,7 +10,7 @@ using System.Data;
 
 namespace InTime.Models
 {
-    public class RequeteSql
+    public static class RequeteSql
     {
         //public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
         //public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
