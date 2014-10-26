@@ -42,7 +42,7 @@ namespace InTime.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45", "60" };
+                string[] tempsMin = { "00", "15", "30", "45" };
                 trancheMin.AddRange(tempsMin);
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
@@ -97,7 +97,7 @@ namespace InTime.Controllers
                 if (!ModelState.IsValid)
                 {
                     var trancheMin = new List<string>();
-                    string[] tempsMin = { "00", "15", "30", "45", "60" };
+                    string[] tempsMin = { "00", "15", "30", "45" };
                     trancheMin.AddRange(tempsMin);
                     ViewBag.trancheMin = new SelectList(trancheMin);
 
