@@ -6,9 +6,13 @@
 
     <div>
         @{
-            if (ViewBag.Reussi == "Reussi")
+            if (ViewBag.Message == "Reussi")
             {
                 <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
+            }
+            if (ViewBag.Message == "Erreur")
+            {
+                <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
             }
         }
     </div>

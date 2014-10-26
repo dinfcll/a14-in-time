@@ -359,17 +359,10 @@ namespace InTime.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                SqlConnection con = null;
                 RegisterModel userProfile = null;
-                try
-                {
 
-                    con = RequeteSql.ConnexionBD(con);
-                    int id = RequeteSql.RechercheID(con, User.Identity.Name);
-
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", id);
-                    SqlCommand cmdQuery = new SqlCommand(queryString, con);
-                    SqlDataReader reader = cmdQuery.ExecuteReader();
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.GetCookie(User.Identity.Name));
+                    SqlDataReader reader = RequeteSql.Select(queryString);
 
                     while (reader.Read())
                     {
@@ -382,18 +375,6 @@ namespace InTime.Controllers
                             Email = Convert.ToString(values[4])
                         };
                     }
-
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.ToString());
-                }
-                finally
-                {
-                    if (con != null)
-                        con.Close();
-                }
-
                 if (userProfile == null)
                 {
                     return HttpNotFound();
@@ -448,11 +429,11 @@ namespace InTime.Controllers
 
                     if (ModifRenseig(model, Int32.Parse(Cookie.GetCookie(User.Identity.Name))))
                     {
-                        ViewBag.Reussi = "Reussi";
+                        ViewBag.Message = "Reussi";
                     }
                     else
                     {
-                        ModelState.AddModelError("Erreur", "Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.");
+                        ViewBag.Message = "Erreur";
                     }
 
                     RegisterModel userProfile = new RegisterModel()
@@ -463,6 +444,7 @@ namespace InTime.Controllers
                     };
 
                     ViewData["utilisateur"] = userProfile;
+
                     return View();
                 }
             }
@@ -476,8 +458,7 @@ namespace InTime.Controllers
         {
              string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
              RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
-             return RequeteSql.ExecuteQuery(SqlUpdate);
-             
+             return RequeteSql.ExecuteQuery(SqlUpdate); 
         }
 
         #region Applications auxiliaires
