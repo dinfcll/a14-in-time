@@ -19,6 +19,10 @@
         {
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
+        if (ViewBag.Message == "Erreur")
+        {
+            <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
+        }
     }
 </div>
 

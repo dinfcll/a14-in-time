@@ -60,7 +60,7 @@ namespace InTime.Controllers
             }
             else
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(RequeteSql.PageErreurAuthen);
             }
         }
 
@@ -112,8 +112,15 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    InsertionTache(model);
-                    var message = "Reussi";
+                    var message = "";
+                    if (InsertionTache(model))
+                    {
+                        message = "Reussi";
+                    }
+                    else
+                    {
+                        message = "Erreur";
+                    }
                     return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
                 }
             }
@@ -180,29 +187,13 @@ namespace InTime.Controllers
             }
         }
 
-        private void InsertionTache(Tache Model)
+        private bool InsertionTache(Tache Model)
         {
-            SqlConnection con = null;
-            try
-            {
-                con = RequeteSql.ConnexionBD(con);
-                int id = RequeteSql.RechercheID(con,User.Identity.Name);
 
-                //Requête Insert
                 string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                    id, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description), Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
-                SqlCommand cmd=new SqlCommand(SqlInsert,con);
-                cmd.ExecuteNonQuery();
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally
-            {
-                if (con != null)
-                     con.Close();
-            }
+                    Int32.Parse(Cookie.GetCookie(User.Identity.Name)), RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
+                    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
+            return RequeteSql.ExecuteQuery(SqlInsert);
         }
     }
 }

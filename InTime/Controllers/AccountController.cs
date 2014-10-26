@@ -44,13 +44,6 @@ namespace InTime.Controllers
 
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                if (Request.Cookies[model.UserName] != null)
-                {
-                    var cookie = new HttpCookie(model.UserName);
-                    cookie.Expires = DateTime.Now.AddDays(-1);
-                    Response.Cookies.Add(cookie);
-                }
-
                 SqlConnection con = null;
                 try
                 {
@@ -452,9 +445,8 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    bool reussi = ModifRenseig(model, Int32.Parse(Cookie.GetCookie(User.Identity.Name)));
 
-                    if (reussi)
+                    if (ModifRenseig(model, Int32.Parse(Cookie.GetCookie(User.Identity.Name))))
                     {
                         ViewBag.Reussi = "Reussi";
                     }
@@ -462,12 +454,14 @@ namespace InTime.Controllers
                     {
                         ModelState.AddModelError("Erreur", "Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.");
                     }
+
                     RegisterModel userProfile = new RegisterModel()
                     {
                         Nom = model.Nom,
                         Prenom = model.Prenom,
                         Email = model.Email
                     };
+
                     ViewData["utilisateur"] = userProfile;
                     return View();
                 }
@@ -482,8 +476,8 @@ namespace InTime.Controllers
         {
              string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
              RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
-             bool success = RequeteSql.ExecuteQuery(SqlUpdate);
-             return success;
+             return RequeteSql.ExecuteQuery(SqlUpdate);
+             
         }
 
         #region Applications auxiliaires

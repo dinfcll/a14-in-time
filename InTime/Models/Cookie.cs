@@ -13,7 +13,7 @@ namespace InTime.Models
 
             if (HttpContext.Current.Request.Cookies[username+"1"] != null)
             {
-                var cookieOld = HttpContext.Current.Request.Cookies[username];
+                var cookieOld = HttpContext.Current.Request.Cookies[username+"1"];
                 cookieOld.Expires = DateTime.Now.Add(expires);
                 cookieOld.Value = Cookie.Value;
                 HttpContext.Current.Response.Cookies.Add(cookieOld);
