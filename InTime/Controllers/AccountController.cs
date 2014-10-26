@@ -10,6 +10,10 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using InTime.Filters;
 using InTime.Models;
+using System.Globalization;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
 namespace InTime.Controllers
 {
@@ -27,6 +31,62 @@ namespace InTime.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        public ActionResult Renseignements()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                SqlConnection con = null;
+                RegisterModel userProfile = null;
+                try
+                {
+
+                    con = Global.ConnexionBD(con);
+                    int id = Global.RechercheID(con, User.Identity.Name);
+
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", id);
+                    SqlCommand cmdQuery = new SqlCommand(queryString, con);
+                    SqlDataReader reader = cmdQuery.ExecuteReader();
+
+                    List<System.Data.IDataRecord> datadb = new List<IDataRecord>();
+                    while (reader.Read())
+                    {
+                        datadb.Add((IDataRecord)reader);
+                        Object[] values = new Object[reader.FieldCount];
+                        int fieldCounts = reader.GetValues(values);
+                        userProfile = new RegisterModel()
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4])
+                        };
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally
+                {
+                    if (con != null)
+                        con.Close();
+                }
+
+                if (userProfile == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewData["utilisateur"] = userProfile;
+
+
+                return View();
+            }
+            else
+            {
+                return View(Global.PageErreurAuthen);
+            }
         }
 
         //
@@ -110,7 +170,7 @@ namespace InTime.Controllers
             if (ownerAccount == User.Identity.Name)
             {
                 // Utiliser une transaction pour empêcher l'utilisateur de supprimer ses dernières informations d'identification de connexion
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
+                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
                     bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
                     if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)

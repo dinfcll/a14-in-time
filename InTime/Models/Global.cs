@@ -13,7 +13,9 @@ namespace InTime.Models
     public class Global
     {
         //public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
+        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
+
+        public const string PageErreurAuthen = @"~/Views/ErreurAuthentification.cshtml";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {

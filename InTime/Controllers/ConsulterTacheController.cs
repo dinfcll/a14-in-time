@@ -182,7 +182,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    return View("~/Views/ErreurAuthentification.cshtml");
+                    return View(Global.PageErreurAuthen);
                 }
         }
 
