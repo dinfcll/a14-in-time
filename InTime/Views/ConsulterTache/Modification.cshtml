@@ -33,6 +33,7 @@
         }
     }
     <div id="rightcolumn">
+        <h2>Modifiez votre tâche</h2>
         Date : <br />
         Mois :
         @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
@@ -96,6 +97,30 @@
         Description de la tâche : <br />
         @Html.TextAreaFor(model => model.Description, new { style = "width:95%;" })
         <br />
+        <script>
+                var JourDuMois = function () {
+                var params = {};
+                params.Year = annee;
+                params.Month = $('#Mois').val();
+                $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+                    var items = '<option>Choisir un jour</option>';
+                    $.each(data, function (i, jour) {
+                        items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+                    });
+                    $('#Jour').html(items);
+                });
+            }
+        </script>
+        @Scripts.Render("~/bundles/jquery")
+        <script>
+            $(function () {
+                $('#Mois').change(function () {
+                    JourDuMois();
+                });
+            });
+        </script>
+
+        <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
         </div>
 
 

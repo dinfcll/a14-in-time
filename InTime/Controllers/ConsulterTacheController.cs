@@ -276,6 +276,12 @@ namespace InTime.Controllers
                     return View("~/Views/ErreurAuthentification.cshtml");
                 }
         }
+
+        public ActionResult Test()
+        {
+            return View();
+        }
+
         public ActionResult Index(int? id)
         {
             if (id == null)
