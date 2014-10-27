@@ -42,7 +42,7 @@ namespace InTime.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45", "60" };
+                string[] tempsMin = { "00", "15", "30", "45" };
                 trancheMin.AddRange(tempsMin);
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
@@ -52,10 +52,9 @@ namespace InTime.Controllers
                     trancheHeure.Add(Convert.ToString(i));
                 }
                 ViewBag.trancheHeure = new SelectList(trancheHeure);
-
                 ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
-
                 ViewBag.Message = strMessValidation;
+
                 return View();
             }
             else
@@ -97,7 +96,7 @@ namespace InTime.Controllers
                 if (!ModelState.IsValid)
                 {
                     var trancheMin = new List<string>();
-                    string[] tempsMin = { "00", "15", "30", "45", "60" };
+                    string[] tempsMin = { "00", "15", "30", "45" };
                     trancheMin.AddRange(tempsMin);
                     ViewBag.trancheMin = new SelectList(trancheMin);
 

@@ -54,24 +54,24 @@
         <input readonly id="Annee" name="Annee" width="20">
 
         <script>
-            var annee = 2014;
+            var annee = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
             $("#Annee").spinner();
             $("#Annee").spinner("option", "culture", "fr");
-            $("#Annee").spinner("option", "max", 2114);
-            $("#Annee").spinner("option", "min", 2014);
-            $("#Annee").spinner("value", 2014);
+            $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
+            $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
+            $("#Annee").spinner("value", annee);
             $("#Annee").width(50);
 
 
             $('.ui-spinner-up').click(function () {
-                if (annee != 2114)
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal))
                     {
                         annee += 1;
                         JourDuMois();
                     }
             });
             $('.ui-spinner-down').click(function () {
-                if (annee != 2014)
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal))
                     {
                         annee -= 1;
                         JourDuMois();
