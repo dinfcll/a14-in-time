@@ -139,19 +139,19 @@ namespace InTime.Controllers
             
         }
         [HttpPost]
-        public ActionResult Modification(int? id, string strMessValidation, Tache Model)
+        public ActionResult Modification(Tache Model)
         {
             SqlConnection con = null;
             try
             {
                 con = ConnexionBD(con);
                 int idUser = RechercheID(con);
-                string SqlUpdate = string.Format("UPDATE Taches set {0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}' WHERE UserId={13} AND IdTache={14}",
-                    id,Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee, idUser, id);
+                string SqlUpdate = string.Format("UPDATE Taches set NomTache='{0}',Lieu='{1}',Description='{2}',Mois='{3}',Jour='{4}',HDebut='{5}',HFin='{6}',mDebut='{7}',mFin='{8}',HRappel='{9}',mRappel='{10}',Annee='{11}' WHERE UserId={12} AND IdTache={13}",
+                    Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee, idUser, Model.IdTache);
                 SqlCommand cmd = new SqlCommand(SqlUpdate, con);
                 cmd.ExecuteNonQuery();
-                var message = "Reussi";
-                return RedirectToAction("Modification", "ConsulterTache", new { strMessValidation = message });
+                var message = "Modif";
+                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
             }
             catch (Exception ex)
             {

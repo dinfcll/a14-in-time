@@ -10,7 +10,7 @@ namespace InTime.Models
 {
     public class Tache
     {
-        public int IdTache;
+        public int IdTache { get; set; }
         public int UserId;
 
 
