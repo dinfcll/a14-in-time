@@ -1,50 +1,63 @@
-﻿@{
-    ViewBag.Title = "Contact";
-}
+﻿@model InTime.Models.GMail
 
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-    <h2>@ViewBag.Message</h2>
-</hgroup>
+<html>
+<head>
+    <style>
+        hr {
+            width: 100%;
+            height: 1px;
+            background: #000;
+        }
+    </style>
 
-<section class="contact">
-    <header>
-        <h3>Phone</h3>
-    </header>
-    <p>
-        <span class="label">Main:</span>
-        <span>425.555.0100</span>
-    </p>
-    <p>
-        <span class="label">After Hours:</span>
-        <span>425.555.0199</span>
-    </p>
-</section>
+    <title>Contact</title>
+</head>
 
-<section class="contact">
-    <header>
-        <h3>Email</h3>
-    </header>
-    <p>
-        <span class="label">Support:</span>
-        <span><a href="mailto:Support@example.com">Support@example.com</a></span>
-    </p>
-    <p>
-        <span class="label">Marketing:</span>
-        <span><a href="mailto:Marketing@example.com">Marketing@example.com</a></span>
-    </p>
-    <p>
-        <span class="label">General:</span>
-        <span><a href="mailto:General@example.com">General@example.com</a></span>
-    </p>
-</section>
 
-<section class="contact">
-    <header>
-        <h3>Address</h3>
-    </header>
-    <p>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399
-    </p>
-</section>
+<body>
+    <h1>Nous rejoindre</h1>
+    <article>
+        <section>
+            <h3>Téléphone</h3>
+            <p>
+                418 833-5110 <br />
+                Du lundi au vendredi: de 8h00 à 17h
+            </p>
+        </section>
+
+        <br />
+        <hr />
+
+        <section>
+            @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+            <div>
+                @{
+                    if (TempData["message"] == "Reussi")
+                    {
+                        <h2><font color="green">Votre message a été envoyé.</font></h2>
+                    }
+                }
+            </div>
+            <h3>Nous laisser un commentaire</h3>
+            @using (Html.BeginForm())
+            {
+                <p>
+                    Sujet : <br />
+                    @Html.TextBoxFor(model => model.Subject)
+                    @Html.ValidationMessageFor(model => model.Subject, "*")
+                    <br />
+
+                    Message : <br />
+                    @Html.TextAreaFor(model => model.Body, "*")
+                    @Html.ValidationMessageFor(model => model.Body, "*")
+                    <br />
+
+                    <input type="submit" value="Envoyer" />
+                </p>
+            }
+        </section>
+
+    </article>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using InTime.Models;
 
 namespace InTime.Controllers
 {
@@ -16,16 +17,32 @@ namespace InTime.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your app description page.";
-
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Contact(GMail information)
+        {
+            if (ModelState.IsValid)
+            {
+                GMail mailer = new GMail();
+                mailer.Subject = information.Subject;
+                mailer.Body = information.Body;
+                mailer.IsHtml = true;
+                mailer.Send();
+                TempData["message"] = "Reussi";
+                return RedirectToAction("Contact", "Home");
+            }
+            else
+            {
+                return View();
+            }
         }
     }
 }
+
