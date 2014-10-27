@@ -26,14 +26,10 @@ namespace InTime.Controllers
             try
             {
                 var lstTache = new List<Tache>();
-                con = RequeteSql.ConnexionBD(con);
 
-                //Recherche du Id de l'utilisateur connecté
-                int id = RequeteSql.RechercheID(con,User.Identity.Name);
-
-                string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
-                SqlCommand cmdQuery = new SqlCommand(queryString,con);
-                SqlDataReader reader = cmdQuery.ExecuteReader();
+                string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'",
+                    InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                SqlDataReader reader = RequeteSql.Select(queryString);
 
                 List<IDataRecord> datadb = new List<IDataRecord>();
                 while(reader.Read())

@@ -99,7 +99,6 @@ namespace InTime.Models
         [Required]
         [RegularExpression(@".*@.*")]
         public string Email { get; set; }
-
     }
 
     public class ExternalLogin
