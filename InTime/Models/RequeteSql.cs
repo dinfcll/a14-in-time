@@ -46,11 +46,6 @@ namespace InTime.Models
             {
                 throw new Exception(ex.ToString());
             }
-            finally
-            {
-                if (con!= null)
-                    con.Close();
-            }
         }
 
         public static bool ExecuteQuery(string Query)
@@ -67,11 +62,6 @@ namespace InTime.Models
             catch (Exception ex)
             {
                 return false;
-            }
-            finally
-            {
-                if (con != null)
-                    con.Close();
             }
         }
 
