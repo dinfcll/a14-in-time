@@ -33,6 +33,7 @@ namespace InTime.Controllers
                 GMail mailer = new GMail(information.Subject, information.Body, true);
                 mailer.Send();
                 TempData["message"] = "Reussi";
+
                 return RedirectToAction("Contact", "Home");
             }
 
