@@ -31,6 +31,13 @@ namespace InTime.Models
             ToEmail = "marcmarcmarc123@hotmail.com";
         }
 
+        GMail (string sujet, string contenu, bool Html)
+        {
+            Subject = sujet;
+            Body = contenu;
+            IsHtml = Html;
+        }
+
 
         public void Send()
         {

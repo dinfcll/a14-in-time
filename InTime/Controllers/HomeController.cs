@@ -30,18 +30,13 @@ namespace InTime.Controllers
         {
             if (ModelState.IsValid)
             {
-                GMail mailer = new GMail();
-                mailer.Subject = information.Subject;
-                mailer.Body = information.Body;
-                mailer.IsHtml = true;
+                GMail mailer = new GMail(information.Subject, information.Body, true);
                 mailer.Send();
                 TempData["message"] = "Reussi";
                 return RedirectToAction("Contact", "Home");
             }
-            else
-            {
+
                 return View();
-            }
         }
     }
 }
