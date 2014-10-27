@@ -18,6 +18,25 @@ namespace InTime.Controllers
         CultureInfo culture = new CultureInfo("fr-CA");
         private InTime.Models.InTime db = new InTime.Models.InTime();
 
+        public List<SelectListItem> Les_Mois()
+        {
+            List<SelectListItem> mois = new List<SelectListItem>();
+            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
+            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
+            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
+            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
+            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
+            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
+            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
+            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
+            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
+            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
+            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
+            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
+            return mois;
+        }
+
+
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -156,6 +175,17 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
+                        var trancheMin = new List<string>();
+                        string[] tempsMin = { "00", "15", "30", "45", "60" };
+                        trancheMin.AddRange(tempsMin);
+                        ViewBag.trancheMin = new SelectList(trancheMin);
+
+                        var trancheHeure = new List<string>();
+                        for (int i = 0; i < 25; ++i)
+                            trancheHeure.Add(Convert.ToString(i));
+                        ViewBag.trancheHeure = new SelectList(trancheHeure);
+
+                        ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
                         string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
                         con = new SqlConnection(cs);
