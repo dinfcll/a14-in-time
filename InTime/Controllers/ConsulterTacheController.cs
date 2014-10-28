@@ -21,65 +21,37 @@ namespace InTime.Controllers
         public ActionResult Taches()
         {
             if (User.Identity.IsAuthenticated)
-                {
-            SqlConnection con = null;
-            try
             {
-                var lstTache = new List<Tache>();
-                string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                con = new SqlConnection(cs);
-                con.Open();
-                //Recherche du Id de l'utilisateur connecté
-                string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-                SqlCommand cmdId = new SqlCommand(SqlrId, con);
-                int id = (Int32)cmdId.ExecuteScalar();
-
-                string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
-                SqlCommand cmdQuery = new SqlCommand(queryString,con);
-                SqlDataReader reader = cmdQuery.ExecuteReader();
-
-                List<IDataRecord> datadb = new List<IDataRecord>();
-                while(reader.Read())
+                try
                 {
-                    datadb.Add((IDataRecord)reader);
-                    Object[] values = new Object[reader.FieldCount];
-                    int fieldCounts = reader.GetValues(values);
-                    var tache = new Tache()
+                    var lstTache = new List<Tache>();
+
+                    string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'",
+                        InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                    SqlDataReader reader = RequeteSql.Select(queryString);
+
+                    while (reader.Read())
                     {
-                        IdTache = Convert.ToInt32(values[0]),
-                        UserId = Convert.ToInt32(values[1]),
-                        NomTache = Convert.ToString(values[2]),
-                        Lieu = Convert.ToString(values[3]),
-                        Description = Convert.ToString(values[4]),
-                        Mois = Convert.ToString(values[5]),
-                        Jour = Convert.ToString(values[6]),
-                        HDebut = Convert.ToString(values[7]),
-                        HFin = Convert.ToString(values[8]),
-                        mDebut = Convert.ToString(values[9]),
-                        mFin = Convert.ToString(values[10]),
-                        HRappel = Convert.ToString(values[11]),
-                        mRappel = Convert.ToString(values[12]),
-                        Annee = Convert.ToString(values[13])
-                    };
-                    lstTache.Add(tache);
-                }
+                        Object[] values = new Object[reader.FieldCount];
+                        reader.GetValues(values);
+                        var tache = ObtenirTache(values);
+                        lstTache.Add(tache);
+                    }
+                    reader.Close();
 
-                ViewBag.Taches = lstTache;
-                return View();
+                    ViewBag.Taches = lstTache;
 
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally
-            {
-                  con.Close();
-            }
+                    return View();
+
                 }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+            }
             else
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.Authentification);
             }
         }
 
@@ -93,52 +65,26 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    SqlConnection con = null;
                     Tache tache = null;
                     try
                     {
-                       
-                        string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                        con = new SqlConnection(cs);
-                        con.Open();
 
-                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
-                        SqlCommand cmdQuery = new SqlCommand(queryString, con);
-                        SqlDataReader reader = cmdQuery.ExecuteReader();
+                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
+                            InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                        SqlDataReader reader = RequeteSql.Select(queryString);
 
-                        List<IDataRecord> datadb = new List<IDataRecord>();
                         while (reader.Read())
                         {
-                            datadb.Add((IDataRecord)reader);
                             Object[] values = new Object[reader.FieldCount];
-                            int fieldCounts = reader.GetValues(values);
-                            tache = new Tache()
-                            {
-                                IdTache = Convert.ToInt32(values[0]),
-                                UserId = Convert.ToInt32(values[1]),
-                                NomTache = Convert.ToString(values[2]),
-                                Lieu = Convert.ToString(values[3]),
-                                Description = Convert.ToString(values[4]),
-                                Mois = Convert.ToString(values[5]),
-                                Jour = Convert.ToString(values[6]),
-                                HDebut = Convert.ToString(values[7]),
-                                HFin = Convert.ToString(values[8]),
-                                mDebut = Convert.ToString(values[9]),
-                                mFin = Convert.ToString(values[10]),
-                                HRappel = Convert.ToString(values[11]),
-                                mRappel = Convert.ToString(values[12]),
-                                Annee = Convert.ToString(values[13])
-                            };
+                            reader.GetValues(values);
+                            tache = ObtenirTache(values);
                         }
+                        reader.Close();
 
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.ToString());
-                    }
-                    finally
-                    {
-                        con.Close();
                     }
 
                     if (tache == null)
@@ -164,6 +110,8 @@ namespace InTime.Controllers
                         );
                     ViewBag.DateFin = DateFin.ToString(culture);
 
+                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "0" : tache.HRappel;
+                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "0" : tache.mRappel;
                     TimeSpan tsRappel = new TimeSpan(
                         Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
                         );
@@ -184,7 +132,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    return View("~/Views/ErreurAuthentification.cshtml");
+                    return View(UrlErreur.Authentification);
                 }
         }
 
@@ -235,6 +183,30 @@ namespace InTime.Controllers
 
                 return strPhrase + "avant le rappel.";
             }
+        }
+
+
+        private Tache ObtenirTache(Object[] values)
+        {
+            var tache = new Tache()
+            {
+                IdTache = Convert.ToInt32(values[0]),
+                UserId = Convert.ToInt32(values[1]),
+                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
+                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
+                Mois = Convert.ToString(values[5]),
+                Jour = Convert.ToString(values[6]),
+                HDebut = Convert.ToString(values[7]),
+                HFin = Convert.ToString(values[8]),
+                mDebut = Convert.ToString(values[9]),
+                mFin = Convert.ToString(values[10]),
+                HRappel = Convert.ToString(values[11]),
+                mRappel = Convert.ToString(values[12]),
+                Annee = Convert.ToString(values[13])
+            };
+
+            return tache;
         }
     }
 }
