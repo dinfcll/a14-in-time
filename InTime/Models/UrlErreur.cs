@@ -10,4 +10,3 @@ namespace InTime.Models
         public const string Authentification = @"~/Views/ErreurAuthentification.cshtml";
     }
 }
-
