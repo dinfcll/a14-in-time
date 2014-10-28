@@ -21,6 +21,7 @@
                 editable: true,
                 allDaySlot: false,
                 selectable: true,
+                allDayDefault: false,
                 slotMinutes: 15,
                 monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
                     "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
@@ -32,7 +33,10 @@
                     month:'Mois',
                     week:'Semaine',
                     day:'Jour'
-                }
+                },
+
+                events : '@Url.Content("~/Calendrier/Taches")'
+                
             });
 
         });

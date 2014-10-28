@@ -70,7 +70,7 @@ namespace InTime.Controllers
                     {
 
                         string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
-                            InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                            id);
                         SqlDataReader reader = RequeteSql.Select(queryString);
 
                         while (reader.Read())
