@@ -76,6 +76,18 @@
         @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
         <script type="text/javascript">
             document.getElementById("Mois").selectedIndex = 0
+=======
+>>>>>>> master
+        </script>
+        @Html.ValidationMessage("Mois", "*")
+
+
+
+
+        Mois :
+        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
+        <script type="text/javascript">
+            document.getElementById("Mois").selectedIndex = 0
         </script>
         @Html.ValidationMessage("Mois", "*")
 
