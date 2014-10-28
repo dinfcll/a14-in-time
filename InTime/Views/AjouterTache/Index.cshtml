@@ -43,13 +43,6 @@
         <br />
 
         Date : <br />
-        Mois :
-        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
-        <script type="text/javascript">
-            document.getElementById("Mois").selectedIndex = 0
-        </script>
-        @Html.ValidationMessage("Mois", "*")
-
         Année :
         <input readonly id="Annee" name="Annee" width="20">
 
@@ -64,20 +57,28 @@
 
 
             $('.ui-spinner-up').click(function () {
-                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal))
-                    {
-                        annee += 1;
-                        JourDuMois();
-                    }
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal)) {
+                    annee += 1;
+                    JourDuMois();
+                }
             });
             $('.ui-spinner-down').click(function () {
-                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal))
-                    {
-                        annee -= 1;
-                        JourDuMois();
-                    }
-            });       
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal)) {
+                    annee -= 1;
+                    JourDuMois();
+                }
+            });
         </script>
+
+
+
+        Mois :
+        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
+        <script type="text/javascript">
+            document.getElementById("Mois").selectedIndex = 0
+        </script>
+        @Html.ValidationMessage("Mois", "*")
+
 
         Jour :
             <select id="Jour" name="Jour"></select>
