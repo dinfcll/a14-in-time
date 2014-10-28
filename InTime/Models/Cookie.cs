@@ -24,6 +24,7 @@ namespace InTime.Models
                 HttpContext.Current.Response.Cookies.Add(Cookie);
             }
         }
+
         public static string ObtenirCookie(string NomCookie)
         {
             string value = "";

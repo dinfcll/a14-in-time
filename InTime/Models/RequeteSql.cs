@@ -12,9 +12,7 @@ namespace InTime.Models
 {
     public static class RequeteSql
     {
-        //public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-        //public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
-        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
+        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-2;Integrated Security=True";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {
@@ -29,6 +27,7 @@ namespace InTime.Models
             string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", NomUtilisateur);
             SqlCommand cmdId = new SqlCommand(SqlrId, con);
             int id = (Int32)cmdId.ExecuteScalar();
+
             return id;
         }
 
@@ -40,6 +39,7 @@ namespace InTime.Models
                 con = RequeteSql.ConnexionBD(con);
                 SqlCommand cmdQuery = new SqlCommand(Query, con);
                 SqlDataReader reader = cmdQuery.ExecuteReader();
+
                 return reader;
             }
             catch (Exception ex)
@@ -68,13 +68,15 @@ namespace InTime.Models
         public static string EnleverApostrophe(string texte)
         {
             string Text = "";
+            char apostrophe = Convert.ToChar(39);
+            char doubleApostrophe = Convert.ToChar(34);
+
             foreach (char ch in texte)
             {
-                //Regarde pour les apostrophe
-                if (ch == 39)
+                if (ch == apostrophe)
                 {
 
-                    Text += Convert.ToChar(34);
+                    Text += doubleApostrophe;
                 }
                 else
                 {
@@ -89,13 +91,15 @@ namespace InTime.Models
         public static string RemettreApostrophe(string texte)
         {
             string Text = "";
+            char apostrophe = Convert.ToChar(39);
+            char doubleApostrophe = Convert.ToChar(34);
+
             foreach (char ch in texte)
             {
-                //Regarde pour les apostrophe
-                if (ch == 34)
+                if (ch == doubleApostrophe)
                 {
 
-                    Text += Convert.ToChar(39);
+                    Text += Convert.ToChar(apostrophe);
                 }
                 else
                 {

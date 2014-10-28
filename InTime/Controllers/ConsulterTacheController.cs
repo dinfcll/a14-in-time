@@ -33,24 +33,8 @@ namespace InTime.Controllers
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
-                        int fieldCounts = reader.GetValues(values);
-                        var tache = new Tache()
-                        {
-                            IdTache = Convert.ToInt32(values[0]),
-                            UserId = Convert.ToInt32(values[1]),
-                            NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
-                            Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
-                            Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
-                            Mois = Convert.ToString(values[5]),
-                            Jour = Convert.ToString(values[6]),
-                            HDebut = Convert.ToString(values[7]),
-                            HFin = Convert.ToString(values[8]),
-                            mDebut = Convert.ToString(values[9]),
-                            mFin = Convert.ToString(values[10]),
-                            HRappel = Convert.ToString(values[11]),
-                            mRappel = Convert.ToString(values[12]),
-                            Annee = Convert.ToString(values[13])
-                        };
+                        reader.GetValues(values);
+                        var tache = ObtenirTache(values);
                         lstTache.Add(tache);
                     }
                     reader.Close();
@@ -92,25 +76,10 @@ namespace InTime.Controllers
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
-                            int fieldCounts = reader.GetValues(values);
-                            tache = new Tache()
-                            {
-                                IdTache = Convert.ToInt32(values[0]),
-                                UserId = Convert.ToInt32(values[1]),
-                                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
-                                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
-                                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
-                                Mois = Convert.ToString(values[5]),
-                                Jour = Convert.ToString(values[6]),
-                                HDebut = Convert.ToString(values[7]),
-                                HFin = Convert.ToString(values[8]),
-                                mDebut = Convert.ToString(values[9]),
-                                mFin = Convert.ToString(values[10]),
-                                HRappel = Convert.ToString(values[11]),
-                                mRappel = Convert.ToString(values[12]),
-                                Annee = Convert.ToString(values[13])
-                            };
+                            reader.GetValues(values);
+                            tache = ObtenirTache(values);
                         }
+                        reader.Close();
 
                     }
                     catch (Exception ex)
@@ -214,6 +183,30 @@ namespace InTime.Controllers
 
                 return strPhrase + "avant le rappel.";
             }
+        }
+
+
+        private Tache ObtenirTache(Object[] values)
+        {
+            var tache = new Tache()
+            {
+                IdTache = Convert.ToInt32(values[0]),
+                UserId = Convert.ToInt32(values[1]),
+                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
+                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
+                Mois = Convert.ToString(values[5]),
+                Jour = Convert.ToString(values[6]),
+                HDebut = Convert.ToString(values[7]),
+                HFin = Convert.ToString(values[8]),
+                mDebut = Convert.ToString(values[9]),
+                mFin = Convert.ToString(values[10]),
+                HRappel = Convert.ToString(values[11]),
+                mRappel = Convert.ToString(values[12]),
+                Annee = Convert.ToString(values[13])
+            };
+
+            return tache;
         }
     }
 }
