@@ -16,7 +16,6 @@ namespace InTime.Controllers
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-        private InTime.Models.InTime db = new InTime.Models.InTime();
 
         public ActionResult Taches()
         {
