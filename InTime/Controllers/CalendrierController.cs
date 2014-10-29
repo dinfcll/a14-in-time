@@ -48,15 +48,15 @@ namespace InTime.Controllers
             }
 
             var rows = new List<object>();
-            //foreach(Tache tache in lstTache)
-            //{
-                //string dateDebut = String.Format("{0}-{1}-{2}T{3}:{4}-05:00",
-                //    tache.Annee, tache.Mois, tache.Jour, tache.HDebut, tache.mDebut);
-                //string dateFin = String.Format("{0}-{1}-{2}T{3}:{4}-05:00",
-                //   tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
-                //rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin});
-                //rows.Add(new { title = "Test", start = "2014-10-28T14:00-05:00", end = "2014-10-29T00:00-05:00" });
-            //}
+            foreach (Tache tache in lstTache)
+            {
+                string dateDebut = String.Format("{0}-{1}-{2}T{3}:{4}-05:00",
+                    tache.Annee, tache.Mois, tache.Jour, tache.HDebut, tache.mDebut);
+                string dateFin = String.Format("{0}-{1}-{2}T{3}:{4}-05:00",
+                   tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
+
+                rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, Test = "???" });
+            }
 
             return Json(rows, JsonRequestBehavior.AllowGet);
         }

@@ -92,12 +92,6 @@ namespace InTime.Controllers
                         return HttpNotFound();
                     }
 
-                    if (tache.HFin == "24")
-                        tache.HFin = "0";
-
-                    if (tache.HDebut == "24")
-                        tache.HFin = "0";
-
                     DateTime DateDebut = new DateTime(
                         Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
                         Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0

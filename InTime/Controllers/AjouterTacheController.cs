@@ -47,7 +47,7 @@ namespace InTime.Controllers
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
                 var trancheHeure = new List<string>();
-                for (int i = 1; i < 25; ++i)
+                for (int i = 0; i < 24; ++i)
                 {
                     trancheHeure.Add(Convert.ToString(i));
                 }
@@ -101,7 +101,7 @@ namespace InTime.Controllers
                     ViewBag.trancheMin = new SelectList(trancheMin);
 
                     var trancheHeure = new List<string>();
-                    for (int i = 0; i < 25; ++i)
+                    for (int i = 0; i < 24; ++i)
                         trancheHeure.Add(Convert.ToString(i));
                     ViewBag.trancheHeure = new SelectList(trancheHeure);
 
