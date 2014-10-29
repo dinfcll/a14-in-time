@@ -36,21 +36,21 @@
                 },
 
                 events: '@Url.Content("~/Calendrier/Taches")',
-                //http://stackoverflow.com/questions/8702058/add-custom-html-to-a-jquery-fullcalendar-cell
 
-                eventRender: function(event, element) {
-                    element.find(".fc-event-title").remove();
-                    element.find(".fc-event-time").remove();
-                    var new_description =   
-                        moment(event.start).format("HH:mm") + '-'
-                        + moment(event.end).format("HH:mm") + '<br/>'
-                        + event.customer + '<br/>'
-                        + '<strong>Address: </strong><br/>' + event.address + '<br/>'
-                        + '<strong>Task: </strong><br/>' + event.task + '<br/>'
-                        + '<strong>Place: </strong>' + event.place + '<br/>'
-                    ;
-                    element.append(new_description);
-                }
+                //http://stackoverflow.com/questions/8702058/add-custom-html-to-a-jquery-fullcalendar-cell
+                //eventRender: function(event, element) {
+                //    element.find(".fc-event-title").remove();
+                //    element.find(".fc-event-time").remove();
+                //    var new_description =   
+                //        moment(event.start).format("HH:mm") + '-'
+                //        + moment(event.end).format("HH:mm") + '<br/>'
+                //        + event.customer + '<br/>'
+                //        + '<strong>Address: </strong><br/>' + "Test1" + '<br/>'      //event.address
+                //        + '<strong>Task: </strong><br/>' + "Test2" + '<br/>'         //event.task
+                //        + '<strong>Place: </strong>' + "Test3" + '<br/>'             //event.place
+                //    ;
+                //    element.append(new_description);
+                //}
                 
             });
 
