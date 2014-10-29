@@ -106,7 +106,7 @@ namespace InTime.Controllers
                 // Tentative d'inscription de l'utilisateur
                 try
                 {
-                    if (UtilisateurPresent(model.UserName, model.Password))
+                    if (!UtilisateurPresent(model.UserName, model.Password))
                     {
                         ModelState.AddModelError("", "Votre nom d'utilisateur ou votre courriel n'est pas unique");
                     }

@@ -68,9 +68,8 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
-
                         string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
-                            InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                            id);
                         SqlDataReader reader = RequeteSql.Select(queryString);
 
                         while (reader.Read())
@@ -91,12 +90,6 @@ namespace InTime.Controllers
                     {
                         return HttpNotFound();
                     }
-
-                    if (tache.HFin == "24")
-                        tache.HFin = "0";
-
-                    if (tache.HDebut == "24")
-                        tache.HFin = "0";
 
                     DateTime DateDebut = new DateTime(
                         Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),

@@ -47,7 +47,7 @@ namespace InTime.Controllers
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
                 var trancheHeure = new List<string>();
-                for (int i = 1; i < 25; ++i)
+                for (int i = 0; i < 24; ++i)
                 {
                     trancheHeure.Add(Convert.ToString(i));
                 }
@@ -101,7 +101,7 @@ namespace InTime.Controllers
                     ViewBag.trancheMin = new SelectList(trancheMin);
 
                     var trancheHeure = new List<string>();
-                    for (int i = 0; i < 25; ++i)
+                    for (int i = 0; i < 24; ++i)
                         trancheHeure.Add(Convert.ToString(i));
                     ViewBag.trancheHeure = new SelectList(trancheHeure);
 
@@ -188,12 +188,38 @@ namespace InTime.Controllers
 
         private bool InsertionTache(Tache Model)
         {
+            try
+            {
+                ConversionHeures(ref Model);
+                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
 
-            string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name)), RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
-                Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
-            
-            return RequeteSql.ExecuteQuery(SqlInsert);
+                string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee)"
+                    +"VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
+                   UserId, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
+                    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
+
+                return RequeteSql.ExecuteQuery(SqlInsert);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private void ConversionHeures(ref Tache model)
+        {
+            int HeureDebut = Convert.ToInt32(model.HDebut);
+            int HeureFin = Convert.ToInt32(model.HFin);
+
+            if (HeureDebut >= 0 && HeureDebut < 10)
+            {
+                model.HDebut = "0" + model.HDebut;
+            }
+
+            if (HeureFin >= 0 && HeureFin < 10)
+            {
+                model.HFin = "0" + model.HFin;
+            }
         }
     }
 }
