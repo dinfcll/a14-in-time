@@ -55,12 +55,9 @@ namespace InTime.Controllers
                 string dateFin = String.Format("{0}-{1}-{2}T{3}:{4}-05:00",
                    tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
 
-                //Generate absolute url
-                string Urls = Url.Action("Index", "ConsulterTache", new { @id = tache.IdTache }, Request.Url.Scheme);
-
-                //UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
-                //string urll = UrlH.Action("Index", "ConsulterTache", tache.IdTache); //+ "/" + Convert.ToString(tache.IdTache);
-                rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, url = Urls });
+                UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
+                string urll = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
+                rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, url = urll });
             }
 
             return Json(rows, JsonRequestBehavior.AllowGet);
