@@ -68,7 +68,6 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
-
                         string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
                             id);
                         SqlDataReader reader = RequeteSql.Select(queryString);

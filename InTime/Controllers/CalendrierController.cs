@@ -39,8 +39,6 @@ namespace InTime.Controllers
                     lstTache.Add(tache);
                 }
                 reader.Close();
-
-
             }
             catch (Exception ex)
             {
