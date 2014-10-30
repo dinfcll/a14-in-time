@@ -37,8 +37,8 @@ namespace InTime.Models
             get
             {
                 List<string> option = new List<string>{
-                                   "Aucune","À chaque jour", "Chaque semaine", "Au deux semaines", " Au trois semaines",
-                                   "À chaque mois", "Au trois mois", "Au quatre mois", "À chaque année"
+                                   "Aucune","À chaque jour", "Chaque semaine", "Aux deux semaines", "Aux trois semaines",
+                                   "À chaque mois", "Aux trois mois", "Aux quatre mois", "À chaque année"
                                   };
                 return option;
             }

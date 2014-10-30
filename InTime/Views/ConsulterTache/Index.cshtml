@@ -31,7 +31,11 @@
         <br />
         Nom du lieu :
         <br />
-        @Html.TextBox("Nom", tache.Lieu, new { id = "Consultation" })
+        @Html.TextBox("Lieu", tache.Lieu, new { id = "Consultation" })
+        <br />
+        Réccurence de la tâche :
+        <br />
+        @Html.TextBox("Reccurence", tache.Reccurence, new {  id = "Consultation"})
         <br />
         Début  de la tâche :
         <br />
@@ -53,5 +57,6 @@
 
 </body>
 </html>
+
 
 

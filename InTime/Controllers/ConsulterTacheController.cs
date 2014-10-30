@@ -25,7 +25,6 @@ namespace InTime.Controllers
                 try
                 {
                     var lstTache = new List<Tache>();
-
                     string queryString = "SELECT * FROM Taches where UserId=@Id";
                     
                     List<SqlParameter> Parametre = new List<SqlParameter>
@@ -42,11 +41,9 @@ namespace InTime.Controllers
                         lstTache.Add(tache);
                     }
                     reader.Close();
-
                     ViewBag.Taches = lstTache;
 
                     return View();
-
                 }
                 catch (Exception ex)
                 {
@@ -69,9 +66,9 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    Tache tache = null;
                     try
                     {
+                        Tache tache = null;
                         string queryString = "SELECT * FROM Taches where IdTache=@Id";
                         List<SqlParameter> Parametre = new List<SqlParameter>
                         {
@@ -87,46 +84,13 @@ namespace InTime.Controllers
                         }
                         reader.Close();
 
+                        InitialiseViewBag(tache);
+                        ViewData["Tache"] = tache;
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.ToString());
                     }
-
-                    if (tache == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    DateTime DateDebut = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                        );
-                    ViewBag.DateDebut = DateDebut.ToString(culture);
-
-                    DateTime DateFin = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                        );
-                    ViewBag.DateFin = DateFin.ToString(culture);
-
-                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
-                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
-                    TimeSpan tsRappel = new TimeSpan(
-                        Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
-                        );
-                    DateTime DateRappel = DateDebut.Subtract(tsRappel);
-
-
-                    if (DateRappel == DateDebut)
-                    {
-                        ViewBag.DateRappel = "Aucun";
-                    }
-                    else
-                    {
-                        ViewBag.DateRappel = TempsRappel(DateRappel);
-                    }
-                    ViewData["Tache"] = tache;
 
                     return View();
                 }
@@ -203,10 +167,43 @@ namespace InTime.Controllers
                 mFin = Convert.ToString(values[10]),
                 HRappel = Convert.ToString(values[11]),
                 mRappel = Convert.ToString(values[12]),
-                Annee = Convert.ToString(values[13])
+                Annee = Convert.ToString(values[13]),
+                Reccurence = Convert.ToString(values[14])
             };
 
             return tache;
+        }
+
+        private void InitialiseViewBag(Tache tache)
+        {
+            DateTime DateDebut = new DateTime(
+                       Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                       Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
+                       );
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+
+            DateTime DateFin = new DateTime(
+                Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
+                );
+            ViewBag.DateFin = DateFin.ToString(culture);
+
+            tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+            tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                );
+            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+
+
+            if (DateRappel == DateDebut)
+            {
+                ViewBag.DateRappel = "Aucun";
+            }
+            else
+            {
+                ViewBag.DateRappel = TempsRappel(DateRappel);
+            }
         }
     }
 }

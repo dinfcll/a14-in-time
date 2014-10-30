@@ -23,6 +23,7 @@ namespace InTime.Controllers
             }
         }
 
+        //1393650000.0   1410238800.0
         public JsonResult Taches(double start, double end)
         {
             var lstTache = new List<Tache>();
@@ -51,20 +52,38 @@ namespace InTime.Controllers
             }
 
             var rows = new List<object>();
+            UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
             foreach (Tache tache in lstTache)
             {
-                string dateDebut = String.Format("{0}-{1}-{2}T{3}:{4}:00-05:00",
-                    tache.Annee, tache.Mois, tache.Jour, tache.HDebut, tache.mDebut);
-                string dateFin = String.Format("{0}-{1}-{2}T{3}:{4}:00-05:00",
-                   tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
 
-                UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
-                string urll = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
-                rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, url = urll });
+                if (tache.Reccurence != "Aucune")
+                {
+                    List<string[]> result = TraitementDate.dateMois(tache, start, end);
+
+                    if (result != null)
+                    {
+                        foreach(string[] str in result)
+                        {
+                            string urll = UrlH.Action("Index", "ConsulterTache", new { @id = str[3] });
+                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = urll });
+                        }
+                    }
+                }
+                else
+                {
+
+                    string dateDebut = TraitementDate.DateFormatCalendrier(
+                        tache.Annee, tache.Mois, tache.Jour, tache.HDebut, tache.mDebut);
+                    string dateFin = TraitementDate.DateFormatCalendrier(
+                       tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
+
+                    string urll = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
+
+                    rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, url = urll });
+                }
             }
-            var test = rows.ToArray();
 
-            return Json(test, JsonRequestBehavior.AllowGet);
+            return Json(rows, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -80,7 +99,8 @@ namespace InTime.Controllers
                 HFin = Convert.ToString(values[8]),
                 mDebut = Convert.ToString(values[9]),
                 mFin = Convert.ToString(values[10]),
-                Annee = Convert.ToString(values[13])
+                Annee = Convert.ToString(values[13]),
+                Reccurence = Convert.ToString(values[14])
             };
 
             return tache;
