@@ -130,7 +130,7 @@ namespace InTime.Controllers
         private bool UtilisateurPresent(string NomUtilisateur,string adresseCourriel)
         {
             String query = "SELECT * FROM UserProfile";
-            SqlDataReader reader = RequeteSql.Select(query);
+            SqlDataReader reader = RequeteSql.Select(query, null);
 
             while (reader.Read())
             {
@@ -265,8 +265,13 @@ namespace InTime.Controllers
             {
                 RegisterModel userProfile = null;
 
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.ObtenirCookie(User.Identity.Name));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
+                    string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+
+                var pId = new SqlParameter("@Id",SqlDbType.Int).Value =
+                    (InTime.Models.Cookie.ObtenirCookie(User.Identity.Name) ?? (object)DBNull.Value);
+                List<SqlParameter> Parametre = new List<SqlParameter>();
+                Parametre.Add((SqlParameter)pId);
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
 
                     while (reader.Read())
                     {
@@ -304,10 +309,14 @@ namespace InTime.Controllers
                 if (!ModelState.IsValid)
                 {
                     RegisterModel userProfile = null;
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId={0}",
-                        Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name)));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
-                    
+                    string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+
+                    var pId = new SqlParameter("@Id",SqlDbType.Int).Value = 
+                        (InTime.Models.Cookie.ObtenirCookie(User.Identity.Name) ?? (object)DBNull.Value);
+                    List<SqlParameter> Parametre = new List<SqlParameter>();
+                    Parametre.Add((SqlParameter)pId);
+
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -360,10 +369,15 @@ namespace InTime.Controllers
 
         private bool ModifRenseig(RegisterModel model, int UserId)
         {
-             string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
-             RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
-            // return RequeteSql.ExecuteQuery(SqlUpdate); 
-             return false;
+             string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email WHERE UserId = @Id;";
+             
+             List<SqlParameter> Parametre = new List<SqlParameter>();
+            Parametre.Add(new SqlParameter("@Nom",model.Nom));
+            Parametre.Add(new SqlParameter("@Prenom",model.Prenom));
+            Parametre.Add(new SqlParameter("@Email",model.Email));
+            Parametre.Add(new SqlParameter("@Id",UserId));
+             
+            return RequeteSql.ExecuteQuery(SqlUpdate,Parametre); 
         }
 
         #region Applications auxiliaires

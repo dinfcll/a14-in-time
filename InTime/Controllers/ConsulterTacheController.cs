@@ -10,6 +10,7 @@ using InTime.Models;
 using System.Globalization;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data.SqlClient;
 
 namespace InTime.Controllers
 {
@@ -25,10 +26,14 @@ namespace InTime.Controllers
                 {
                     var lstTache = new List<Tache>();
 
-                    string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'",
-                        InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
+                    string queryString = "SELECT * FROM Taches where UserId=@Id";
+                    
+                    List<SqlParameter> Parametre = new List<SqlParameter>
+                    {
+                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                    };
 
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -67,10 +72,13 @@ namespace InTime.Controllers
                     Tache tache = null;
                     try
                     {
-                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
-                            id);
-                        SqlDataReader reader = RequeteSql.Select(queryString);
+                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
+                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
 
+                        SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
@@ -102,8 +110,8 @@ namespace InTime.Controllers
                         );
                     ViewBag.DateFin = DateFin.ToString(culture);
 
-                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "0" : tache.HRappel;
-                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "0" : tache.mRappel;
+                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
                     TimeSpan tsRappel = new TimeSpan(
                         Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
                         );
