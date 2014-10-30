@@ -58,14 +58,14 @@ namespace InTime.Controllers
 
                 if (tache.Reccurence != "Aucune")
                 {
-                    List<string[]> result = TraitementDate.dateMois(tache, start, end);
+                    List<string[]> result = TraitementDate.ChaqueJour(tache, end);
 
                     if (result != null)
                     {
                         foreach(string[] str in result)
                         {
                             string urll = UrlH.Action("Index", "ConsulterTache", new { @id = str[3] });
-                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = urll });
+                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = urll, id=str[3] });
                         }
                     }
                 }

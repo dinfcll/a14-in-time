@@ -45,38 +45,9 @@ namespace InTime.Models
 
         public static string DateFormatCalendrier(int Annee, int Mois, int Jour, int Heure, int Minute)
         {
-            return String.Format("{0}-{1}-{2}T{3}:{4}:00-05:00",
-                   Annee, Mois, Jour, Heure, Minute);
-        }
+            DateTime date = new DateTime(Annee, Mois, Jour, Heure, Minute, 0);
 
-        public static List<string[]> dateMois(Tache tache, double start, double end)
-        {
-            List<string[]> date = null;
-
-            switch(tache.Reccurence)
-            {
-                case "Aucune":
-                    break;
-                case "À chaque jour" :
-                    date = ChaqueJour(tache, start);
-                    break;
-                case "Chaque semaine" :
-                    break;
-                case "Aux deux semaines" :
-                    break;
-                case "Aux trois semaines":
-                    break;
-                case "À cahque mois" :
-                    break;
-                case "Aux trois mois":
-                    break;
-                case "Aux quatre mois":
-                    break;
-                case "À chaque année":
-                    break;
-            }
-
-            return date;
+            return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
 
         public static List<string[]> ChaqueJour(Tache tache, double start)
@@ -86,38 +57,51 @@ namespace InTime.Models
             DateTime debut = DateDebut(tache);
             DateTime fin = DateFin(tache);
             DateTime debutCalendrier = UnixTimeStampToDateTime(start);
+            debutCalendrier = debutCalendrier.AddMonths(-1);
             bool Changement = false;
+            bool Jour = false;
 
-            if (debut.Year < debutCalendrier.Year)
+
+            if (debut.Month <= debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
             {
-                while(debut.Year < debutCalendrier.Year)
+                if (debut.Month < debutCalendrier.Month)
                 {
-                     debut.AddYears(1);
-                }
-
-                Changement = true;
-            }
-
-            if (debut.Month < debutCalendrier.Month)
-            {
-                while (debut.Month < debutCalendrier.Month)
-                {
-                    debut.AddMonths(1);
-                }
-
-                Changement = true;
-            }
-
-            if (Changement)
-            {
-                if (debut.Day != 1)
-                {
-                    while (debut.Day > 1)
+                    while (debut.Month < debutCalendrier.Month)
                     {
-                        debut.AddDays(-1);
+                        debut = debut.AddMonths(+1);
+                    }
+                    Jour = true;
+                }
+                if (debut.Year < debutCalendrier.Year)
+                {
+                    Jour = true;
+                    while (debut.Year < debutCalendrier.Year)
+                    {
+                        debut = debut.AddYears(+1);
                     }
                 }
+                Changement = true;
+            }
+            else
+            {
+                if (debut.Month > debutCalendrier.Month && debut.Year < debutCalendrier.Year)
+                {
+                    while (debut.Month > debutCalendrier.Month)
+                    {
+                        debut = debut.AddMonths(-1);
+                    }
+                    while(debut.Year < debutCalendrier.Year)
+                    {
+                        debut = debut.AddYears(1);
+                    }
 
+                    Jour = true;
+                }
+            }
+ 
+
+            if (Jour)
+            {
                 int days = DateTime.DaysInMonth(debut.Year,debut.Month);
                 for (int day = 1; day <= days; day++)
                 {
@@ -131,8 +115,7 @@ namespace InTime.Models
             }
             else
             {
-                if (debut.Month == debutCalendrier.Month &&
-                    debut.Year == debutCalendrier.Year)
+                if (Changement)
                 {
                     int days = DateTime.DaysInMonth(debut.Year, debut.Month);
                     for (int day = debut.Day; day <= days; day++)
