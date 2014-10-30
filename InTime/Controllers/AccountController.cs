@@ -362,7 +362,8 @@ namespace InTime.Controllers
         {
              string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
              RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
-             return RequeteSql.ExecuteQuery(SqlUpdate); 
+            // return RequeteSql.ExecuteQuery(SqlUpdate); 
+             return false;
         }
 
         #region Applications auxiliaires

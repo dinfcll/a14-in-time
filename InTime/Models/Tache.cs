@@ -10,23 +10,48 @@ namespace InTime.Models
 {
     public class Tache
     {
-        public static const string[] tempsMin = { "00", "15", "30", "45" };
-        public static const string[] options = {
+        public static List<string> tempsHeure
+        {
+            get
+            {
+                List<string> Heures = new List<string>{
+                                    "00","01","02","03","04","05","06","07","08","09","10",
+                                    "11","12","13","14","15","16","17","18","19","20","21",
+                                    "22","23"
+                                  };
+                return Heures;
+            }
+        }
+
+        public static List<string> tempsMinutes
+        {
+            get
+            {
+                List<string> minutes = new List<string>{ "00", "15", "30", "45" };
+                return minutes;
+            }
+        }
+
+        public static List<string> options
+        {
+            get
+            {
+                List<string> option = new List<string>{
                                    "Aucune","À chaque jour", "Chaque semaine", "Au deux semaines", " Au trois semaines",
                                    "À chaque mois", "Au trois mois", "Au quatre mois", "À chaque année"
-                               };
-        public static const string[] tempsHeure = {
-                                                      "00","01","02","03","04","05","06","07","08","09","10",
-                                                      "11","12","13","14","15","16","17","18","19","20","21",
-                                                      "22","23"
-                                                  };
+                                  };
+                return option;
+            }
+        }
+
+
 
         public int IdTache { get; set; }
         public int UserId { get; set; }
 
         [Display(Name = "Nom de la tâche")]
         [Required(ErrorMessage = "Vous devez donner un nom à votre tâchem")]
-        [StringLength(50,ErrorMessage = "Le nom de votre tâche est trop longm")]
+        [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longm")]
         public string NomTache { get; set; }
 
         [Display(Name = "Nom du lieu")]
@@ -52,7 +77,7 @@ namespace InTime.Models
         public string mFin { get; set; }
         public string HRappel { get; set; }
         public string mRappel { get; set; }
-        public string Reccurence {get; set;}
+        public string Reccurence { get; set; }
     }
 }
 

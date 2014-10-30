@@ -99,7 +99,9 @@ namespace InTime.Controllers
                     {
                         message = "Erreur";
                     }
-                    return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
+                    TempData["Message"] = message;
+
+                    return RedirectToAction("Index", "AjouterTache");
                 }
             }
             else
@@ -142,11 +144,6 @@ namespace InTime.Controllers
                 ModelState.AddModelError("rapTacheHeure", "Veuillez compléter l'heure de rappel correctement.");
                 ModelState.AddModelError("rapTacheMinute", "");
             }
-
-            if (model.Reccurence == null)
-            {
-                model.Reccurence = "Aucun";
-            }
         }
 
         private void ValHeureFinDebut(ref Tache model)
@@ -174,15 +171,32 @@ namespace InTime.Controllers
         {
             try
             {
-                ConversionHeures(ref Model);
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
+                    +" VALUES (@UserId,@NomTache,@Lieu,@Description,@Mois,@Jour,@HDebut,@HFin,@mDebut,@mFin,@HRappel,@mRappel,@Annee,@Reccurence);";
 
-                string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
-                    +"VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}',{13})",
-                   UserId, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
-                    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee,Model.Reccurence);
+                List<SqlParameter> listParametre = new List<SqlParameter>();
+                listParametre.Add(new SqlParameter("@UserId", UserId));
+                listParametre.Add(new SqlParameter("@NomTache", Model.NomTache));
+                listParametre.Add(new SqlParameter("@Lieu", Model.Lieu));
+                listParametre.Add(new SqlParameter("@Description", Model.Description));
+                listParametre.Add(new SqlParameter("@Mois", Model.Mois));
+                listParametre.Add(new SqlParameter("@Jour", Model.Jour));
+                listParametre.Add(new SqlParameter("@HDebut", Model.HDebut));
+                listParametre.Add(new SqlParameter("@HFin", Model.HFin));
+                listParametre.Add(new SqlParameter("@mDebut", Model.mDebut));
+                listParametre.Add(new SqlParameter("@mFin", Model.mFin));
+                listParametre.Add(new SqlParameter("@HRappel", Model.HRappel));
+                listParametre.Add(new SqlParameter("@mRappel", Model.mRappel));
+                listParametre.Add(new SqlParameter("@Annee", Model.Annee));
+                listParametre.Add(new SqlParameter("@Reccurence", Model.Reccurence));
 
-                return RequeteSql.ExecuteQuery(SqlInsert);
+                //string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
+                //    +" VALUES ({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}')",
+                //   UserId, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
+                //    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee,Model.Reccurence);
+
+                return RequeteSql.ExecuteQuery(SqlInsert,listParametre);
             }
             catch (Exception ex)
             {
@@ -190,38 +204,15 @@ namespace InTime.Controllers
             }
         }
 
-        private void ConversionHeures(ref Tache model)
-        {
-            int HeureDebut = Convert.ToInt32(model.HDebut);
-            int HeureFin = Convert.ToInt32(model.HFin);
-
-            if (HeureDebut >= 0 && HeureDebut < 10)
-            {
-                model.HDebut = "0" + model.HDebut;
-            }
-
-            if (HeureFin >= 0 && HeureFin < 10)
-            {
-                model.HFin = "0" + model.HFin;
-            }
-        }
-
         private void InitialiseViewBags()
         {
-            var trancheMin = new List<string>(Tache.tempsMin);
-            ViewBag.trancheMin = new SelectList(trancheMin);
+            ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
 
-            var trancheHeure = new List<string>();
-            for (int i = 0; i < 24; ++i)
-            {
-                trancheHeure.Add(Convert.ToString(i));
-            }
-            ViewBag.trancheHeure = new SelectList(trancheHeure);
+            ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
 
             ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
 
-            var optionReccurence = new List<string>(Tache.options);;
-            ViewBag.Reccurence = new SelectList(optionReccurence);
+            ViewBag.Reccurence = new SelectList(Tache.options);
         }
     }
 }

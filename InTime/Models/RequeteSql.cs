@@ -48,13 +48,14 @@ namespace InTime.Models
             }
         }
 
-        public static bool ExecuteQuery(string Query)
+        public static bool ExecuteQuery(string Query, List<SqlParameter> Parametres)
         {
             SqlConnection con = null;
             try
             {
                 con = RequeteSql.ConnexionBD(con);
                 SqlCommand cmd = new SqlCommand(Query, con);
+                cmd.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
                 cmd.ExecuteNonQuery();
 
                 return true;

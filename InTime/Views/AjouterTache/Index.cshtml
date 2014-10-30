@@ -15,11 +15,11 @@
 
 <div>
     @{
-        if (ViewBag.Message == "Reussi")
+        if (@TempData["Message"] == "Reussi")
         {
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
-        if (ViewBag.Message == "Erreur")
+        if (@TempData["Message"] == "Erreur")
         {
             <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
         }
@@ -84,6 +84,11 @@
         @Html.ValidationMessage("Jour", "*")
         <br />
 
+        Récurrence de la tache :<br/>
+        @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+        <br/>
+
+
         Heure : <br />
         Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
         @Html.ValidationMessage("dbTacheHeure", "*")
@@ -113,8 +118,6 @@
 
         Description de la tâche : <br />
         @Html.TextAreaFor(model => model.Description, "*")
-
-
         <br />
 
         <input type="submit" value="Enregistrer" />
