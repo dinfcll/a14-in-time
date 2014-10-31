@@ -49,7 +49,7 @@ namespace InTime.Models
         public int UserId { get; set; }
 
         [Display(Name = "Nom de la tâche")]
-        [Required(ErrorMessage = "Vous devez donner un nom à votre tâchem")]
+        [Required(ErrorMessage = "Vous devez donner un nom à votre tâche.")]
         [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longue.")]
         public string NomTache { get; set; }
 
@@ -67,7 +67,7 @@ namespace InTime.Models
         [Display(Name = "Année")]
         public string Annee { get; set; }
 
-        [StringLength(500, ErrorMessage = "La description de la tâche est trop long.")]
+        [StringLength(500, ErrorMessage = "La description de la tâche est trop longue.")]
         public string Description { get; set; }
 
         public string HDebut { get; set; }
