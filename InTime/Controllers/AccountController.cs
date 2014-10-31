@@ -39,16 +39,18 @@ namespace InTime.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
-
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
                 SqlConnection con = null;
                 try
                 {
-                    con = RequeteSql.ConnexionBD(con);
-                    int id = RequeteSql.RechercheID(con,model.UserName);
+                    int Minute = 0, Seconde = 0;
+                    int Heure = 1;
 
-                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
+                    con = RequeteSql.ConnexionBD(con);
+                    int id = RequeteSql.RechercheID(con, model.UserName);
+
+                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(Heure, Minute, Seconde));
                 }
                 catch (Exception ex)
                 {
@@ -127,10 +129,10 @@ namespace InTime.Controllers
             return View(model);
         }
 
-        private bool UtilisateurPresent(string NomUtilisateur,string adresseCourriel)
+        private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
         {
             String query = "SELECT * FROM UserProfile";
-            SqlDataReader reader = RequeteSql.Select(query);
+            SqlDataReader reader = RequeteSql.Select(query, null);
 
             while (reader.Read())
             {
@@ -265,20 +267,25 @@ namespace InTime.Controllers
             {
                 RegisterModel userProfile = null;
 
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.ObtenirCookie(User.Identity.Name));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
+                string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
 
-                    while (reader.Read())
-                    {
-                        Object[] values = new Object[reader.FieldCount];
-                        int fieldCounts = reader.GetValues(values);
-                        userProfile = new RegisterModel()
+                List<SqlParameter> Parametres = new List<SqlParameter>
                         {
-                            Nom = Convert.ToString(values[2]),
-                            Prenom = Convert.ToString(values[3]),
-                            Email = Convert.ToString(values[4])
+                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                         };
-                    }
+                SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+
+                while (reader.Read())
+                {
+                    Object[] values = new Object[reader.FieldCount];
+                    int fieldCounts = reader.GetValues(values);
+                    userProfile = new RegisterModel()
+                    {
+                        Nom = Convert.ToString(values[2]),
+                        Prenom = Convert.ToString(values[3]),
+                        Email = Convert.ToString(values[4])
+                    };
+                }
                 if (userProfile == null)
                 {
                     return HttpNotFound();
@@ -304,10 +311,13 @@ namespace InTime.Controllers
                 if (!ModelState.IsValid)
                 {
                     RegisterModel userProfile = null;
-                    string queryString = string.Format("SELECT * FROM UserProfile where UserId={0}",
-                        Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name)));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
-                    
+                    string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+                    List<SqlParameter> Parametres = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                        };
+
+                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -360,9 +370,17 @@ namespace InTime.Controllers
 
         private bool ModifRenseig(RegisterModel model, int UserId)
         {
-             string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
-             RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
-             return RequeteSql.ExecuteQuery(SqlUpdate); 
+            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email WHERE UserId = @Id;";
+
+            List<SqlParameter> Parametres = new List<SqlParameter>
+            {
+                new SqlParameter("@Nom", model.Nom),
+                new SqlParameter("@Prenom", model.Prenom),
+                new SqlParameter("@Email", model.Email),
+                new SqlParameter("@Id", UserId)
+            };
+
+            return RequeteSql.ExecuteQuery(SqlUpdate, Parametres);
         }
 
         #region Applications auxiliaires

@@ -22,22 +22,29 @@ namespace InTime.Models
             return con;
         }
 
-        public static int RechercheID(SqlConnection con,string NomUtilisateur)
+        public static int RechercheID(SqlConnection con, string username)
         {
-            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", NomUtilisateur);
-            SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            int id = (Int32)cmdId.ExecuteScalar();
+            string SqlrId = "SELECT * FROM UserProfile where UserName=@NomUtilisateur;";
 
-            return id;
+            SqlCommand cmdId = new SqlCommand(SqlrId, con);
+            cmdId.Parameters.Add(new SqlParameter("@NomUtilisateur", SqlDbType.VarChar)
+            {  Value = username ?? (object)DBNull.Value });
+
+            return (Int32)cmdId.ExecuteScalar();
         }
 
-        public static SqlDataReader Select (string Query)
+        public static SqlDataReader Select (string Query, List<SqlParameter> Parametres)
         {
             SqlConnection con = null;
             try
             {
                 con = RequeteSql.ConnexionBD(con);
                 SqlCommand cmdQuery = new SqlCommand(Query, con);
+
+                if (Parametres != null)
+                {
+                    cmdQuery.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
+                }
                 SqlDataReader reader = cmdQuery.ExecuteReader();
 
                 return reader;
@@ -48,13 +55,14 @@ namespace InTime.Models
             }
         }
 
-        public static bool ExecuteQuery(string Query)
+        public static bool ExecuteQuery(string Query, List<SqlParameter> Parametres)
         {
             SqlConnection con = null;
             try
             {
                 con = RequeteSql.ConnexionBD(con);
                 SqlCommand cmd = new SqlCommand(Query, con);
+                cmd.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
                 cmd.ExecuteNonQuery();
 
                 return true;

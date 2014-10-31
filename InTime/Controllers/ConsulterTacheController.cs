@@ -10,13 +10,13 @@ using InTime.Models;
 using System.Globalization;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data.SqlClient;
 
 namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-        private InTime.Models.InTime db = new InTime.Models.InTime();
 
         public ActionResult Taches()
         {
@@ -25,11 +25,14 @@ namespace InTime.Controllers
                 try
                 {
                     var lstTache = new List<Tache>();
+                    string queryString = "SELECT * FROM Taches where UserId=@Id";
+                    
+                    List<SqlParameter> Parametre = new List<SqlParameter>
+                    {
+                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                    };
 
-                    string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'",
-                        InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                    SqlDataReader reader = RequeteSql.Select(queryString);
-
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -38,11 +41,9 @@ namespace InTime.Controllers
                         lstTache.Add(tache);
                     }
                     reader.Close();
-
                     ViewBag.Taches = lstTache;
 
                     return View();
-
                 }
                 catch (Exception ex)
                 {
@@ -65,13 +66,16 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    Tache tache = null;
                     try
                     {
-                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'",
-                            id);
-                        SqlDataReader reader = RequeteSql.Select(queryString);
+                        Tache tache = null;
+                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
+                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
 
+                        SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
@@ -80,46 +84,13 @@ namespace InTime.Controllers
                         }
                         reader.Close();
 
+                        InitialiseViewBag(tache);
+                        ViewData["Tache"] = tache;
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.ToString());
                     }
-
-                    if (tache == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    DateTime DateDebut = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                        );
-                    ViewBag.DateDebut = DateDebut.ToString(culture);
-
-                    DateTime DateFin = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                        );
-                    ViewBag.DateFin = DateFin.ToString(culture);
-
-                    tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "0" : tache.HRappel;
-                    tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "0" : tache.mRappel;
-                    TimeSpan tsRappel = new TimeSpan(
-                        Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
-                        );
-                    DateTime DateRappel = DateDebut.Subtract(tsRappel);
-
-
-                    if (DateRappel == DateDebut)
-                    {
-                        ViewBag.DateRappel = "Aucun";
-                    }
-                    else
-                    {
-                        ViewBag.DateRappel = TempsRappel(DateRappel);
-                    }
-                    ViewData["Tache"] = tache;
 
                     return View();
                 }
@@ -196,10 +167,43 @@ namespace InTime.Controllers
                 mFin = Convert.ToString(values[10]),
                 HRappel = Convert.ToString(values[11]),
                 mRappel = Convert.ToString(values[12]),
-                Annee = Convert.ToString(values[13])
+                Annee = Convert.ToString(values[13]),
+                Reccurence = Convert.ToString(values[14])
             };
 
             return tache;
+        }
+
+        private void InitialiseViewBag(Tache tache)
+        {
+            DateTime DateDebut = new DateTime(
+                       Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                       Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
+                       );
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+
+            DateTime DateFin = new DateTime(
+                Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
+                );
+            ViewBag.DateFin = DateFin.ToString(culture);
+
+            tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+            tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                );
+            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+
+
+            if (DateRappel == DateDebut)
+            {
+                ViewBag.DateRappel = "Aucun";
+            }
+            else
+            {
+                ViewBag.DateRappel = TempsRappel(DateRappel);
+            }
         }
     }
 }

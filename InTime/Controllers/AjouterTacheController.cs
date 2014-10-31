@@ -20,40 +20,29 @@ namespace InTime.Controllers
         public List<SelectListItem> Les_Mois()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
-            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
-            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
-            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
-            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
-            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
-            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
-            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
-            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
-            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
+            mois.Add(new SelectListItem { Text = "Janvier", Value = "01" });
+            mois.Add(new SelectListItem { Text = "Février", Value = "02" });
+            mois.Add(new SelectListItem { Text = "Mars", Value = "03" });
+            mois.Add(new SelectListItem { Text = "Avril", Value = "04" });
+            mois.Add(new SelectListItem { Text = "Mai", Value = "05" });
+            mois.Add(new SelectListItem { Text = "Juin", Value = "06" });
+            mois.Add(new SelectListItem { Text = "Juillet", Value = "07" });
+            mois.Add(new SelectListItem { Text = "Aout", Value = "08" });
+            mois.Add(new SelectListItem { Text = "Septembre", Value = "09" });
             mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
             mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
             mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
+
             return mois;
         }
 
 
-        public ActionResult Index(string strMessValidation)
+        public ActionResult Index()
         {
 
             if (User.Identity.IsAuthenticated)
             {
-                var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45" };
-                trancheMin.AddRange(tempsMin);
-                ViewBag.trancheMin = new SelectList(trancheMin);
-
-                var trancheHeure = new List<string>();
-                for (int i = 0; i < 24; ++i)
-                {
-                    trancheHeure.Add(Convert.ToString(i));
-                }
-                ViewBag.trancheHeure = new SelectList(trancheHeure);
-                ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
-                ViewBag.Message = strMessValidation;
+                InitialiseViewBags();
 
                 return View();
             }
@@ -95,32 +84,16 @@ namespace InTime.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    var trancheMin = new List<string>();
-                    string[] tempsMin = { "00", "15", "30", "45" };
-                    trancheMin.AddRange(tempsMin);
-                    ViewBag.trancheMin = new SelectList(trancheMin);
-
-                    var trancheHeure = new List<string>();
-                    for (int i = 0; i < 24; ++i)
-                        trancheHeure.Add(Convert.ToString(i));
-                    ViewBag.trancheHeure = new SelectList(trancheHeure);
-
-                    ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+                    InitialiseViewBags();
 
                     return View("Index");
                 }
                 else
                 {
-                    var message = "";
-                    if (InsertionTache(model))
-                    {
-                        message = "Reussi";
-                    }
-                    else
-                    {
-                        message = "Erreur";
-                    }
-                    return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
+                    var message = InsertionTache(model) ? "Reussi" : "Erreur";
+                    TempData["Message"] = message;
+
+                    return RedirectToAction("Index", "AjouterTache");
                 }
             }
             else
@@ -190,15 +163,30 @@ namespace InTime.Controllers
         {
             try
             {
-                ConversionHeures(ref Model);
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                verificationJour(ref Model);
+                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
+                    + " VALUES (@UserId,@NomTache,@Lieu,@Description,@Mois,@Jour,@HDebut,@HFin,@mDebut,@mFin,@HRappel,@mRappel,@Annee,@Reccurence);";
 
-                string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee)"
-                    +"VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                   UserId, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
-                    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
+                List<SqlParameter> listParametres = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@NomTache", Model.NomTache),
+                    new SqlParameter("@Lieu", Model.Lieu),
+                    new SqlParameter("@Description", Model.Description),
+                    new SqlParameter("@Mois", Model.Mois),
+                    new SqlParameter("@Jour", Model.Jour),
+                    new SqlParameter("@HDebut", Model.HDebut),
+                    new SqlParameter("@HFin", Model.HFin),
+                    new SqlParameter("@mDebut", Model.mDebut),
+                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@Annee", Model.Annee),
+                    new SqlParameter("@Reccurence", Model.Reccurence)
+                };
 
-                return RequeteSql.ExecuteQuery(SqlInsert);
+                return RequeteSql.ExecuteQuery(SqlInsert, listParametre);
             }
             catch (Exception ex)
             {
@@ -206,19 +194,22 @@ namespace InTime.Controllers
             }
         }
 
-        private void ConversionHeures(ref Tache model)
+        private void InitialiseViewBags()
         {
-            int HeureDebut = Convert.ToInt32(model.HDebut);
-            int HeureFin = Convert.ToInt32(model.HFin);
+            ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
 
-            if (HeureDebut >= 0 && HeureDebut < 10)
-            {
-                model.HDebut = "0" + model.HDebut;
-            }
+            ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
 
-            if (HeureFin >= 0 && HeureFin < 10)
+            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+            ViewBag.Reccurence = new SelectList(Tache.options);
+        }
+
+        private void verificationJour(ref Tache model)
+        {
+            if (Convert.ToInt32(model.Jour) < 10)
             {
-                model.HFin = "0" + model.HFin;
+                model.Jour = "0" + model.Jour;
             }
         }
     }
