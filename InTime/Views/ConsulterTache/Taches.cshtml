@@ -4,6 +4,15 @@
     ViewBag.Title = "Taches";
 }
 
+<div>
+    @{
+        if (ViewBag.Message == "Reussi")
+        {
+            <h2><font color="green">Votre tâche a été supprimée.</font></h2>
+        }
+    }
+</div>
+
 <h2>Voici vos tâches</h2>
 
 
@@ -46,7 +55,13 @@
                 @Html.DisplayFor(modelItem => item.Annee)
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) |
+                @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) 
+            </td>
+            <td>
+                @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache }) 
+            </td>
+            <td>
+                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
             </td>
         </tr>
     }

@@ -17,7 +17,7 @@ namespace InTime.Controllers
     {
         CultureInfo culture = new CultureInfo("fr-CA");
 
-        public ActionResult Taches()
+        public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -25,13 +25,12 @@ namespace InTime.Controllers
                 {
                     var lstTache = new List<Tache>();
                     string queryString = "SELECT * FROM Taches where UserId=@Id";
-                    
-                    List<SqlParameter> Parametre = new List<SqlParameter>
+                    List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                     };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametres);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -55,6 +54,30 @@ namespace InTime.Controllers
             }
         }
 
+        public ActionResult SuppTache(int? id)
+        {
+            SqlConnection con = null;
+            try
+            {
+                //SqlCommand cmd = new SqlCommand(SqlDelete, con);
+                //cmd.ExecuteNonQuery();
+                string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                List<SqlParameter> Parametres = new List<SqlParameter>
+                    {
+                        new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@IdTache",id)
+                    };
+
+                RequeteSql.ExecuteQuery(SqlDelete, Parametres);
+
+                var message = "Reussi";
+                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+        }
 
         public ActionResult Index(int? id)
         {
