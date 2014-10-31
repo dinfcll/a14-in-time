@@ -14,12 +14,12 @@ namespace InTime.Models
         {
             get
             {
-                List<string> Heures = new List<string>{
+                return new List<string>
+                {
                                     "00","01","02","03","04","05","06","07","08","09","10",
                                     "11","12","13","14","15","16","17","18","19","20","21",
                                     "22","23"
                                   };
-                return Heures;
             }
         }
 
@@ -27,8 +27,7 @@ namespace InTime.Models
         {
             get
             {
-                List<string> minutes = new List<string>{ "00", "15", "30", "45" };
-                return minutes;
+                return new List<string> { "00", "15", "30", "45" };
             }
         }
 
@@ -36,11 +35,11 @@ namespace InTime.Models
         {
             get
             {
-                List<string> option = new List<string>{
+                return new List<string>
+                {
                                    "Aucune","À chaque jour", "Chaque semaine", "Aux deux semaines", "Aux trois semaines",
                                    "À chaque mois", "Aux trois mois", "Aux quatre mois", "À chaque année"
                                   };
-                return option;
             }
         }
 
@@ -51,12 +50,12 @@ namespace InTime.Models
 
         [Display(Name = "Nom de la tâche")]
         [Required(ErrorMessage = "Vous devez donner un nom à votre tâchem")]
-        [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longm")]
+        [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longue.")]
         public string NomTache { get; set; }
 
         [Display(Name = "Nom du lieu")]
-        [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâchem")]
-        [StringLength(50, ErrorMessage = "Votre nom de lieu est trop long.")]
+        [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâche.")]
+        [StringLength(50, ErrorMessage = "Votre nom de lieu est trop longue.")]
         public string Lieu { get; set; }
 
         [Display(Name = "Jour")]

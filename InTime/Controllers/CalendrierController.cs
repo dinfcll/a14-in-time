@@ -29,7 +29,6 @@ namespace InTime.Controllers
             try
             {
                 string queryString = "SELECT * FROM Taches where UserId=@Id;";
-
                 List<SqlParameter> param = new List<SqlParameter>
                     {
                         new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))

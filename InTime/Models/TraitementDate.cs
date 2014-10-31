@@ -6,7 +6,7 @@ using System.Web.Routing;
 
 namespace InTime.Models
 {
-    public class TraitementDate
+    public static class TraitementDate
     {
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
@@ -337,3 +337,4 @@ namespace InTime.Models
         }
     }
 }
+
