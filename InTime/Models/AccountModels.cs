@@ -11,7 +11,7 @@ namespace InTime.Models
     public class UsersContext : DbContext
     {
         public UsersContext()
-            : base("ConnString")
+            : base(RequeteSql.connectionString)
         {
         }
 
@@ -99,7 +99,6 @@ namespace InTime.Models
         [Required]
         [RegularExpression(@".*@.*")]
         public string Email { get; set; }
-
     }
 
     public class ExternalLogin

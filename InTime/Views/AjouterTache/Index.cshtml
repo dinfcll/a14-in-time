@@ -15,9 +15,13 @@
 
 <div>
     @{
-        if (ViewBag.Message == "Reussi")
+        if (@TempData["Message"] == "Reussi")
         {
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
+        }
+        if (@TempData["Message"] == "Erreur")
+        {
+            <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
         }
     }
 </div>
@@ -39,6 +43,34 @@
         <br />
 
         Date : <br />
+        Année :
+        <input readonly id="Annee" name="Annee" width="20">
+
+        <script>
+            var annee = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
+            $("#Annee").spinner();
+            $("#Annee").spinner("option", "culture", "fr");
+            $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
+            $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
+            $("#Annee").spinner("value", annee);
+            $("#Annee").width(50);
+
+
+            $('.ui-spinner-up').click(function () {
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal)) {
+                    annee += 1;
+                    JourDuMois();
+                }
+            });
+            $('.ui-spinner-down').click(function () {
+                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal)) {
+                    annee -= 1;
+                    JourDuMois();
+                }
+            });
+        </script>
+
+
         Mois :
         @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
         <script type="text/javascript">
@@ -46,48 +78,25 @@
         </script>
         @Html.ValidationMessage("Mois", "*")
 
-        Année :
-        <input readonly id="Annee" name="Annee" width="20">
-
-        <script>
-            var annee = 2014;
-            $("#Annee").spinner();
-            $("#Annee").spinner("option", "culture", "fr");
-            $("#Annee").spinner("option", "max", 2114);
-            $("#Annee").spinner("option", "min", 2014);
-            $("#Annee").spinner("value", 2014);
-            $("#Annee").width(50);
-
-
-            $('.ui-spinner-up').click(function () {
-                if (annee != 2114)
-                    {
-                        annee += 1;
-                        JourDuMois();
-                    }
-            });
-            $('.ui-spinner-down').click(function () {
-                if (annee != 2014)
-                    {
-                        annee -= 1;
-                        JourDuMois();
-                    }
-            });       
-        </script>
 
         Jour :
-            <select id="Jour" name="Jour"></select>
-            @Html.ValidationMessage("Jour","*")
-            <br />
+        <select id="Jour" name="Jour"></select>
+        @Html.ValidationMessage("Jour", "*")
+        <br />
+
+        Récurrence de la tache :<br/>
+        @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+        <br/>
+
 
         Heure : <br />
-        Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList,"", new { id = "HDebut" })
-        @Html.ValidationMessage("dbTacheHeure","*")
+        Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
+        @Html.ValidationMessage("dbTacheHeure", "*")
         H
-        @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList,"", new { id = "mDebut" })
+        @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
         @Html.ValidationMessage("dbTacheMinute", "*")
         Min
-         <br />
+        <br />
 
         Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
         @Html.ValidationMessage("finTacheHeure", "*")
@@ -95,20 +104,20 @@
         @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
         @Html.ValidationMessage("finTacheMinute", "*")
         Min
-         <br />
+        <br />
 
 
         Avant combien de temps voulez-vous être informé de votre tâche ? <br />
         @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
-        @Html.ValidationMessage("rapTacheHeure","*")
+        @Html.ValidationMessage("rapTacheHeure", "*")
         H
         @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
-        @Html.ValidationMessage("rapTacheMinute","*")
+        @Html.ValidationMessage("rapTacheMinute", "*")
         Min
         <br />
 
         Description de la tâche : <br />
-        @Html.TextAreaFor(model => model.Description,"*")
+        @Html.TextAreaFor(model => model.Description, "*")
         <br />
 
         <input type="submit" value="Enregistrer" />
@@ -117,8 +126,7 @@
 
 
 <script>
-    var JourDuMois = function()
-    {
+    var JourDuMois = function () {
         var params = {};
         params.Year = annee;
         params.Month = $('#Mois').val();

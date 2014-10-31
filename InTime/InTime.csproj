@@ -193,7 +193,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\GMail.cs" />
+    <Compile Include="Models\Cookie.cs" />
+    <Compile Include="Models\RequeteSql.cs" />
     <Compile Include="Models\Tache.cs" />
+    <Compile Include="Models\TraitementDate.cs" />
+    <Compile Include="Models\UrlErreur.cs" />
+    <Compile Include="Models\ValeursSpinner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -299,14 +305,10 @@
     <Content Include="Images\orderedList9.png" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\_RemoveExternalLoginsPartial.cshtml" />
     <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -321,6 +323,7 @@
     <Content Include="Views\ConsulterTache\Index.cshtml" />
     <Content Include="Views\Calendrier\Index.cshtml" />
     <Content Include="Views\ConsulterTache\Taches.cshtml" />
+    <Content Include="Views\Account\Renseignements.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

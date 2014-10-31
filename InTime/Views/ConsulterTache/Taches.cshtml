@@ -55,13 +55,13 @@
                 @Html.DisplayFor(modelItem => item.Annee)
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) |
+                @Html.ActionLink("Détails", "Index", new { id = item.IdTache }) 
             </td>
             <td>
-                @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache }) |
+                @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache }) 
             </td>
             <td>
-                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache })
+                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
             </td>
         </tr>
     }
