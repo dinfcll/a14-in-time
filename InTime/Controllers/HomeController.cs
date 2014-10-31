@@ -39,16 +39,28 @@ namespace InTime.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your app description page.";
-
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Contact(GMail information)
+        {
+            if (ModelState.IsValid)
+            {
+                GMail mailer = new GMail(information.Subject, information.Body, true);
+                mailer.Send();
+                TempData["message"] = "Reussi";
+
+                return RedirectToAction("Contact", "Home");
+            }
+
+                return View();
         }
     }
 }
+
