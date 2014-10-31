@@ -10,6 +10,18 @@
         {
             <h2><font color="green">Votre tâche a été supprimée.</font></h2>
         }
+
+        if (TempData["Modification"] == "Modif")
+        {
+            <h2><font color="green">Votre tâche a été modifiée.</font></h2>
+        }
+        else
+        {
+            if (TempData["Modification"] == "Erreur")
+            {
+                <h2><font color="red">Une erreur s'est produite. Vos modifications sont invalides.</font></h2>
+            }
+        }
     }
 </div>
 
@@ -61,7 +73,7 @@
                 @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache }) 
             </td>
             <td>
-                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
+                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');"})
             </td>
         </tr>
     }

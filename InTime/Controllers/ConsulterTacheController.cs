@@ -17,6 +17,25 @@ namespace InTime.Controllers
     {
         CultureInfo culture = new CultureInfo("fr-CA");
 
+        public List<SelectListItem> Les_Mois()
+        {
+            List<SelectListItem> mois = new List<SelectListItem>();
+            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
+            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
+            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
+            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
+            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
+            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
+            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
+            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
+            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
+            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
+            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
+            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
+            return mois;
+        }
+
+
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -79,6 +98,95 @@ namespace InTime.Controllers
             }
         }
 
+
+        [HttpPost]
+        public ActionResult Modification(Tache Model)
+        {
+            try
+            {
+                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,Mois=@Mois,Jour=@Jour,"
+                +"HDebut=@HDebut,HFin=@HFin,mDebut=@mDebut,mFin=@mFin,HRappel=@HRappel,mRappel=@mRappel,Annee=@Annee,"
+                +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                List<SqlParameter> listParametres = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@IdTache", Model.IdTache),
+                    new SqlParameter("@NomTache", Model.NomTache),
+                    new SqlParameter("@Lieu", Model.Lieu),
+                    new SqlParameter("@Desc", Model.Description),
+                    new SqlParameter("@Mois", Model.Mois),
+                    new SqlParameter("@Jour", Model.Jour),
+                    new SqlParameter("@HDebut", Model.HDebut),
+                    new SqlParameter("@HFin", Model.HFin),
+                    new SqlParameter("@mDebut", Model.mDebut),
+                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@Annee", Model.Annee),
+                    new SqlParameter("@Reccurence", Model.Reccurence)
+                };
+
+                var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
+
+                TempData["Modification"] = message;
+                return RedirectToAction("Taches", "ConsulterTache");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+        }
+
+        public ActionResult ModifTache(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+                if (User.Identity.IsAuthenticated)
+                {
+                    try
+                    {
+                        Tache tache = null;
+                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
+                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
+
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+                        while (reader.Read())
+                        {
+                            Object[] values = new Object[reader.FieldCount];
+                            reader.GetValues(values);
+                            tache = ObtenirTache(values);
+                        }
+                        reader.Close();
+
+                        if (tache == null)
+                        {
+                            return HttpNotFound();
+                        }
+
+                        InitialiseViewBags();
+                        InitialiseViewBag(tache);
+                        ViewData["Tache"] = tache;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
+
+                    return View("Modification");
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
+        }
+
         public ActionResult Index(int? id)
         {
             if (id == null)
@@ -106,6 +214,7 @@ namespace InTime.Controllers
                         }
                         reader.Close();
 
+                        InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
                     }
@@ -194,6 +303,17 @@ namespace InTime.Controllers
             };
 
             return tache;
+        }
+
+        private void InitialiseViewBags()
+        {
+            ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
+
+            ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
+
+            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+            ViewBag.Reccurence = new SelectList(Tache.options);
         }
 
         private void InitialiseViewBag(Tache tache)

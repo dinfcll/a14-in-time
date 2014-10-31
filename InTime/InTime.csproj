@@ -323,6 +323,7 @@
     <Content Include="Views\ConsulterTache\Index.cshtml" />
     <Content Include="Views\Calendrier\Index.cshtml" />
     <Content Include="Views\ConsulterTache\Taches.cshtml" />
+    <Content Include="Views\ConsulterTache\Modification.cshtml" />
     <Content Include="Views\Account\Renseignements.cshtml" />
   </ItemGroup>
   <ItemGroup>
