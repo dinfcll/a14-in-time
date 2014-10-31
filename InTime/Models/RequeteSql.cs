@@ -12,7 +12,7 @@ namespace InTime.Models
 {
     public static class RequeteSql
     {
-        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
+        public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {
@@ -27,10 +27,16 @@ namespace InTime.Models
             string SqlrId = "SELECT * FROM UserProfile where UserName=@NomUtilisateur;";
 
             SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            cmdId.Parameters.Add(new SqlParameter("@NomUtilisateur", SqlDbType.VarChar)
-            {  Value = username ?? (object)DBNull.Value });
+            List<SqlParameter> Parametres = new List<SqlParameter>
+            {
+                new SqlParameter("@NomUtilisateur",username)
+            };
 
-            return (Int32)cmdId.ExecuteScalar();
+            if (Parametres != null)
+            {
+                cmdId.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
+            }
+                return (Int32)cmdId.ExecuteScalar();
         }
 
         public static SqlDataReader Select (string Query, List<SqlParameter> Parametres)

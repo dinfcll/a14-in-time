@@ -75,11 +75,8 @@ namespace InTime.Controllers
 
         public ActionResult SuppTache(int? id)
         {
-            SqlConnection con = null;
             try
             {
-                //SqlCommand cmd = new SqlCommand(SqlDelete, con);
-                //cmd.ExecuteNonQuery();
                 string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
                 List<SqlParameter> Parametres = new List<SqlParameter>
                     {
