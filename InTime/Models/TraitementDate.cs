@@ -202,17 +202,17 @@ namespace InTime.Models
                 {
                     while (debut.Month < debutCalendrier.Month)
                     {
-                        debut = debut.AddMonths(+1);
+                        debut = debut.AddMonths(1);
                     }
                     Jour = true;
                 }
                 if (debut.Year < debutCalendrier.Year)
                 {
-                    Jour = true;
                     while (debut.Year < debutCalendrier.Year)
                     {
-                        debut = debut.AddYears(+1);
+                        debut = debut.AddYears(1);
                     }
+                    Jour = true;
                 }
                 Changement = true;
             }
@@ -228,7 +228,6 @@ namespace InTime.Models
                     {
                         debut = debut.AddYears(1);
                     }
-
                     Jour = true;
                 }
             }
