@@ -310,11 +310,10 @@ namespace InTime.Controllers
                 {
                     RegisterModel userProfile = null;
                     string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-
-                    var pId = new SqlParameter("@Id", SqlDbType.Int).Value =
-                        (InTime.Models.Cookie.ObtenirCookie(User.Identity.Name) ?? (object)DBNull.Value);
-                    List<SqlParameter> Parametre = new List<SqlParameter>();
-                    Parametre.Add((SqlParameter)pId);
+                    List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                        };
 
                     SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
                     while (reader.Read())

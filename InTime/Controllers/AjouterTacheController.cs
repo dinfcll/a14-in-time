@@ -168,21 +168,23 @@ namespace InTime.Controllers
                 string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
                     + " VALUES (@UserId,@NomTache,@Lieu,@Description,@Mois,@Jour,@HDebut,@HFin,@mDebut,@mFin,@HRappel,@mRappel,@Annee,@Reccurence);";
 
-                List<SqlParameter> listParametre = new List<SqlParameter>();
-                listParametre.Add(new SqlParameter("@UserId", UserId));
-                listParametre.Add(new SqlParameter("@NomTache", Model.NomTache));
-                listParametre.Add(new SqlParameter("@Lieu", Model.Lieu));
-                listParametre.Add(new SqlParameter("@Description", Model.Description));
-                listParametre.Add(new SqlParameter("@Mois", Model.Mois));
-                listParametre.Add(new SqlParameter("@Jour", Model.Jour));
-                listParametre.Add(new SqlParameter("@HDebut", Model.HDebut));
-                listParametre.Add(new SqlParameter("@HFin", Model.HFin));
-                listParametre.Add(new SqlParameter("@mDebut", Model.mDebut));
-                listParametre.Add(new SqlParameter("@mFin", Model.mFin));
-                listParametre.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
-                listParametre.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
-                listParametre.Add(new SqlParameter("@Annee", Model.Annee));
-                listParametre.Add(new SqlParameter("@Reccurence", Model.Reccurence));
+                List<SqlParameter> listParametre = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@NomTache", Model.NomTache),
+                    new SqlParameter("@Lieu", Model.Lieu),
+                    new SqlParameter("@Description", Model.Description),
+                    new SqlParameter("@Mois", Model.Mois),
+                    new SqlParameter("@Jour", Model.Jour),
+                    new SqlParameter("@HDebut", Model.HDebut),
+                    new SqlParameter("@HFin", Model.HFin),
+                    new SqlParameter("@mDebut", Model.mDebut),
+                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@Annee", Model.Annee),
+                    new SqlParameter("@Reccurence", Model.Reccurence)
+                };
 
                 return RequeteSql.ExecuteQuery(SqlInsert, listParametre);
             }
