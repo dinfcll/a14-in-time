@@ -42,25 +42,24 @@ namespace InTime.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var trancheMin = new List<string>();
-                string[] tempsMin = { "00", "15", "30", "45", "60" };
+                string[] tempsMin = { "00", "15", "30", "45" };
                 trancheMin.AddRange(tempsMin);
                 ViewBag.trancheMin = new SelectList(trancheMin);
 
                 var trancheHeure = new List<string>();
-                for (int i = 1; i < 25; ++i)
+                for (int i = 0; i < 24; ++i)
                 {
                     trancheHeure.Add(Convert.ToString(i));
                 }
                 ViewBag.trancheHeure = new SelectList(trancheHeure);
-
                 ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
-
                 ViewBag.Message = strMessValidation;
+
                 return View();
             }
             else
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.Authentification);
             }
         }
 
@@ -97,12 +96,12 @@ namespace InTime.Controllers
                 if (!ModelState.IsValid)
                 {
                     var trancheMin = new List<string>();
-                    string[] tempsMin = { "00", "15", "30", "45", "60" };
+                    string[] tempsMin = { "00", "15", "30", "45" };
                     trancheMin.AddRange(tempsMin);
                     ViewBag.trancheMin = new SelectList(trancheMin);
 
                     var trancheHeure = new List<string>();
-                    for (int i = 0; i < 25; ++i)
+                    for (int i = 0; i < 24; ++i)
                         trancheHeure.Add(Convert.ToString(i));
                     ViewBag.trancheHeure = new SelectList(trancheHeure);
 
@@ -112,14 +111,21 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    InsertionTache(model);
-                    var message = "Reussi";
+                    var message = "";
+                    if (InsertionTache(model))
+                    {
+                        message = "Reussi";
+                    }
+                    else
+                    {
+                        message = "Erreur";
+                    }
                     return RedirectToAction("Index", "AjouterTache", new { strMessValidation = message });
                 }
             }
             else
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.Authentification);
             }
         }
 
@@ -179,42 +185,40 @@ namespace InTime.Controllers
                 }
             }
         }
-        private SqlConnection ConnexionBD(SqlConnection con)
+
+        private bool InsertionTache(Tache Model)
         {
-            string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-            con = new SqlConnection(cs);
-            con.Open();
-            return con;
-        }
-        private int RechercheID(SqlConnection con)
-        {
-            //Recherche du Id de l'utilisateur connecté
-            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-            SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            int id = (Int32)cmdId.ExecuteScalar();
-            return id;
-        }
-        private void InsertionTache(Tache Model)
-        {
-            SqlConnection con = null;
             try
             {
-                con = ConnexionBD(con);
-                int id = RechercheID(con);
+                ConversionHeures(ref Model);
+                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
 
-                //Requête Insert
-                string SqlInsert = string.Format("INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee) VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
-                    id,Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
-                SqlCommand cmd=new SqlCommand(SqlInsert,con);
-                cmd.ExecuteNonQuery();
+                string SqlInsert = string.Format(@"INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee)"
+                    +"VALUES({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}')",
+                   UserId, RequeteSql.EnleverApostrophe(Model.NomTache), RequeteSql.EnleverApostrophe(Model.Lieu), RequeteSql.EnleverApostrophe(Model.Description),
+                    Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee);
+
+                return RequeteSql.ExecuteQuery(SqlInsert);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return false;
             }
-            finally
+        }
+
+        private void ConversionHeures(ref Tache model)
+        {
+            int HeureDebut = Convert.ToInt32(model.HDebut);
+            int HeureFin = Convert.ToInt32(model.HFin);
+
+            if (HeureDebut >= 0 && HeureDebut < 10)
             {
-                con.Close();
+                model.HDebut = "0" + model.HDebut;
+            }
+
+            if (HeureFin >= 0 && HeureFin < 10)
+            {
+                model.HFin = "0" + model.HFin;
             }
         }
     }

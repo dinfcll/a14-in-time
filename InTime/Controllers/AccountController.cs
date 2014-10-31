@@ -10,13 +10,15 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using InTime.Filters;
 using InTime.Models;
+using System.Globalization;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
 namespace InTime.Controllers
 {
     [Authorize]
     [InitializeSimpleMembership]
-
-    
     public class AccountController : Controller
     {
         //
@@ -40,6 +42,23 @@ namespace InTime.Controllers
 
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
+                SqlConnection con = null;
+                try
+                {
+                    con = RequeteSql.ConnexionBD(con);
+                    int id = RequeteSql.RechercheID(con,model.UserName);
+
+                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally
+                {
+                    if (con != null)
+                        con.Close();
+                }
                 return RedirectToLocal(returnUrl);
             }
 
@@ -56,7 +75,12 @@ namespace InTime.Controllers
         public ActionResult LogOff()
         {
             WebSecurity.Logout();
-
+            if (Request.Cookies[User.Identity.Name] != null)
+            {
+                var cookie = new HttpCookie(User.Identity.Name);
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(cookie);
+            }
             return RedirectToAction("Index", "Home");
         }
 
@@ -82,9 +106,16 @@ namespace InTime.Controllers
                 // Tentative d'inscription de l'utilisateur
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
-                    WebSecurity.Login(model.UserName, model.Password);
-                    return RedirectToAction("Index", "Home");
+                    if (!UtilisateurPresent(model.UserName, model.Password))
+                    {
+                        ModelState.AddModelError("", "Votre nom d'utilisateur ou votre courriel n'est pas unique");
+                    }
+                    else
+                    {
+                        WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
+                        WebSecurity.Login(model.UserName, model.Password);
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 catch (MembershipCreateUserException e)
                 {
@@ -94,6 +125,31 @@ namespace InTime.Controllers
 
             // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
             return View(model);
+        }
+
+        private bool UtilisateurPresent(string NomUtilisateur,string adresseCourriel)
+        {
+            String query = "SELECT * FROM UserProfile";
+            SqlDataReader reader = RequeteSql.Select(query);
+
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                int fieldCounts = reader.GetValues(values);
+                var account = new RegisterModel()
+                {
+                    UserName = Convert.ToString(values[1]),
+                    Email = Convert.ToString(values[4])
+                };
+
+                if (account.UserName.ToLower() == NomUtilisateur.ToLower() ||
+                    account.Email.ToLower() == adresseCourriel.ToLower())
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         //
@@ -110,7 +166,8 @@ namespace InTime.Controllers
             if (ownerAccount == User.Identity.Name)
             {
                 // Utiliser une transaction pour empêcher l'utilisateur de supprimer ses dernières informations d'identification de connexion
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
+                using (var scope = new TransactionScope(TransactionScopeOption.Required,
+                    new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
                     bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
                     if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
@@ -202,130 +259,110 @@ namespace InTime.Controllers
             return View(model);
         }
 
-        //
-        // POST: /Account/ExternalLogin
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        public ActionResult Renseignements()
         {
-            return new ExternalLoginResult(provider, Url.Action("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
-        }
-
-        //
-        // GET: /Account/ExternalLoginCallback
-
-        [AllowAnonymous]
-        public ActionResult ExternalLoginCallback(string returnUrl)
-        {
-            AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication(Url.Action("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
-            if (!result.IsSuccessful)
-            {
-                return RedirectToAction("ExternalLoginFailure");
-            }
-
-            if (OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false))
-            {
-                return RedirectToLocal(returnUrl);
-            }
-
             if (User.Identity.IsAuthenticated)
             {
-                // Si l'utilisateur actuel est connecté, ajoutez le nouveau compte
-                OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, User.Identity.Name);
-                return RedirectToLocal(returnUrl);
+                RegisterModel userProfile = null;
+
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId='{0}'", Cookie.ObtenirCookie(User.Identity.Name));
+                    SqlDataReader reader = RequeteSql.Select(queryString);
+
+                    while (reader.Read())
+                    {
+                        Object[] values = new Object[reader.FieldCount];
+                        int fieldCounts = reader.GetValues(values);
+                        userProfile = new RegisterModel()
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4])
+                        };
+                    }
+                if (userProfile == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewData["utilisateur"] = userProfile;
+
+
+                return View();
             }
             else
             {
-                // L'utilisateur est nouveau. Demander le nom d'appartenance souhaité
-                string loginData = OAuthWebSecurity.SerializeProviderUserId(result.Provider, result.ProviderUserId);
-                ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(result.Provider).DisplayName;
-                ViewBag.ReturnUrl = returnUrl;
-                return View("ExternalLoginConfirmation", new RegisterExternalLoginModel { UserName = result.UserName, ExternalLoginData = loginData });
+                return View(UrlErreur.Authentification);
             }
         }
 
-        //
-        // POST: /Account/ExternalLoginConfirmation
-
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ExternalLoginConfirmation(RegisterExternalLoginModel model, string returnUrl)
+        public ActionResult Renseignements(RegisterModel model)
         {
-            string provider = null;
-            string providerUserId = null;
-
-            if (User.Identity.IsAuthenticated || !OAuthWebSecurity.TryDeserializeProviderUserId(model.ExternalLoginData, out provider, out providerUserId))
+            if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Manage");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Insérer un nouvel utilisateur dans la base de données
-                using (UsersContext db = new UsersContext())
+                ModelState.Remove("Password");
+                ModelState.Remove("Username");
+                if (!ModelState.IsValid)
                 {
-                    UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
-                    if(user.UserName=="")
-                    // Vérifier si l'utilisateur n'existe pas déjà
-                    if (user == null)
+                    RegisterModel userProfile = null;
+                    string queryString = string.Format("SELECT * FROM UserProfile where UserId={0}",
+                        Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name)));
+                    SqlDataReader reader = RequeteSql.Select(queryString);
+                    
+                    while (reader.Read())
                     {
-                        // Insérer le nom dans la table des profils
-                        db.UserProfiles.Add(new UserProfile { UserName = model.UserName });
-                        db.SaveChanges();
+                        Object[] values = new Object[reader.FieldCount];
+                        int fieldCounts = reader.GetValues(values);
+                        userProfile = new RegisterModel()
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4])
+                        };
+                    }
 
-                        OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
-                        OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-                        return RedirectToLocal(returnUrl);
+                    if (userProfile == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    ViewData["utilisateur"] = userProfile;
+                    return View();
+                }
+                else
+                {
+
+                    if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
+                    {
+                        ViewBag.Message = "Reussi";
                     }
                     else
                     {
-                        ModelState.AddModelError("UserName", "Le nom d'utilisateur existe déjà. Entrez un nom d'utilisateur différent.");
+                        ViewBag.Message = "Erreur";
                     }
+
+                    RegisterModel userProfile = new RegisterModel()
+                    {
+                        Nom = model.Nom,
+                        Prenom = model.Prenom,
+                        Email = model.Email
+                    };
+
+                    ViewData["utilisateur"] = userProfile;
+
+                    return View();
                 }
             }
-            ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(provider).DisplayName;
-            ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
-
-        //
-        // GET: /Account/ExternalLoginFailure
-
-        [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
-        {
-            return View();
-        }
-
-        [AllowAnonymous]
-        [ChildActionOnly]
-        public ActionResult ExternalLoginsList(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return PartialView("_ExternalLoginsListPartial", OAuthWebSecurity.RegisteredClientData);
-        }
-
-        [ChildActionOnly]
-        public ActionResult RemoveExternalLogins()
-        {
-            ICollection<OAuthAccount> accounts = OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name);
-            List<ExternalLogin> externalLogins = new List<ExternalLogin>();
-            foreach (OAuthAccount account in accounts)
+            else
             {
-                AuthenticationClientData clientData = OAuthWebSecurity.GetOAuthClientData(account.Provider);
-                externalLogins.Add(new ExternalLogin
-                {
-                    Provider = account.Provider,
-                    ProviderDisplayName = clientData.DisplayName,
-                    ProviderUserId = account.ProviderUserId,
-                });
+                return View(UrlErreur.Authentification);
             }
+        }
 
-            ViewBag.ShowRemoveButton = externalLogins.Count > 1 || OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            return PartialView("_RemoveExternalLoginsPartial", externalLogins);
+        private bool ModifRenseig(RegisterModel model, int UserId)
+        {
+             string SqlUpdate = string.Format(@"UPDATE UserProfile Set Nom = '{0}', Prenom = '{1}', Email = '{2}' WHERE UserId = {3};",
+             RequeteSql.EnleverApostrophe(model.Nom), RequeteSql.EnleverApostrophe(model.Prenom), model.Email, UserId);
+             return RequeteSql.ExecuteQuery(SqlUpdate); 
         }
 
         #region Applications auxiliaires
@@ -346,22 +383,6 @@ namespace InTime.Controllers
             ChangePasswordSuccess,
             SetPasswordSuccess,
             RemoveLoginSuccess,
-        }
-
-        internal class ExternalLoginResult : ActionResult
-        {
-            public ExternalLoginResult(string provider, string returnUrl)
-            {
-                Provider = provider;
-                ReturnUrl = returnUrl;
-            }
-            public string Provider { get; private set; }
-            public string ReturnUrl { get; private set; }
-
-            public override void ExecuteResult(ControllerContext context)
-            {
-                OAuthWebSecurity.RequestAuthentication(Provider, ReturnUrl);
-            }
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)

@@ -10,8 +10,8 @@ namespace InTime.Models
 {
     public class Tache
     {
-        public int IdTache;
-        public int UserId;
+        public int IdTache { get; set; }
+        public int UserId { get; set; }
 
 
         [Display(Name = "Nom de la tâche")]
