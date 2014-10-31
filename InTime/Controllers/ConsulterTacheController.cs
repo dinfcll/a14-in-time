@@ -16,7 +16,6 @@ namespace InTime.Controllers
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-        private InTime.Models.InTime db = new InTime.Models.InTime();
 
         public List<SelectListItem> Les_Mois()
         {
@@ -40,91 +39,56 @@ namespace InTime.Controllers
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
-                {
-            SqlConnection con = null;
-            try
             {
-                var lstTache = new List<Tache>();
-                string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                con = new SqlConnection(cs);
-                con.Open();
-                //Recherche du Id de l'utilisateur connecté
-                string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-                SqlCommand cmdId = new SqlCommand(SqlrId, con);
-                int id = (Int32)cmdId.ExecuteScalar();
-
-                string queryString = string.Format("SELECT * FROM Taches where UserId='{0}'", id);
-                SqlCommand cmdQuery = new SqlCommand(queryString,con);
-                SqlDataReader reader = cmdQuery.ExecuteReader();
-
-                List<IDataRecord> datadb = new List<IDataRecord>();
-                while(reader.Read())
+                try
                 {
-                    datadb.Add((IDataRecord)reader);
-                    Object[] values = new Object[reader.FieldCount];
-                    int fieldCounts = reader.GetValues(values);
-                    var tache = new Tache()
+                    var lstTache = new List<Tache>();
+                    string queryString = "SELECT * FROM Taches where UserId=@Id";
+                    List<SqlParameter> Parametres = new List<SqlParameter>
                     {
-                        IdTache = Convert.ToInt32(values[0]),
-                        UserId = Convert.ToInt32(values[1]),
-                        NomTache = Convert.ToString(values[2]),
-                        Lieu = Convert.ToString(values[3]),
-                        Description = Convert.ToString(values[4]),
-                        Mois = Convert.ToString(values[5]),
-                        Jour = Convert.ToString(values[6]),
-                        HDebut = Convert.ToString(values[7]),
-                        HFin = Convert.ToString(values[8]),
-                        mDebut = Convert.ToString(values[9]),
-                        mFin = Convert.ToString(values[10]),
-                        HRappel = Convert.ToString(values[11]),
-                        mRappel = Convert.ToString(values[12]),
-                        Annee = Convert.ToString(values[13])
+                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                     };
-                    lstTache.Add(tache);
+
+                    SqlDataReader reader = RequeteSql.Select(queryString,Parametres);
+                    while (reader.Read())
+                    {
+                        Object[] values = new Object[reader.FieldCount];
+                        reader.GetValues(values);
+                        var tache = ObtenirTache(values);
+                        lstTache.Add(tache);
+                    }
+                    reader.Close();
+                    ViewBag.Taches = lstTache;
+
+                    return View();
                 }
-                ViewBag.Message = strMessValidation;
-                ViewBag.Taches = lstTache;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally
-            {
-                  con.Close();
-            }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
                 }
+            }
             else
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.Authentification);
             }
         }
-        private SqlConnection ConnexionBD(SqlConnection con)
-        {
-            string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-            con = new SqlConnection(cs);
-            con.Open();
-            return con;
-        }
-        private int RechercheID(SqlConnection con)
-        {
-            //Recherche du Id de l'utilisateur connecté
-            string SqlrId = string.Format("SELECT * FROM UserProfile where UserName='{0}'", User.Identity.Name);
-            SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            int id = (Int32)cmdId.ExecuteScalar();
-            return id;
-        }
+
         public ActionResult SuppTache(int? id)
         {
             SqlConnection con = null;
             try
             {
-                con = ConnexionBD(con);
-                int idUser = RechercheID(con);
-                string SqlDelete = string.Format("DELETE FROM Taches WHERE UserId={0} AND IdTache={1}", idUser, id);
-                SqlCommand cmd = new SqlCommand(SqlDelete, con);
-                cmd.ExecuteNonQuery();
+                //SqlCommand cmd = new SqlCommand(SqlDelete, con);
+                //cmd.ExecuteNonQuery();
+                string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                List<SqlParameter> Parametres = new List<SqlParameter>
+                    {
+                        new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@IdTache",id)
+                    };
+
+                RequeteSql.ExecuteQuery(SqlDelete, Parametres);
+
                 var message = "Reussi";
                 return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
             }
@@ -132,36 +96,48 @@ namespace InTime.Controllers
             {
                 throw new Exception(ex.ToString());
             }
-            finally
-            {
-                con.Close();    
-            }
-            
         }
+
+
         [HttpPost]
         public ActionResult Modification(Tache Model)
         {
-            SqlConnection con = null;
             try
             {
-                con = ConnexionBD(con);
-                int idUser = RechercheID(con);
-                string SqlUpdate = string.Format("UPDATE Taches set NomTache='{0}',Lieu='{1}',Description='{2}',Mois='{3}',Jour='{4}',HDebut='{5}',HFin='{6}',mDebut='{7}',mFin='{8}',HRappel='{9}',mRappel='{10}',Annee='{11}' WHERE UserId={12} AND IdTache={13}",
-                    Model.NomTache, Model.Lieu, Model.Description, Model.Mois, Model.Jour, Model.HDebut, Model.HFin, Model.mDebut, Model.mFin, Model.HRappel, Model.mRappel, Model.Annee, idUser, Model.IdTache);
-                SqlCommand cmd = new SqlCommand(SqlUpdate, con);
-                cmd.ExecuteNonQuery();
-                var message = "Modif";
-                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
+                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,Mois=@Mois,Jour=@Jour,"
+                +"HDebut=@HDebut,HFin=@HFin,mDebut=@mDebut,mFin=@mFin,HRappel=@HRappel,mRappel=@mRappel,Annee=@Annee,"
+                +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                List<SqlParameter> listParametres = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@IdTache", Model.IdTache),
+                    new SqlParameter("@NomTache", Model.NomTache),
+                    new SqlParameter("@Lieu", Model.Lieu),
+                    new SqlParameter("@Desc", Model.Description),
+                    new SqlParameter("@Mois", Model.Mois),
+                    new SqlParameter("@Jour", Model.Jour),
+                    new SqlParameter("@HDebut", Model.HDebut),
+                    new SqlParameter("@HFin", Model.HFin),
+                    new SqlParameter("@mDebut", Model.mDebut),
+                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@Annee", Model.Annee),
+                    new SqlParameter("@Reccurence", Model.Reccurence)
+                };
+
+                var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
+
+                TempData["Modification"] = message;
+                return RedirectToAction("Taches", "ConsulterTache");
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }
-            finally
-            {
-                con.Close();
-            }
         }
+
         public ActionResult ModifTache(int? id)
         {
             if (id == null)
@@ -171,115 +147,44 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    SqlConnection con = null;
-                    Tache tache = null;
                     try
                     {
-                        var trancheMin = new List<string>();
-                        string[] tempsMin = { "00", "15", "30", "45", "60" };
-                        trancheMin.AddRange(tempsMin);
-                        ViewBag.trancheMin = new SelectList(trancheMin);
+                        Tache tache = null;
+                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
+                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
 
-                        var trancheHeure = new List<string>();
-                        for (int i = 0; i < 25; ++i)
-                            trancheHeure.Add(Convert.ToString(i));
-                        ViewBag.trancheHeure = new SelectList(trancheHeure);
-
-                        ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
-
-                        string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                        con = new SqlConnection(cs);
-                        con.Open();
-
-                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
-                        SqlCommand cmdQuery = new SqlCommand(queryString, con);
-                        SqlDataReader reader = cmdQuery.ExecuteReader();
-
-                        List<IDataRecord> datadb = new List<IDataRecord>();
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
                         while (reader.Read())
                         {
-                            datadb.Add((IDataRecord)reader);
                             Object[] values = new Object[reader.FieldCount];
-                            int fieldCounts = reader.GetValues(values);
-                            tache = new Tache()
-                            {
-                                IdTache = Convert.ToInt32(values[0]),
-                                UserId = Convert.ToInt32(values[1]),
-                                NomTache = Convert.ToString(values[2]),
-                                Lieu = Convert.ToString(values[3]),
-                                Description = Convert.ToString(values[4]),
-                                Mois = Convert.ToString(values[5]),
-                                Jour = Convert.ToString(values[6]),
-                                HDebut = Convert.ToString(values[7]),
-                                HFin = Convert.ToString(values[8]),
-                                mDebut = Convert.ToString(values[9]),
-                                mFin = Convert.ToString(values[10]),
-                                HRappel = Convert.ToString(values[11]),
-                                mRappel = Convert.ToString(values[12]),
-                                Annee = Convert.ToString(values[13])
-                            };
+                            reader.GetValues(values);
+                            tache = ObtenirTache(values);
+                        }
+                        reader.Close();
+
+                        if (tache == null)
+                        {
+                            return HttpNotFound();
                         }
 
+                        InitialiseViewBags();
+                        InitialiseViewBag(tache);
+                        ViewData["Tache"] = tache;
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.ToString());
                     }
-                    finally
-                    {
-                        con.Close();
-                    }
 
-                    if (tache == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    if (tache.HFin == "24")
-                        tache.HFin = "0";
-
-                    if (tache.HDebut == "24")
-                        tache.HFin = "0";
-
-                    DateTime DateDebut = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                        );
-                    ViewBag.DateDebut = DateDebut.ToString(culture);
-
-                    DateTime DateFin = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                        );
-                    ViewBag.DateFin = DateFin.ToString(culture);
-
-                    TimeSpan tsRappel = new TimeSpan(
-                        Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
-                        );
-                    DateTime DateRappel = DateDebut.Subtract(tsRappel);
-
-
-                    if (DateRappel == DateDebut)
-                    {
-                        ViewBag.DateRappel = "Aucun";
-                    }
-                    else
-                    {
-                        ViewBag.DateRappel = TempsRappel(DateRappel);
-                    }
-                    ViewData["Tache"] = tache;
-
-                    return View("~/Views/ConsulterTache/Modification.cshtml");
+                    return View("Modification");
                 }
                 else
                 {
-                    return View("~/Views/ErreurAuthentification.cshtml");
+                    return View(UrlErreur.Authentification);
                 }
-        }
-
-        public ActionResult Test()
-        {
-            return View();
         }
 
         public ActionResult Index(int? id)
@@ -291,98 +196,38 @@ namespace InTime.Controllers
             else
                 if (User.Identity.IsAuthenticated)
                 {
-                    SqlConnection con = null;
-                    Tache tache = null;
                     try
                     {
-                       
-                        string cs = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
-                        con = new SqlConnection(cs);
-                        con.Open();
+                        Tache tache = null;
+                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
+                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
 
-                        string queryString = string.Format("SELECT * FROM Taches where IdTache='{0}'", id);
-                        SqlCommand cmdQuery = new SqlCommand(queryString, con);
-                        SqlDataReader reader = cmdQuery.ExecuteReader();
-
-                        List<IDataRecord> datadb = new List<IDataRecord>();
+                        SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
                         while (reader.Read())
                         {
-                            datadb.Add((IDataRecord)reader);
                             Object[] values = new Object[reader.FieldCount];
-                            int fieldCounts = reader.GetValues(values);
-                            tache = new Tache()
-                            {
-                                IdTache = Convert.ToInt32(values[0]),
-                                UserId = Convert.ToInt32(values[1]),
-                                NomTache = Convert.ToString(values[2]),
-                                Lieu = Convert.ToString(values[3]),
-                                Description = Convert.ToString(values[4]),
-                                Mois = Convert.ToString(values[5]),
-                                Jour = Convert.ToString(values[6]),
-                                HDebut = Convert.ToString(values[7]),
-                                HFin = Convert.ToString(values[8]),
-                                mDebut = Convert.ToString(values[9]),
-                                mFin = Convert.ToString(values[10]),
-                                HRappel = Convert.ToString(values[11]),
-                                mRappel = Convert.ToString(values[12]),
-                                Annee = Convert.ToString(values[13])
-                            };
+                            reader.GetValues(values);
+                            tache = ObtenirTache(values);
                         }
+                        reader.Close();
 
+                        InitialiseViewBags();
+                        InitialiseViewBag(tache);
+                        ViewData["Tache"] = tache;
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.ToString());
                     }
-                    finally
-                    {
-                        con.Close();
-                    }
-
-                    if (tache == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    if (tache.HFin == "24")
-                        tache.HFin = "0";
-
-                    if (tache.HDebut == "24")
-                        tache.HFin = "0";
-
-                    DateTime DateDebut = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                        );
-                    ViewBag.DateDebut = DateDebut.ToString(culture);
-
-                    DateTime DateFin = new DateTime(
-                        Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                        Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                        );
-                    ViewBag.DateFin = DateFin.ToString(culture);
-
-                    TimeSpan tsRappel = new TimeSpan(
-                        Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
-                        );
-                    DateTime DateRappel = DateDebut.Subtract(tsRappel);
-
-
-                    if (DateRappel == DateDebut)
-                    {
-                        ViewBag.DateRappel = "Aucun";
-                    }
-                    else
-                    {
-                        ViewBag.DateRappel = TempsRappel(DateRappel);
-                    }
-                    ViewData["Tache"] = tache;
 
                     return View();
                 }
                 else
                 {
-                    return View("~/Views/ErreurAuthentification.cshtml");
+                    return View(UrlErreur.Authentification);
                 }
         }
 
@@ -432,6 +277,74 @@ namespace InTime.Controllers
                 }
 
                 return strPhrase + "avant le rappel.";
+            }
+        }
+
+
+        private Tache ObtenirTache(Object[] values)
+        {
+            var tache = new Tache()
+            {
+                IdTache = Convert.ToInt32(values[0]),
+                UserId = Convert.ToInt32(values[1]),
+                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
+                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
+                Mois = Convert.ToString(values[5]),
+                Jour = Convert.ToString(values[6]),
+                HDebut = Convert.ToString(values[7]),
+                HFin = Convert.ToString(values[8]),
+                mDebut = Convert.ToString(values[9]),
+                mFin = Convert.ToString(values[10]),
+                HRappel = Convert.ToString(values[11]),
+                mRappel = Convert.ToString(values[12]),
+                Annee = Convert.ToString(values[13]),
+                Reccurence = Convert.ToString(values[14])
+            };
+
+            return tache;
+        }
+
+        private void InitialiseViewBags()
+        {
+            ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
+
+            ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
+
+            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+
+            ViewBag.Reccurence = new SelectList(Tache.options);
+        }
+
+        private void InitialiseViewBag(Tache tache)
+        {
+            DateTime DateDebut = new DateTime(
+                       Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                       Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
+                       );
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+
+            DateTime DateFin = new DateTime(
+                Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
+                Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
+                );
+            ViewBag.DateFin = DateFin.ToString(culture);
+
+            tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+            tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                );
+            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+
+
+            if (DateRappel == DateDebut)
+            {
+                ViewBag.DateRappel = "Aucun";
+            }
+            else
+            {
+                ViewBag.DateRappel = TempsRappel(DateRappel);
             }
         }
     }
