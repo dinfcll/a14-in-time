@@ -168,7 +168,7 @@ namespace InTime.Controllers
                 string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,Mois,Jour,HDebut,HFin,mDebut,mFin,HRappel,mRappel,Annee,Reccurence)"
                     + " VALUES (@UserId,@NomTache,@Lieu,@Description,@Mois,@Jour,@HDebut,@HFin,@mDebut,@mFin,@HRappel,@mRappel,@Annee,@Reccurence);";
 
-                List<SqlParameter> listParametre = new List<SqlParameter>
+                List<SqlParameter> listParametres = new List<SqlParameter>
                 {
                     new SqlParameter("@UserId", UserId),
                     new SqlParameter("@NomTache", Model.NomTache),
