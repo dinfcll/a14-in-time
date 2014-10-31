@@ -23,7 +23,6 @@ namespace InTime.Controllers
             }
         }
 
-        //1393650000.0   1410238800.0
         public JsonResult Taches(double start, double end)
         {
             var lstTache = new List<Tache>();
@@ -58,7 +57,34 @@ namespace InTime.Controllers
 
                 if (tache.Reccurence != "Aucune")
                 {
-                    List<string[]> result = TraitementDate.ChaqueJour(tache, end);
+                    List<string[]> result = null;
+                    switch(tache.Reccurence)
+                    {
+                        case "À chaque jour":
+                            result = TraitementDate.ChaqueJour(tache, end);
+                            break;
+                        case "Chaque semaine":
+                            result = TraitementDate.ChaqueSemaine(tache, end);
+                            break;
+                        case "Aux deux semaines":
+                            result = TraitementDate.DeuxSemaine(tache, end);
+                            break;
+                        case "Aux trois semaines":
+                            result = TraitementDate.TroisSemaine(tache, end);
+                            break;
+                        case "À chaque mois":
+                            result = TraitementDate.ChaqueMois(tache, end);
+                            break;
+                        case "Aux trois mois":
+                            result = TraitementDate.TroisMois(tache, end);
+                            break;
+                        case "Aux quatre mois":
+                            result = TraitementDate.QuatreMois(tache, end);
+                            break;
+                        case "À chaque année":
+                            result = TraitementDate.ChaqueAnnee(tache, end);
+                            break;
+                    }
 
                     if (result != null)
                     {

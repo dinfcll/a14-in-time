@@ -46,9 +46,9 @@ namespace InTime.Controllers
                 try
                 {
                     con = RequeteSql.ConnexionBD(con);
-                    int id = RequeteSql.RechercheID(con,model.UserName);
+                    int id = RequeteSql.RechercheID(con, model.UserName);
 
-                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(1,0,0));
+                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(1, 0, 0));
                 }
                 catch (Exception ex)
                 {
@@ -127,7 +127,7 @@ namespace InTime.Controllers
             return View(model);
         }
 
-        private bool UtilisateurPresent(string NomUtilisateur,string adresseCourriel)
+        private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
         {
             String query = "SELECT * FROM UserProfile";
             SqlDataReader reader = RequeteSql.Select(query, null);
@@ -265,25 +265,25 @@ namespace InTime.Controllers
             {
                 RegisterModel userProfile = null;
 
-                    string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+                string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
 
-                var pId = new SqlParameter("@Id",SqlDbType.Int).Value =
-                    (InTime.Models.Cookie.ObtenirCookie(User.Identity.Name) ?? (object)DBNull.Value);
-                List<SqlParameter> Parametre = new List<SqlParameter>();
-                Parametre.Add((SqlParameter)pId);
-                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
-
-                    while (reader.Read())
-                    {
-                        Object[] values = new Object[reader.FieldCount];
-                        int fieldCounts = reader.GetValues(values);
-                        userProfile = new RegisterModel()
+                List<SqlParameter> Parametre = new List<SqlParameter>
                         {
-                            Nom = Convert.ToString(values[2]),
-                            Prenom = Convert.ToString(values[3]),
-                            Email = Convert.ToString(values[4])
+                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                         };
-                    }
+                SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+
+                while (reader.Read())
+                {
+                    Object[] values = new Object[reader.FieldCount];
+                    int fieldCounts = reader.GetValues(values);
+                    userProfile = new RegisterModel()
+                    {
+                        Nom = Convert.ToString(values[2]),
+                        Prenom = Convert.ToString(values[3]),
+                        Email = Convert.ToString(values[4])
+                    };
+                }
                 if (userProfile == null)
                 {
                     return HttpNotFound();
@@ -311,12 +311,12 @@ namespace InTime.Controllers
                     RegisterModel userProfile = null;
                     string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
 
-                    var pId = new SqlParameter("@Id",SqlDbType.Int).Value = 
+                    var pId = new SqlParameter("@Id", SqlDbType.Int).Value =
                         (InTime.Models.Cookie.ObtenirCookie(User.Identity.Name) ?? (object)DBNull.Value);
                     List<SqlParameter> Parametre = new List<SqlParameter>();
                     Parametre.Add((SqlParameter)pId);
 
-                    SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
+                    SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -369,15 +369,15 @@ namespace InTime.Controllers
 
         private bool ModifRenseig(RegisterModel model, int UserId)
         {
-             string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email WHERE UserId = @Id;";
-             
-             List<SqlParameter> Parametre = new List<SqlParameter>();
-            Parametre.Add(new SqlParameter("@Nom",model.Nom));
-            Parametre.Add(new SqlParameter("@Prenom",model.Prenom));
-            Parametre.Add(new SqlParameter("@Email",model.Email));
-            Parametre.Add(new SqlParameter("@Id",UserId));
-             
-            return RequeteSql.ExecuteQuery(SqlUpdate,Parametre); 
+            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email WHERE UserId = @Id;";
+
+            List<SqlParameter> Parametre = new List<SqlParameter>();
+            Parametre.Add(new SqlParameter("@Nom", model.Nom));
+            Parametre.Add(new SqlParameter("@Prenom", model.Prenom));
+            Parametre.Add(new SqlParameter("@Email", model.Email));
+            Parametre.Add(new SqlParameter("@Id", UserId));
+
+            return RequeteSql.ExecuteQuery(SqlUpdate, Parametre);
         }
 
         #region Applications auxiliaires
