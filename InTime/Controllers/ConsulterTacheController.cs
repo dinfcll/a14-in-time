@@ -10,7 +10,6 @@ using InTime.Models;
 using System.Globalization;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Data.SqlClient;
 
 namespace InTime.Controllers
 {

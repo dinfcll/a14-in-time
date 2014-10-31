@@ -186,7 +186,7 @@ namespace InTime.Controllers
                     new SqlParameter("@Reccurence", Model.Reccurence)
                 };
 
-                return RequeteSql.ExecuteQuery(SqlInsert, listParametre);
+                return RequeteSql.ExecuteQuery(SqlInsert, listParametres);
             }
             catch (Exception ex)
             {

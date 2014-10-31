@@ -44,13 +44,10 @@ namespace InTime.Controllers
                 SqlConnection con = null;
                 try
                 {
-                    int Minute = 0, Seconde = 0;
-                    int Heure = 1;
-
                     con = RequeteSql.ConnexionBD(con);
                     int id = RequeteSql.RechercheID(con, model.UserName);
 
-                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), new TimeSpan(Heure, Minute, Seconde));
+                    Cookie.CreationCookie(model.UserName, Convert.ToString(id), InTime.Models.Cookie.Heure);
                 }
                 catch (Exception ex)
                 {

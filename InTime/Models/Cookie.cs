@@ -8,6 +8,7 @@ namespace InTime.Models
     {
         public static void CreationCookie(string Utilisateur, string Valeur, TimeSpan TempsSurvie)
         {
+            
             //On rajoute une valeur a la fin, car MVC cree un cookie au nom de l'utilisateur.
             HttpCookie Cookie = new HttpCookie(Utilisateur+"1", Valeur);
 
@@ -22,6 +23,14 @@ namespace InTime.Models
             {
                 Cookie.Expires = DateTime.Now.Add(TempsSurvie);
                 HttpContext.Current.Response.Cookies.Add(Cookie);
+            }
+        }
+
+        public static TimeSpan Heure
+        {
+            get
+            {
+                return new TimeSpan(1, 0, 0);
             }
         }
 
