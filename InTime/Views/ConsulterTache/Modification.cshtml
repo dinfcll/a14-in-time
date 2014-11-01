@@ -23,15 +23,6 @@
         var tache = (InTime.Models.Tache)ViewData["Tache"];
     }
 
-    <script>
-        $(window).load(function () {
-            $(function () {
-                $("[id^=Consultation").attr('readonly', 'true');
-                $("[id^=Consultation").css('background-color', '#DEDEDE');
-            });
-        });
-    </script>
-
 </head>
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 @{
@@ -49,12 +40,11 @@
     <div id="rightcolumn">
         <h2>Modifiez votre tâche</h2>
         Nom de la tâche : <br />
-        @Html.TextBoxFor(model => model.NomTache)
-        @Html.ValidationMessageFor(model => model.NomTache, "*")
+        @Html.TextBox("Nom", tache.NomTache, new {id = "Consultation" })
         <br />
-        Nom du lieu : <br />
-        @Html.TextBoxFor(model => model.Lieu)
-        @Html.ValidationMessageFor(model => model.Lieu, "*")
+        Nom du lieu :
+        <br />
+        @Html.TextBox("Lieu", tache.Lieu, new {id = "Consultation" })
         <br />
         Date : <br />
         Année :
@@ -81,12 +71,12 @@
                     JourDuMois();
                 }
             });
+            $(selector, context).spinner("action");;
         </script>
-
         Mois :
         @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
         <script type="text/javascript">
-            document.getElementById("Mois").selectedIndex = 0
+            document.getElementById("Mois").selectedIndex = @tache.Mois
         </script>
         @Html.ValidationMessage("Mois", "*")<br />
            
@@ -123,7 +113,7 @@
         Min
         <br />
         Description de la tâche : <br />
-        @Html.TextAreaFor(model => model.Description, new { style = "width:95%;" })
+        @Html.TextArea("Desc", tache.Description, new {style = "width:95%;", id = "Consultation" })
         <br />
         @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache,@type="Hidden" })
         <script>
