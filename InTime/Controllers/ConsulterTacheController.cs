@@ -170,6 +170,7 @@ namespace InTime.Controllers
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
+                        IdRecurrence(tache);
                     }
                     catch (Exception ex)
                     {
@@ -183,7 +184,39 @@ namespace InTime.Controllers
                     return View(UrlErreur.Authentification);
                 }
         }
-
+        private void IdRecurrence(Tache tache)
+        {
+            switch (tache.Reccurence)
+            {
+                case "Aucune":
+                    tache.Reccurence = "0";
+                    break;
+                case "À chaque jour":
+                    tache.Reccurence = "1";
+                    break;
+                case "Chaque semaine":
+                    tache.Reccurence = "2";
+                    break;
+                case "Aux deux semaines":
+                    tache.Reccurence = "3";
+                    break;
+                case "Aux trois semaines":
+                    tache.Reccurence = "4";
+                    break;
+                case "À chaque mois":
+                    tache.Reccurence = "5";
+                    break;
+                case "Aux trois mois":
+                    tache.Reccurence = "6";
+                    break;
+                case "Aux quatre mois":
+                    tache.Reccurence = "7";
+                    break;
+                case "À chaque année":
+                    tache.Reccurence = "8";
+                    break;
+            }
+        }
         public ActionResult Index(int? id)
         {
             if (id == null)

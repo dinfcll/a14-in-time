@@ -87,6 +87,10 @@
 
         Récurrence de la tache :<br />
         @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+        <script type="text/javascript">
+            document.getElementById("Reccurence").selectedIndex = @tache.Reccurence
+        </script>
+
         <br />
 
         Heure : <br />
