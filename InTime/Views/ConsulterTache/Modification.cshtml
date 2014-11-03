@@ -49,14 +49,13 @@
         Date : <br />
         Année :
         <input readonly id="Annee" name="Annee" width="20">
-
         <script>
             var annee = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
             $("#Annee").spinner();
             $("#Annee").spinner("option", "culture", "fr");
             $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
             $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
-            $("#Annee").spinner("value", annee);
+            $("#Annee").spinner("value", parseInt(@tache.Annee));
             $("#Annee").width(50);
 
             $('.ui-spinner-up').click(function () {
@@ -95,9 +94,17 @@
 
         Heure : <br />
         Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
+        <script type="text/javascript">
+            document.getElementById("HDebut").selectedIndex = @tache.HDebut
+        </script>
+
         @Html.ValidationMessage("dbTacheHeure", "*")
         H
         @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
+        <script type="text/javascript">
+            document.getElementById("mDebut").selectedIndex = @tache.mDebut
+        </script>
+
         @Html.ValidationMessage("dbTacheMinute", "*")
         Min
         <br />

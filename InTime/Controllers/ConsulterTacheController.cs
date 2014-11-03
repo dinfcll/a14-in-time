@@ -16,7 +16,6 @@ namespace InTime.Controllers
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-
         public List<SelectListItem> Les_Mois()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
@@ -35,7 +34,7 @@ namespace InTime.Controllers
             return mois;
         }
 
-
+        //int[] m_Tabmin = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -216,6 +215,10 @@ namespace InTime.Controllers
                     tache.Reccurence = "8";
                     break;
             }
+        }
+        private void IdHeure(Tache tache)
+        {
+            
         }
         public ActionResult Index(int? id)
         {
