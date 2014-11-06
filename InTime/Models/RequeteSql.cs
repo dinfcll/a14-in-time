@@ -12,7 +12,7 @@ namespace InTime.Models
 {
     public static class RequeteSql
     {
-        public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {

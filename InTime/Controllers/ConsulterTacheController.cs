@@ -102,8 +102,10 @@ namespace InTime.Controllers
             try
             {
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,Mois=@Mois,Jour=@Jour,"
-                +"HDebut=@HDebut,HFin=@HFin,mDebut=@mDebut,mFin=@mFin,HRappel=@HRappel,mRappel=@mRappel,Annee=@Annee,"
+                double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
+                double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,"
+                +"DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
                 +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
@@ -112,15 +114,10 @@ namespace InTime.Controllers
                     new SqlParameter("@NomTache", Model.NomTache),
                     new SqlParameter("@Lieu", Model.Lieu),
                     new SqlParameter("@Desc", Model.Description),
-                    new SqlParameter("@Mois", Model.Mois),
-                    new SqlParameter("@Jour", Model.Jour),
-                    new SqlParameter("@HDebut", Model.HDebut),
-                    new SqlParameter("@HFin", Model.HFin),
-                    new SqlParameter("@mDebut", Model.mDebut),
-                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@DateDebut",unixDebut),
+                    new SqlParameter("@DateFin",unixFin),
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Annee", Model.Annee),
                     new SqlParameter("@Reccurence", Model.Reccurence)
                 };
 
@@ -284,19 +281,14 @@ namespace InTime.Controllers
             {
                 IdTache = Convert.ToInt32(values[0]),
                 UserId = Convert.ToInt32(values[1]),
-                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
-                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
-                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
-                Mois = Convert.ToString(values[5]),
-                Jour = Convert.ToString(values[6]),
-                HDebut = Convert.ToString(values[7]),
-                HFin = Convert.ToString(values[8]),
-                mDebut = Convert.ToString(values[9]),
-                mFin = Convert.ToString(values[10]),
-                HRappel = Convert.ToString(values[11]),
-                mRappel = Convert.ToString(values[12]),
-                Annee = Convert.ToString(values[13]),
-                Reccurence = Convert.ToString(values[14])
+                NomTache = Convert.ToString(values[2]),
+                Lieu = Convert.ToString(values[3]),
+                Description = Convert.ToString(values[4]),
+                unixDebut = Convert.ToDouble(values[5]),
+                unixFin = Convert.ToDouble(values[6]),
+                HRappel = Convert.ToString(values[7]),
+                mRappel = Convert.ToString(values[8]),
+                Reccurence = Convert.ToString(values[9])
             };
 
             return tache;
@@ -315,17 +307,11 @@ namespace InTime.Controllers
 
         private void InitialiseViewBag(Tache tache)
         {
-            DateTime DateDebut = new DateTime(
-                       Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                       Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                       );
-            ViewBag.DateDebut = DateDebut.ToString(culture);
+            DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+            string Test = DateDebut.ToString(culture);
 
-            DateTime DateFin = new DateTime(
-                Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                );
-            ViewBag.DateFin = DateFin.ToString(culture);
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+            ViewBag.DateFin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin).ToString(culture);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
