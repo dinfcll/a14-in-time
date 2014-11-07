@@ -43,6 +43,11 @@
 </head>
 
 <body>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+        <li class="active">Calendrier</li>
+    </ol>
     <div id='calendar'></div>
 </body>
 

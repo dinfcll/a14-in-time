@@ -19,6 +19,11 @@
 
 
 <body>
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+        <li class="active">Modifier vos renseignements personnels</li>
+    </ol>
     <h2>Vos renseignements personnels</h2>
 
     @{

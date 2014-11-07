@@ -21,6 +21,12 @@
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
     }
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+        <li>@Html.ActionLink("Consulter tâches", "Taches", "ConsulterTache")</li>
+        <li class="active">Modifier</li>
+    </ol>
 @using (Html.BeginForm("Modification","ConsulterTache"))
 {
     <div id="rightcolumn">
