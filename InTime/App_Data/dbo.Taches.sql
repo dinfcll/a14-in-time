@@ -4,11 +4,11 @@
     [NomTache]    VARCHAR (50)  NOT NULL,
     [Lieu]        VARCHAR (50)  NOT NULL,
     [Description] VARCHAR (MAX) NULL,
-	[DateDebut]   NUMERIC(10,0) NOT NULL,
+    [DateDebut]   NUMERIC(10,0) NOT NULL,
     [DateFin]     NUMERIC(10,0) NOT NULL,
     [HRappel]     VARCHAR (2)   NULL,
     [mRappel]     VARCHAR (2)   NULL,
-	[Reccurence]  NUMERIC (2,0)  NULL,  
+    [Reccurence]  NUMERIC (2,0)  NULL,  
     PRIMARY KEY CLUSTERED ([IdTache] ASC),
     CONSTRAINT [FK_UserProfile_Taches] FOREIGN KEY ([UserId]) REFERENCES [dbo].[UserProfile] ([UserId])
 );
