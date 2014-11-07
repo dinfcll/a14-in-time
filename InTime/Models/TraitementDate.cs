@@ -8,6 +8,10 @@ namespace InTime.Models
 {
     public static class TraitementDate
     {
+        public enum Reccurence { 
+            Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois,QuatreMois,ChaqueAnnee
+        }
+
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
             return (dateTime - new DateTime(1970, 1, 1)).TotalSeconds;

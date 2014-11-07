@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
-
+using System.Web.Mvc;
 
 namespace InTime.Models
 {
@@ -31,19 +31,46 @@ namespace InTime.Models
             }
         }
 
-        public static List<string> options
+        public static List<SelectListItem> options
         {
             get
             {
-                return new List<string>
+                return new List<SelectListItem>
                 {
-                                   "Aucune","À chaque jour", "Chaque semaine", "Aux deux semaines", "Aux trois semaines",
-                                   "À chaque mois", "Aux trois mois", "Aux quatre mois", "À chaque année"
-                                  };
+                    new SelectListItem { Text = "Aucune", Value = "0"},
+                    new SelectListItem { Text = "À chaque jour", Value = "1"},
+                    new SelectListItem { Text = "Chaque semaine", Value = "2"},
+                    new SelectListItem { Text = "Aux deux semaines", Value = "3"},
+                    new SelectListItem { Text = "Aux trois semaines", Value = "4"},
+                    new SelectListItem { Text = "À chaque mois", Value = "5"},
+                    new SelectListItem { Text = "Aux trois mois", Value = "6"},
+                    new SelectListItem { Text = "Aux quatre mois", Value = "7"},
+                    new SelectListItem { Text = "À chaque année", Value = "8"}
+                };
             }
         }
 
-
+        public static List<SelectListItem> les_mois
+        {
+            get
+            {
+                return new List<SelectListItem> 
+                {
+                    new SelectListItem { Text = "Janvier", Value = "1" },
+                    new SelectListItem { Text = "Février", Value = "2" },
+                    new SelectListItem { Text = "Mars", Value = "3" },
+                    new SelectListItem { Text = "Avril", Value = "4" },
+                    new SelectListItem { Text = "Mai", Value = "5" },
+                    new SelectListItem { Text = "Juin", Value = "6" },
+                    new SelectListItem { Text = "Juillet", Value = "7" },
+                    new SelectListItem { Text = "Aout", Value = "8" },
+                    new SelectListItem { Text = "Septembre", Value = "9" },
+                    new SelectListItem { Text = "Octobre", Value = "10" },
+                    new SelectListItem { Text = "Novembre", Value = "11" },
+                    new SelectListItem { Text = "Décembre", Value = "12" }
+                };
+            }
+        }
 
         public int IdTache { get; set; }
         public int UserId { get; set; }

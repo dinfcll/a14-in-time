@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
 
+
 namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
@@ -17,29 +18,8 @@ namespace InTime.Controllers
             return Convert.ToInt32(nombre);
         }
 
-        public List<SelectListItem> Les_Mois()
-        {
-            List<SelectListItem> mois = new List<SelectListItem>();
-            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
-            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
-            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
-            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
-            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
-            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
-            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
-            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
-            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
-            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
-            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
-            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
-
-            return mois;
-        }
-
-
         public ActionResult Index()
         {
-
             if (User.Identity.IsAuthenticated)
             {
                 InitialiseViewBags();
@@ -70,7 +50,6 @@ namespace InTime.Controllers
             }
             else
             {
-
                 return Json(null, JsonRequestBehavior.DenyGet);
             }
         }
@@ -196,9 +175,9 @@ namespace InTime.Controllers
 
             ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
 
-            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+            ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options);
+            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
         }
     }
 }

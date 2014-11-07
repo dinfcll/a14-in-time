@@ -53,34 +53,34 @@ namespace InTime.Controllers
             UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
             foreach (Tache tache in lstTache)
             {
-
-                if (tache.Reccurence != "Aucune")
+                if (Convert.ToInt32(tache.Reccurence) != (int)TraitementDate.Reccurence.Aucune)
                 {
                     List<string[]> result = null;
-                    switch(tache.Reccurence)
+
+                    switch(Convert.ToInt32(tache.Reccurence))
                     {
-                        case "À chaque jour":
+                        case (int)TraitementDate.Reccurence.ChaqueJour:
                             result = TraitementDate.ChaqueJour(tache, end);
                             break;
-                        case "Chaque semaine":
+                        case (int)TraitementDate.Reccurence.ChaqueSemaine:
                             result = TraitementDate.ChaqueSemaine(tache, end);
                             break;
-                        case "Aux deux semaines":
+                        case (int)TraitementDate.Reccurence.DeuxSemaines:
                             result = TraitementDate.DeuxSemaine(tache, end);
                             break;
-                        case "Aux trois semaines":
+                        case (int)TraitementDate.Reccurence.TroisSemaine:
                             result = TraitementDate.TroisSemaine(tache, end);
                             break;
-                        case "À chaque mois":
+                        case (int)TraitementDate.Reccurence.ChaqueMois:
                             result = TraitementDate.ChaqueMois(tache, end);
                             break;
-                        case "Aux trois mois":
+                        case (int)TraitementDate.Reccurence.TroisMois:
                             result = TraitementDate.TroisMois(tache, end);
                             break;
-                        case "Aux quatre mois":
+                        case (int)TraitementDate.Reccurence.QuatreMois:
                             result = TraitementDate.QuatreMois(tache, end);
                             break;
-                        case "À chaque année":
+                        case (int)TraitementDate.Reccurence.ChaqueAnnee:
                             result = TraitementDate.ChaqueAnnee(tache, end);
                             break;
                     }
@@ -117,7 +117,7 @@ namespace InTime.Controllers
             var tache = new Tache()
             {
                 IdTache = Convert.ToInt32(values[0]),
-                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
+                NomTache = Convert.ToString(values[2]),
                 Mois = Convert.ToString(values[5]),
                 Jour = Convert.ToString(values[6]),
                 HDebut = Convert.ToString(values[7]),

@@ -11,30 +11,12 @@ using System.Globalization;
 using System.Data.SqlClient;
 using System.Configuration;
 
+
 namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-
-        public List<SelectListItem> Les_Mois()
-        {
-            List<SelectListItem> mois = new List<SelectListItem>();
-            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
-            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
-            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
-            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
-            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
-            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
-            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
-            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
-            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
-            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
-            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
-            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
-            return mois;
-        }
-
 
         public ActionResult Taches(string strMessValidation)
         {
@@ -288,7 +270,7 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Reccurence = Convert.ToString(values[9])
+                Reccurence = Convert.ToInt32(values[9])
             };
 
             return tache;
@@ -300,7 +282,7 @@ namespace InTime.Controllers
 
             ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
 
-            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+            ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
             ViewBag.Reccurence = new SelectList(Tache.options);
         }
