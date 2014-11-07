@@ -16,7 +16,6 @@ namespace InTime.Controllers
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-
         public List<SelectListItem> Les_Mois()
         {
             List<SelectListItem> mois = new List<SelectListItem>();
@@ -34,8 +33,6 @@ namespace InTime.Controllers
             mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
             return mois;
         }
-
-
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -170,6 +167,8 @@ namespace InTime.Controllers
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
+                        IdRecurrence(tache);
+                        IdMin(tache);
                     }
                     catch (Exception ex)
                     {
@@ -183,7 +182,89 @@ namespace InTime.Controllers
                     return View(UrlErreur.Authentification);
                 }
         }
+        private void IdRecurrence(Tache tache)
+        {
+            switch (tache.Reccurence)
+            {
+                case "Aucune":
+                    tache.Reccurence = "0";
+                    break;
+                case "À chaque jour":
+                    tache.Reccurence = "1";
+                    break;
+                case "Chaque semaine":
+                    tache.Reccurence = "2";
+                    break;
+                case "Aux deux semaines":
+                    tache.Reccurence = "3";
+                    break;
+                case "Aux trois semaines":
+                    tache.Reccurence = "4";
+                    break;
+                case "À chaque mois":
+                    tache.Reccurence = "5";
+                    break;
+                case "Aux trois mois":
+                    tache.Reccurence = "6";
+                    break;
+                case "Aux quatre mois":
+                    tache.Reccurence = "7";
+                    break;
+                case "À chaque année":
+                    tache.Reccurence = "8";
+                    break;
+            }
+        }
+        private void IdMin(Tache tache)
+        {
+            switch (tache.mDebut)
+            {
+                case "00":
+                    tache.mDebut = "1";
+                    break;
+                case "15":
+                    tache.mDebut = "2";
+                    break;
+                case "30":
+                    tache.mDebut = "3";
+                    break;
+                case "45":
+                    tache.mDebut = "4";
+                    break;
+            }
 
+            switch (tache.mFin)
+            {
+                case "00":
+                    tache.mFin = "1";
+                    break;
+                case "15":
+                    tache.mFin = "2";
+                    break;
+                case "30":
+                    tache.mFin = "3";
+                    break;
+                case "45":
+                    tache.mFin = "4";
+                    break;
+            }
+
+            switch (tache.mRappel)
+            {
+                case "00":
+                    tache.mRappel = "1";
+                    break;
+                case "15":
+                    tache.mRappel = "2";
+                    break;
+                case "30":
+                    tache.mRappel = "3";
+                    break;
+                case "45":
+                    tache.mRappel = "4";
+                    break;
+            }
+        }
         public ActionResult Index(int? id)
         {
             if (id == null)
