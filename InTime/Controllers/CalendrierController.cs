@@ -53,11 +53,11 @@ namespace InTime.Controllers
             UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
             foreach (Tache tache in lstTache)
             {
-                if (Convert.ToInt32(tache.Reccurence) != (int)TraitementDate.Reccurence.Aucune)
+                if (tache.Reccurence != (int)TraitementDate.Reccurence.Aucune)
                 {
                     List<string[]> result = null;
 
-                    switch(Convert.ToInt32(tache.Reccurence))
+                    switch(tache.Reccurence)
                     {
                         case (int)TraitementDate.Reccurence.ChaqueJour:
                             result = TraitementDate.ChaqueJour(tache, end);
@@ -125,7 +125,7 @@ namespace InTime.Controllers
                 mDebut = Convert.ToString(values[9]),
                 mFin = Convert.ToString(values[10]),
                 Annee = Convert.ToString(values[13]),
-                Reccurence = Convert.ToString(values[14])
+                Reccurence = Convert.ToInt32(values[14])
             };
 
             return tache;

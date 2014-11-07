@@ -103,7 +103,7 @@ namespace InTime.Models
         public string mFin { get; set; }
         public string HRappel { get; set; }
         public string mRappel { get; set; }
-        public string Reccurence { get; set; }
+        public int Reccurence { get; set; }
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
     }

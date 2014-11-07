@@ -284,7 +284,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options);
+            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
         }
 
         private void InitialiseViewBag(Tache tache)
