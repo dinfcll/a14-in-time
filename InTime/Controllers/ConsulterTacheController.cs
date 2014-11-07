@@ -33,8 +33,6 @@ namespace InTime.Controllers
             mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
             return mois;
         }
-
-        //int[] m_Tabmin = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -170,6 +168,7 @@ namespace InTime.Controllers
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
                         IdRecurrence(tache);
+                        IdMin(tache);
                     }
                     catch (Exception ex)
                     {
@@ -216,9 +215,55 @@ namespace InTime.Controllers
                     break;
             }
         }
-        private void IdHeure(Tache tache)
+        private void IdMin(Tache tache)
         {
-            
+            switch (tache.mDebut)
+            {
+                case "00":
+                    tache.mDebut = "0";
+                    break;
+                case "15":
+                    tache.mDebut = "1";
+                    break;
+                case "30":
+                    tache.mDebut = "2";
+                    break;
+                case "45":
+                    tache.mDebut = "3";
+                    break;
+            }
+
+            switch (tache.mFin)
+            {
+                case "00":
+                    tache.mFin = "0";
+                    break;
+                case "15":
+                    tache.mFin = "1";
+                    break;
+                case "30":
+                    tache.mFin = "2";
+                    break;
+                case "45":
+                    tache.mFin = "3";
+                    break;
+            }
+
+            switch (tache.mRappel)
+            {
+                case "00":
+                    tache.mRappel = "1";
+                    break;
+                case "15":
+                    tache.mRappel = "2";
+                    break;
+                case "30":
+                    tache.mRappel = "3";
+                    break;
+                case "45":
+                    tache.mRappel = "4";
+                    break;
+            }
         }
         public ActionResult Index(int? id)
         {
