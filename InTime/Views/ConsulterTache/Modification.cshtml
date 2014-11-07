@@ -93,7 +93,7 @@
         Heure : <br />
         Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
         <script type="text/javascript">
-            document.getElementById("HDebut").selectedIndex = @tache.HDebut
+            document.getElementById("HDebut").selectedIndex = parseInt(@tache.HDebut)+1
         </script>
 
         @Html.ValidationMessage("dbTacheHeure", "*")
@@ -109,7 +109,7 @@
         Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
         @Html.ValidationMessage("finTacheHeure", "*")
         <script type="text/javascript">
-            document.getElementById("HFin").selectedIndex = @tache.HFin
+            document.getElementById("HFin").selectedIndex = parseInt(@tache.HFin)+1
         </script>
         H
         @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
@@ -161,6 +161,6 @@
                 });
             });
         </script>
-        <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
+        <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" onclick=" return confirm('voulez-vous modifier cette tâche?')" />
     </div>
 }

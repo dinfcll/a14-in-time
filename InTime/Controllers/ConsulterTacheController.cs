@@ -220,32 +220,32 @@ namespace InTime.Controllers
             switch (tache.mDebut)
             {
                 case "00":
-                    tache.mDebut = "0";
-                    break;
-                case "15":
                     tache.mDebut = "1";
                     break;
-                case "30":
+                case "15":
                     tache.mDebut = "2";
                     break;
-                case "45":
+                case "30":
                     tache.mDebut = "3";
+                    break;
+                case "45":
+                    tache.mDebut = "4";
                     break;
             }
 
             switch (tache.mFin)
             {
                 case "00":
-                    tache.mFin = "0";
-                    break;
-                case "15":
                     tache.mFin = "1";
                     break;
-                case "30":
+                case "15":
                     tache.mFin = "2";
                     break;
-                case "45":
+                case "30":
                     tache.mFin = "3";
+                    break;
+                case "45":
+                    tache.mFin = "4";
                     break;
             }
 
