@@ -51,36 +51,39 @@ namespace InTime.Controllers
 
             var rows = new List<object>();
             UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
+
             foreach (Tache tache in lstTache)
             {
-                if (tache.Reccurence != (int)TraitementDate.Reccurence.Aucune)
+                TraitementDate.Reccurence Reccurence =
+                        (TraitementDate.Reccurence)Enum.ToObject(typeof(TraitementDate.Reccurence), tache.Reccurence);
+                if (Reccurence != TraitementDate.Reccurence.Aucune)
                 {
                     List<string[]> result = null;
 
-                    switch(tache.Reccurence)
+                    switch (Reccurence)
                     {
-                        case (int)TraitementDate.Reccurence.ChaqueJour:
+                        case TraitementDate.Reccurence.ChaqueJour:
                             result = TraitementDate.ChaqueJour(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.ChaqueSemaine:
+                        case TraitementDate.Reccurence.ChaqueSemaine:
                             result = TraitementDate.ChaqueSemaine(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.DeuxSemaines:
+                        case TraitementDate.Reccurence.DeuxSemaines:
                             result = TraitementDate.DeuxSemaine(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.TroisSemaine:
+                        case TraitementDate.Reccurence.TroisSemaine:
                             result = TraitementDate.TroisSemaine(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.ChaqueMois:
+                        case TraitementDate.Reccurence.ChaqueMois:
                             result = TraitementDate.ChaqueMois(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.TroisMois:
+                        case TraitementDate.Reccurence.TroisMois:
                             result = TraitementDate.TroisMois(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.QuatreMois:
+                        case TraitementDate.Reccurence.QuatreMois:
                             result = TraitementDate.QuatreMois(tache, end);
                             break;
-                        case (int)TraitementDate.Reccurence.ChaqueAnnee:
+                        case TraitementDate.Reccurence.ChaqueAnnee:
                             result = TraitementDate.ChaqueAnnee(tache, end);
                             break;
                     }
