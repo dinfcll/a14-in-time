@@ -290,7 +290,6 @@ namespace InTime.Controllers
         private void InitialiseViewBag(Tache tache)
         {
             DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-            string Test = DateDebut.ToString(culture);
 
             ViewBag.DateDebut = DateDebut.ToString(culture);
             ViewBag.DateFin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin).ToString(culture);
