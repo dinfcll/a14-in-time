@@ -65,10 +65,9 @@ namespace InTime.Controllers
                         new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@IdTache",id)
                     };
-
                 RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-
                 var message = "Reussi";
+
                 return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
             }
             catch (Exception ex)
@@ -86,26 +85,26 @@ namespace InTime.Controllers
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                 double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                 double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,"
+                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
                 +"DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
                 +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
+                    new SqlParameter("@IdTache",Model.IdTache),
                     new SqlParameter("@UserId", UserId),
-                    new SqlParameter("@IdTache", Model.IdTache),
                     new SqlParameter("@NomTache", Model.NomTache),
                     new SqlParameter("@Lieu", Model.Lieu),
-                    new SqlParameter("@Desc", Model.Description),
                     new SqlParameter("@DateDebut",unixDebut),
                     new SqlParameter("@DateFin",unixFin),
+                    new SqlParameter("@Description", Model.Description),
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
                     new SqlParameter("@Reccurence", Model.Reccurence)
                 };
-
                 var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
-
                 TempData["Modification"] = message;
+
                 return RedirectToAction("Taches", "ConsulterTache");
             }
             catch (Exception ex)
@@ -149,7 +148,6 @@ namespace InTime.Controllers
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
-                        IdRecurrence(tache);
                         IdMin(tache);
                     }
                     catch (Exception ex)
@@ -165,56 +163,6 @@ namespace InTime.Controllers
                 }
         }
 
-        private void IdMin(Tache tache)
-        {
-            switch (tache.mDebut)
-            {
-                case "00":
-                    tache.mDebut = "1";
-                    break;
-                case "15":
-                    tache.mDebut = "2";
-                    break;
-                case "30":
-                    tache.mDebut = "3";
-                    break;
-                case "45":
-                    tache.mDebut = "4";
-                    break;
-            }
-
-            switch (tache.mFin)
-            {
-                case "00":
-                    tache.mFin = "1";
-                    break;
-                case "15":
-                    tache.mFin = "2";
-                    break;
-                case "30":
-                    tache.mFin = "3";
-                    break;
-                case "45":
-                    tache.mFin = "4";
-                    break;
-            }
-
-            switch (tache.mRappel)
-            {
-                case "00":
-                    tache.mRappel = "1";
-                    break;
-                case "15":
-                    tache.mRappel = "2";
-                    break;
-                case "30":
-                    tache.mRappel = "3";
-                    break;
-                case "45":
-                    tache.mRappel = "4";
-                    break;
-            }
-        }
         public ActionResult Index(int? id)
         {
             if (id == null)
@@ -242,7 +190,6 @@ namespace InTime.Controllers
                         }
                         reader.Close();
 
-                        InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
                     }
@@ -361,6 +308,60 @@ namespace InTime.Controllers
             else
             {
                 ViewBag.DateRappel = TempsRappel(DateRappel);
+            }
+
+            ViewBag.Recurrence = Tache.NomReccurence(tache.Reccurence);
+        }
+
+
+        private void IdMin(Tache tache)
+        {
+            switch (tache.mDebut)
+            {
+                case "00":
+                    tache.mDebut = "1";
+                    break;
+                case "15":
+                    tache.mDebut = "2";
+                    break;
+                case "30":
+                    tache.mDebut = "3";
+                    break;
+                case "45":
+                    tache.mDebut = "4";
+                    break;
+            }
+
+            switch (tache.mFin)
+            {
+                case "00":
+                    tache.mFin = "1";
+                    break;
+                case "15":
+                    tache.mFin = "2";
+                    break;
+                case "30":
+                    tache.mFin = "3";
+                    break;
+                case "45":
+                    tache.mFin = "4";
+                    break;
+            }
+
+            switch (tache.mRappel)
+            {
+                case "00":
+                    tache.mRappel = "1";
+                    break;
+                case "15":
+                    tache.mRappel = "2";
+                    break;
+                case "30":
+                    tache.mRappel = "3";
+                    break;
+                case "45":
+                    tache.mRappel = "4";
+                    break;
             }
         }
     }

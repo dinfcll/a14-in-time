@@ -10,6 +10,41 @@ namespace InTime.Models
 {
     public class Tache
     {
+        public int IdTache { get; set; }
+        public int UserId { get; set; }
+
+        [Display(Name = "Nom de la tâche")]
+        [Required(ErrorMessage = "Vous devez donner un nom à votre tâche.")]
+        [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longue.")]
+        public string NomTache { get; set; }
+
+        [Display(Name = "Nom du lieu")]
+        [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâche.")]
+        [StringLength(50, ErrorMessage = "Votre nom de lieu est trop longue.")]
+        public string Lieu { get; set; }
+
+        [Display(Name = "Jour")]
+        public string Jour { get; set; }
+
+        [Display(Name = "Mois")]
+        public string Mois { get; set; }
+
+        [Display(Name = "Année")]
+        public string Annee { get; set; }
+
+        [StringLength(500, ErrorMessage = "La description de la tâche est trop longue.")]
+        public string Description { get; set; }
+
+        public string HDebut { get; set; }
+        public string mDebut { get; set; }
+        public string HFin { get; set; }
+        public string mFin { get; set; }
+        public string HRappel { get; set; }
+        public string mRappel { get; set; }
+        public int Reccurence { get; set; }
+        public double unixDebut { get; set; }
+        public double unixFin { get; set; }
+
         public static List<string> tempsHeure
         {
             get
@@ -72,40 +107,32 @@ namespace InTime.Models
             }
         }
 
-        public int IdTache { get; set; }
-        public int UserId { get; set; }
-
-        [Display(Name = "Nom de la tâche")]
-        [Required(ErrorMessage = "Vous devez donner un nom à votre tâche.")]
-        [StringLength(50, ErrorMessage = "Le nom de votre tâche est trop longue.")]
-        public string NomTache { get; set; }
-
-        [Display(Name = "Nom du lieu")]
-        [Required(ErrorMessage = "Vous devez donner un nom de lieu à votre tâche.")]
-        [StringLength(50, ErrorMessage = "Votre nom de lieu est trop longue.")]
-        public string Lieu { get; set; }
-
-        [Display(Name = "Jour")]
-        public string Jour { get; set; }
-
-        [Display(Name = "Mois")]
-        public string Mois { get; set; }
-
-        [Display(Name = "Année")]
-        public string Annee { get; set; }
-
-        [StringLength(500, ErrorMessage = "La description de la tâche est trop longue.")]
-        public string Description { get; set; }
-
-        public string HDebut { get; set; }
-        public string mDebut { get; set; }
-        public string HFin { get; set; }
-        public string mFin { get; set; }
-        public string HRappel { get; set; }
-        public string mRappel { get; set; }
-        public int Reccurence { get; set; }
-        public double unixDebut { get; set; }
-        public double unixFin { get; set; }
+        public static string NomReccurence(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "Aucune";
+                case 1:
+                    return "À chaque jour";
+                case 2:
+                    return "Chaque semaine";
+                case 3:
+                    return "Aux deux semaines";
+                case 4:
+                    return "Aux trois semaines";
+                case 5:
+                    return "À chaque mois";
+                case 6:
+                    return "Aux trois mois";
+                case 7:
+                    return "Aux quatre mois";
+                case 8:
+                    return "À chaque année";
+                default:
+                    return "Aucune";
+            }
+        }
     }
 }
 
