@@ -5,32 +5,9 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-
-    <style>
-        #leftcolumn {
-            width: 49.5%;
-            border: 1px solid black;
-            float: left;
-        }
-
-        #rightcolumn {
-            width: 49.5%;
-            border: 1px solid black;
-            float: right;
-        }
-    </style>
     @{
         var tache = (InTime.Models.Tache)ViewData["Tache"];
     }
-
-    <script>
-        $(window).load(function () {
-            $(function () {
-                $("[id^=Consultation").attr('readonly', 'true');
-                $("[id^=Consultation").css('background-color', '#DEDEDE');
-            });
-        });
-    </script>
 
 </head>
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
@@ -49,26 +26,24 @@
     <div id="rightcolumn">
         <h2>Modifiez votre tâche</h2>
         Nom de la tâche : <br />
-        @Html.TextBoxFor(model => model.NomTache)
-        @Html.ValidationMessageFor(model => model.NomTache, "*")
+        @Html.TextBox("NomTache", tache.NomTache, new {id = "NomTache" })
         <br />
-        Nom du lieu : <br />
-        @Html.TextBoxFor(model => model.Lieu)
-        @Html.ValidationMessageFor(model => model.Lieu, "*")
+        Nom du lieu :
+        <br />
+        @Html.TextBox("Lieu", tache.Lieu, new {id = "Consultation" })
         <br />
         Date : <br />
         Année :
         <input readonly id="Annee" name="Annee" width="20">
-
         <script>
             var annee = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
             $("#Annee").spinner();
             $("#Annee").spinner("option", "culture", "fr");
             $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
             $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
-            $("#Annee").spinner("value", annee);
+            $("#Annee").spinner("value", parseInt(@tache.Annee));
             $("#Annee").width(50);
-
+            
             $('.ui-spinner-up').click(function () {
                 if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal)) {
                     annee += 1;
@@ -81,49 +56,87 @@
                     JourDuMois();
                 }
             });
+            $(selector, context).spinner("action");
         </script>
-
         Mois :
-        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
-        <script type="text/javascript">
-            document.getElementById("Mois").selectedIndex = 0
+        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois"})
+        @Html.ValidationMessage("Mois", "*")<br /> 
+        <script>
+            document.getElementById("Mois").selectedIndex = @tache.Mois
         </script>
-        @Html.ValidationMessage("Mois", "*")<br />
-           
-        Jour :
+        <script>
+            var params = {};
+            params.Year = annee;
+            params.Month = $('#Mois').val();
+            $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+                var items = '<option>Choisir un jour</option>';
+                $.each(data, function (i, jour) {
+                    items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+                });
+                $('#Jour').html(items);
+                document.getElementById("Jour").selectedIndex = 10;
+            });
+        </script>
+          Jour :
         <select id="Jour" name="Jour"></select>
         @Html.ValidationMessage("Jour", "*")
         <br />
 
         Récurrence de la tache :<br />
         @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+        <script type="text/javascript">
+            document.getElementById("Reccurence").selectedIndex = @tache.Reccurence
+        </script>
+
         <br />
 
         Heure : <br />
         Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
+        <script type="text/javascript">
+            document.getElementById("HDebut").selectedIndex = parseInt(@tache.HDebut)+1
+        </script>
+
         @Html.ValidationMessage("dbTacheHeure", "*")
         H
         @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
+        <script type="text/javascript">
+            document.getElementById("mDebut").selectedIndex = @tache.mDebut
+        </script>
+
         @Html.ValidationMessage("dbTacheMinute", "*")
         Min
         <br />
         Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
         @Html.ValidationMessage("finTacheHeure", "*")
+        <script type="text/javascript">
+            document.getElementById("HFin").selectedIndex = parseInt(@tache.HFin)+1
+        </script>
         H
         @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
         @Html.ValidationMessage("finTacheMinute", "*")
         Min
+        <script type="text/javascript">
+            document.getElementById("mFin").selectedIndex = @tache.mFin
+        </script>
+
         <br />
         Avant combien de temps voulez-vous être informé de votre tâche ? <br />
         @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
         @Html.ValidationMessage("rapTacheHeure", "*")
+        <script type="text/javascript">
+            document.getElementById("HRappel").selectedIndex = @tache.HRappel
+        </script>
         H
         @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
         @Html.ValidationMessage("rapTacheMinute", "*")
         Min
+        <script type="text/javascript">
+            document.getElementById("mRappel").selectedIndex = 1
+        </script>
+
         <br />
         Description de la tâche : <br />
-        @Html.TextAreaFor(model => model.Description, new { style = "width:95%;" })
+        @Html.TextArea("Description", tache.Description, new {style = "width:95%;", id = "Description" })
         <br />
         @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache,@type="Hidden" })
         <script>
@@ -148,43 +161,6 @@
                 });
             });
         </script>
-        <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
+        <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" onclick=" return confirm('voulez-vous modifier cette tâche?')" />
     </div>
 }
-    <div id="leftcolumn">
-        <h2>Voici votre tâche</h2>
-        
-        <p>
-            <!-- To Do : Boite grise-->
-            Nom de la tâche :
-            <br />
-            @Html.TextBox("Nom", tache.NomTache, new { disabled = "disabled", id = "Consultation" })
-            <br />
-            Nom du lieu :
-            <br />
-            @Html.TextBox("Lieu", tache.Lieu, new { disabled = "disabled", id = "Consultation" })
-            <br />
-            Récurrence de la tâche :
-            <br />
-            @Html.TextBox("Reccurence", tache.Reccurence, new { disabled = "disabled", id = "Consultation" })
-            <br />
-            Début  de la tâche :
-            <br />
-            @Html.TextBox("Debut", (string)ViewBag.DateDebut, new { disabled = "disabled", id = "Consultation" })
-            <br />
-            Fin de la tâche :
-            <br />
-            @Html.TextBox("Fin", (string)ViewBag.DateFin, new { disabled = "disabled", id = "Consultation" })
-            <br />
-            Rappel :
-            <br />
-            @Html.TextBox("Rappel", (string)ViewBag.DateRappel, new { disabled = "disabled", style = "width:95%;", id = "Consultation" })
-            <br />
-            Description de la tâche :
-            <br />
-            @Html.TextArea("Desc", tache.Description, new { disabled = "disabled", style = "width:95%;", id = "Consultation" })
-            <br />
-        </p>
-    </div>
-</body>
-</html>
