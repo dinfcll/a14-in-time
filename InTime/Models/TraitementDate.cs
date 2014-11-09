@@ -63,8 +63,8 @@ namespace InTime.Models
         {
             bool Changement = false;
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
             debutCalendrier = debutCalendrier.AddMonths(-1);
 
@@ -124,8 +124,8 @@ namespace InTime.Models
         private static List<string[]> VerificationMois(Tache tache,double FinMois,int Bond)
         {
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
             debutCalendrier = debutCalendrier.AddMonths(-1);
             bool Changement = false;
@@ -194,8 +194,8 @@ namespace InTime.Models
             bool Changement = false;
             bool Jour = false;
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(start);
             debutCalendrier = debutCalendrier.AddMonths(-1);
 

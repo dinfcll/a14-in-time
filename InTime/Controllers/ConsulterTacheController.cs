@@ -57,63 +57,34 @@ namespace InTime.Controllers
 
         public ActionResult SuppTache(int? id)
         {
-            try
+            if (User.Identity.IsAuthenticated)
             {
-                string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
-                List<SqlParameter> Parametres = new List<SqlParameter>
+                try
+                {
+                    string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                    List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@IdTache",id)
                     };
-                RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-                var message = "Reussi";
+                    RequeteSql.ExecuteQuery(SqlDelete, Parametres);
+                    var message = "Reussi";
 
-                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-        }
-
-
-        [HttpPost]
-        public ActionResult Modification(Tache Model)
-        {
-            try
-            {
-                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
-                double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
-                +"DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
-
-                List<SqlParameter> listParametres = new List<SqlParameter>
+                    return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
+                }
+                catch (Exception ex)
                 {
-                    new SqlParameter("@IdTache",Model.IdTache),
-                    new SqlParameter("@UserId", UserId),
-                    new SqlParameter("@NomTache", Model.NomTache),
-                    new SqlParameter("@Lieu", Model.Lieu),
-                    new SqlParameter("@DateDebut",unixDebut),
-                    new SqlParameter("@DateFin",unixFin),
-                    new SqlParameter("@Description", Model.Description),
-                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Reccurence", Model.Reccurence)
-                };
-                var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
-                TempData["Modification"] = message;
-
-                return RedirectToAction("Taches", "ConsulterTache");
+                    throw new Exception(ex.ToString());
+                }
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception(ex.ToString());
+                return View(UrlErreur.Authentification);
             }
         }
 
-        public ActionResult ModifTache(int? id)
+
+        public ActionResult ModifTache(int? id, DateTime? dep, DateTime? fin)
         {
             if (id == null)
             {
@@ -145,6 +116,13 @@ namespace InTime.Controllers
                             return HttpNotFound();
                         }
 
+                        if (dep != null && fin != null)
+                        {
+                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
+                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fin));
+                            ViewBag.Modif = true;
+                        }
+
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
                         Tache.InitChampsTache(ref tache);
@@ -161,6 +139,49 @@ namespace InTime.Controllers
                 {
                     return View(UrlErreur.Authentification);
                 }
+        }
+
+        [HttpPost]
+        public ActionResult Modification(Tache Model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                    double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
+                    double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+                    string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
+                    + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
+                    + "Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+
+                    List<SqlParameter> listParametres = new List<SqlParameter>
+                {
+                    new SqlParameter("@IdTache",Model.IdTache),
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@NomTache", Model.NomTache),
+                    new SqlParameter("@Lieu", Model.Lieu),
+                    new SqlParameter("@DateDebut",unixDebut),
+                    new SqlParameter("@DateFin",unixFin),
+                    new SqlParameter("@Description", Model.Description),
+                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
+                    new SqlParameter("@Reccurence", Model.Reccurence)
+                };
+                    var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
+                    TempData["Modification"] = message;
+
+                    return RedirectToAction("Taches", "ConsulterTache");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+            }
+            else
+            {
+                return View(UrlErreur.Authentification);
+            }
         }
 
         public ActionResult Index(int? id)

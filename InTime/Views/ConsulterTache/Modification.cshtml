@@ -9,6 +9,15 @@
         var tache = (InTime.Models.Tache)ViewData["Tache"];
     }
 
+    <script>
+        //$(document).ready(function () {
+        //    if (parseBoolean('@ViewBag.Modif') == true)
+        //    {
+                $('div').find('input,select').attr('readonly',true);
+        //    }
+        //});
+    </script>
+
 </head>
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 @{
@@ -23,14 +32,14 @@
     }
 @using (Html.BeginForm("Modification","ConsulterTache"))
 {
-    <div id="rightcolumn">
+    <div>
         <h2>Modifiez votre tâche</h2>
         Nom de la tâche : <br />
         @Html.TextBox("NomTache", tache.NomTache, new {id = "NomTache" })
         <br />
         Nom du lieu :
         <br />
-        @Html.TextBox("Lieu", tache.Lieu, new {id = "Consultation" })
+        @Html.TextBox("Lieu", tache.Lieu, new {id = "Lieu" })
         <br />
         Date : <br />
         Année :
@@ -62,7 +71,7 @@
         @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois"})
         @Html.ValidationMessage("Mois", "*")<br /> 
         <script>
-            document.getElementById("Mois").selectedIndex = @tache.Mois
+            document.getElementById("Mois").selectedIndex = @tache.Mois;
         </script>
         <script>
             var params = {};
@@ -86,7 +95,7 @@
         Récurrence de la tache :<br />
         @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
         <script type="text/javascript">
-            document.getElementById("Reccurence").selectedIndex = @tache.Reccurence
+            document.getElementById("Reccurence").selectedIndex = @tache.Reccurence;
         </script>
 
         <br />
@@ -94,14 +103,14 @@
         Heure : <br />
         Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
         <script type="text/javascript">
-            document.getElementById("HDebut").selectedIndex = parseInt(@tache.HDebut)+1
+            document.getElementById("HDebut").selectedIndex = parseInt(@tache.HDebut)+1;
         </script>
 
         @Html.ValidationMessage("dbTacheHeure", "*")
         H
         @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
         <script type="text/javascript">
-            document.getElementById("mDebut").selectedIndex = @tache.mDebut
+            document.getElementById("mDebut").selectedIndex = @tache.mDebut;
         </script>
 
         @Html.ValidationMessage("dbTacheMinute", "*")
@@ -117,7 +126,7 @@
         @Html.ValidationMessage("finTacheMinute", "*")
         Min
         <script type="text/javascript">
-            document.getElementById("mFin").selectedIndex = @tache.mFin
+            document.getElementById("mFin").selectedIndex = @tache.mFin;
         </script>
 
         <br />
@@ -153,9 +162,7 @@
                     $('#Jour').html(items);
                 });
             }
-        </script>
-        @Scripts.Render("~/bundles/jquery")
-        <script>
+
             $(function () {
                 $('#Mois').change(function () {
                     JourDuMois();
@@ -165,3 +172,10 @@
         <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" onclick=" return confirm('voulez-vous modifier cette tâche?')" />
     </div>
 }
+    <script>
+        $('div').find('input').attr('readonly',true);
+        $('div').find('select').attr('disabled',true);
+        $( "#Annee" ).spinner( "option", "disabled", true );
+    </script>
+</body>
+</html>
