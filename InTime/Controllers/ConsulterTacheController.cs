@@ -31,7 +31,7 @@ namespace InTime.Controllers
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                     };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString,Parametres);
+                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -143,33 +143,43 @@ namespace InTime.Controllers
         }
 
         [HttpPost]
-        public ActionResult Modification(Tache Model)
+        public ActionResult Modification(Tache Model, string modif)
         {
             if (User.Identity.IsAuthenticated)
             {
                 try
                 {
+                    string SqlCommande;
+                    List<SqlParameter> listParametres = new List<SqlParameter>();
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                    string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
-                    + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                    + "Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
-
-                    List<SqlParameter> listParametres = new List<SqlParameter>
-                {
-                    new SqlParameter("@IdTache",Model.IdTache),
-                    new SqlParameter("@UserId", UserId),
-                    new SqlParameter("@NomTache", Model.NomTache),
-                    new SqlParameter("@Lieu", Model.Lieu),
-                    new SqlParameter("@DateDebut",unixDebut),
-                    new SqlParameter("@DateFin",unixFin),
-                    new SqlParameter("@Description", Model.Description),
-                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Reccurence", Model.Reccurence)
-                };
-                    var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
+                    if (modif == "False")
+                    {
+                        SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
+                        + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
+                        + "Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                        listParametres.Add(new SqlParameter("@UserId", UserId));
+                        listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
+                        listParametres.Add(new SqlParameter("@Lieu", Model.Lieu));
+                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                        listParametres.Add(new SqlParameter("@Description", Model.Description));
+                        listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
+                        listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
+                        listParametres.Add(new SqlParameter("@Reccurence", Model.Reccurence));
+                    }
+                    else
+                    {
+                        SqlCommande = "INSERT INTO DescTacheReccu (IdTache,DateDebut,DateFin,Description)"
+                        + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                        listParametres.Add(new SqlParameter("@Description", Model.Description));
+                    }
+                    var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Erreur";
                     TempData["Modification"] = message;
 
                     return RedirectToAction("Taches", "ConsulterTache");
@@ -203,7 +213,7 @@ namespace InTime.Controllers
                             new SqlParameter("@Id", id)
                         };
 
-                        SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
@@ -313,7 +323,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
+            ViewBag.Reccurence = new SelectList(Tache.options, "Value", "Text");
         }
 
         private void InitialiseViewBag(Tache tache)
