@@ -92,14 +92,14 @@ namespace InTime.Controllers
                     {
                         foreach(string[] str in result)
                         {
-                            string urll = UrlH.Action("ModifTache", "ConsulterTache", new { @id = str[3], dep = str[1], fin = str[2] });
+                            string urll = UrlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
                             rows.Add(new { title = str[0], start = str[1], end = str[2], url = urll, id=str[3] });
                         }
                     }
                 }
                 else
                 {
-                    string urll = UrlH.Action("ModifTache", "ConsulterTache", new { @id = tache.IdTache });
+                    string urll = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
                     rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = urll });
                 }
             }

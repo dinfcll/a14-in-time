@@ -55,6 +55,13 @@
         <br />
     </p>
 
+    @if (ViewBag.Modif == true)
+    {
+        
+        <input type="button" value="Modifier Description" 
+               onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin})'" />
+    }
+
 </body>
 </html>
 

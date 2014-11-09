@@ -172,10 +172,15 @@
         <input style="float:right; margin-right:12px;" type="submit" name="Modifier" value="Modifier" onclick=" return confirm('voulez-vous modifier cette tâche?')" />
     </div>
 }
-    <script>
-        $('div').find('input').attr('readonly',true);
-        $('div').find('select').attr('disabled',true);
-        $( "#Annee" ).spinner( "option", "disabled", true );
-    </script>
+    
+        @if (@ViewBag.Modif)
+        {
+            <script>
+                $('div').find('input').attr('readonly',true);
+                $('div').find('select').attr('disabled',true);
+                $( "#Annee" ).spinner( "option", "disabled", true );
+                $('input,select').css('background-color', '#DEDEDE');
+            </script>
+        }
 </body>
 </html>

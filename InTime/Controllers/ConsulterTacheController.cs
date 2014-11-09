@@ -84,7 +84,7 @@ namespace InTime.Controllers
         }
 
 
-        public ActionResult ModifTache(int? id, DateTime? dep, DateTime? fin)
+        public ActionResult ModifTache(int? id, double? dep, double? fn)
         {
             if (id == null)
             {
@@ -116,10 +116,11 @@ namespace InTime.Controllers
                             return HttpNotFound();
                         }
 
-                        if (dep != null && fin != null)
+                        ViewBag.Modif = false;
+                        if (dep != null && fn != null)
                         {
-                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
-                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fin));
+                            tache.unixDebut = Convert.ToDouble(dep);
+                            tache.unixFin = Convert.ToDouble(fn);
                             ViewBag.Modif = true;
                         }
 
@@ -184,7 +185,7 @@ namespace InTime.Controllers
             }
         }
 
-        public ActionResult Index(int? id)
+        public ActionResult Index(int? id, DateTime? dep, DateTime? fn)
         {
             if (id == null)
             {
@@ -210,6 +211,14 @@ namespace InTime.Controllers
                             tache = ObtenirTache(values);
                         }
                         reader.Close();
+
+                        ViewBag.Modif = false;
+                        if (dep != null && fn != null)
+                        {
+                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
+                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
+                            ViewBag.Modif = true;
+                        }
 
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
@@ -311,8 +320,8 @@ namespace InTime.Controllers
         {
             DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
 
-            ViewBag.DateDebut = DateDebut.ToString(culture);
-            ViewBag.DateFin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin).ToString(culture);
+            ViewBag.DateDebut = TraitementDate.UnixTimeStampToString(tache.unixDebut);
+            ViewBag.DateFin = TraitementDate.UnixTimeStampToString(tache.unixFin);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
