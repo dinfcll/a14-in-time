@@ -11,28 +11,13 @@ using System.Globalization;
 using System.Data.SqlClient;
 using System.Configuration;
 
+
 namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
         CultureInfo culture = new CultureInfo("fr-CA");
-        public List<SelectListItem> Les_Mois()
-        {
-            List<SelectListItem> mois = new List<SelectListItem>();
-            mois.Add(new SelectListItem { Text = "Janvier", Value = "1" });
-            mois.Add(new SelectListItem { Text = "Février", Value = "2" });
-            mois.Add(new SelectListItem { Text = "Mars", Value = "3" });
-            mois.Add(new SelectListItem { Text = "Avril", Value = "4" });
-            mois.Add(new SelectListItem { Text = "Mai", Value = "5" });
-            mois.Add(new SelectListItem { Text = "Juin", Value = "6" });
-            mois.Add(new SelectListItem { Text = "Juillet", Value = "7" });
-            mois.Add(new SelectListItem { Text = "Aout", Value = "8" });
-            mois.Add(new SelectListItem { Text = "Septembre", Value = "9" });
-            mois.Add(new SelectListItem { Text = "Octobre", Value = "10" });
-            mois.Add(new SelectListItem { Text = "Novembre", Value = "11" });
-            mois.Add(new SelectListItem { Text = "Décembre", Value = "12" });
-            return mois;
-        }
+
         public ActionResult Taches(string strMessValidation)
         {
             if (User.Identity.IsAuthenticated)
@@ -80,10 +65,9 @@ namespace InTime.Controllers
                         new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@IdTache",id)
                     };
-
                 RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-
                 var message = "Reussi";
+
                 return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
             }
             catch (Exception ex)
@@ -99,31 +83,28 @@ namespace InTime.Controllers
             try
             {
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Desc,Mois=@Mois,Jour=@Jour,"
-                +"HDebut=@HDebut,HFin=@HFin,mDebut=@mDebut,mFin=@mFin,HRappel=@HRappel,mRappel=@mRappel,Annee=@Annee,"
+                double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
+                double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
+                +"DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
                 +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
+                    new SqlParameter("@IdTache",Model.IdTache),
                     new SqlParameter("@UserId", UserId),
-                    new SqlParameter("@IdTache", Model.IdTache),
                     new SqlParameter("@NomTache", Model.NomTache),
                     new SqlParameter("@Lieu", Model.Lieu),
-                    new SqlParameter("@Desc", Model.Description),
-                    new SqlParameter("@Mois", Model.Mois),
-                    new SqlParameter("@Jour", Model.Jour),
-                    new SqlParameter("@HDebut", Model.HDebut),
-                    new SqlParameter("@HFin", Model.HFin),
-                    new SqlParameter("@mDebut", Model.mDebut),
-                    new SqlParameter("@mFin", Model.mFin),
+                    new SqlParameter("@DateDebut",unixDebut),
+                    new SqlParameter("@DateFin",unixFin),
+                    new SqlParameter("@Description", Model.Description),
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Annee", Model.Annee),
                     new SqlParameter("@Reccurence", Model.Reccurence)
                 };
-
                 var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
-
                 TempData["Modification"] = message;
+
                 return RedirectToAction("Taches", "ConsulterTache");
             }
             catch (Exception ex)
@@ -166,9 +147,8 @@ namespace InTime.Controllers
 
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
+                        Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
-                        IdRecurrence(tache);
-                        IdMin(tache);
                     }
                     catch (Exception ex)
                     {
@@ -182,89 +162,7 @@ namespace InTime.Controllers
                     return View(UrlErreur.Authentification);
                 }
         }
-        private void IdRecurrence(Tache tache)
-        {
-            switch (tache.Reccurence)
-            {
-                case "Aucune":
-                    tache.Reccurence = "0";
-                    break;
-                case "À chaque jour":
-                    tache.Reccurence = "1";
-                    break;
-                case "Chaque semaine":
-                    tache.Reccurence = "2";
-                    break;
-                case "Aux deux semaines":
-                    tache.Reccurence = "3";
-                    break;
-                case "Aux trois semaines":
-                    tache.Reccurence = "4";
-                    break;
-                case "À chaque mois":
-                    tache.Reccurence = "5";
-                    break;
-                case "Aux trois mois":
-                    tache.Reccurence = "6";
-                    break;
-                case "Aux quatre mois":
-                    tache.Reccurence = "7";
-                    break;
-                case "À chaque année":
-                    tache.Reccurence = "8";
-                    break;
-            }
-        }
-        private void IdMin(Tache tache)
-        {
-            switch (tache.mDebut)
-            {
-                case "00":
-                    tache.mDebut = "1";
-                    break;
-                case "15":
-                    tache.mDebut = "2";
-                    break;
-                case "30":
-                    tache.mDebut = "3";
-                    break;
-                case "45":
-                    tache.mDebut = "4";
-                    break;
-            }
 
-            switch (tache.mFin)
-            {
-                case "00":
-                    tache.mFin = "1";
-                    break;
-                case "15":
-                    tache.mFin = "2";
-                    break;
-                case "30":
-                    tache.mFin = "3";
-                    break;
-                case "45":
-                    tache.mFin = "4";
-                    break;
-            }
-
-            switch (tache.mRappel)
-            {
-                case "00":
-                    tache.mRappel = "1";
-                    break;
-                case "15":
-                    tache.mRappel = "2";
-                    break;
-                case "30":
-                    tache.mRappel = "3";
-                    break;
-                case "45":
-                    tache.mRappel = "4";
-                    break;
-            }
-        }
         public ActionResult Index(int? id)
         {
             if (id == null)
@@ -292,7 +190,6 @@ namespace InTime.Controllers
                         }
                         reader.Close();
 
-                        InitialiseViewBags();
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
                     }
@@ -365,19 +262,14 @@ namespace InTime.Controllers
             {
                 IdTache = Convert.ToInt32(values[0]),
                 UserId = Convert.ToInt32(values[1]),
-                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
-                Lieu = RequeteSql.RemettreApostrophe(Convert.ToString(values[3])),
-                Description = RequeteSql.RemettreApostrophe(Convert.ToString(values[4])),
-                Mois = Convert.ToString(values[5]),
-                Jour = Convert.ToString(values[6]),
-                HDebut = Convert.ToString(values[7]),
-                HFin = Convert.ToString(values[8]),
-                mDebut = Convert.ToString(values[9]),
-                mFin = Convert.ToString(values[10]),
-                HRappel = Convert.ToString(values[11]),
-                mRappel = Convert.ToString(values[12]),
-                Annee = Convert.ToString(values[13]),
-                Reccurence = Convert.ToString(values[14])
+                NomTache = Convert.ToString(values[2]),
+                Lieu = Convert.ToString(values[3]),
+                Description = Convert.ToString(values[4]),
+                unixDebut = Convert.ToDouble(values[5]),
+                unixFin = Convert.ToDouble(values[6]),
+                HRappel = Convert.ToString(values[7]),
+                mRappel = Convert.ToString(values[8]),
+                Reccurence = Convert.ToInt32(values[9])
             };
 
             return tache;
@@ -389,24 +281,17 @@ namespace InTime.Controllers
 
             ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
 
-            ViewBag.MoisAnnee = new SelectList(Les_Mois(), "Value", "Text");
+            ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options);
+            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
         }
 
         private void InitialiseViewBag(Tache tache)
         {
-            DateTime DateDebut = new DateTime(
-                       Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                       Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0
-                       );
-            ViewBag.DateDebut = DateDebut.ToString(culture);
+            DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
 
-            DateTime DateFin = new DateTime(
-                Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0
-                );
-            ViewBag.DateFin = DateFin.ToString(culture);
+            ViewBag.DateDebut = DateDebut.ToString(culture);
+            ViewBag.DateFin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin).ToString(culture);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
@@ -414,7 +299,6 @@ namespace InTime.Controllers
                 Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
                 );
             DateTime DateRappel = DateDebut.Subtract(tsRappel);
-
 
             if (DateRappel == DateDebut)
             {
@@ -424,6 +308,8 @@ namespace InTime.Controllers
             {
                 ViewBag.DateRappel = TempsRappel(DateRappel);
             }
+
+            ViewBag.Recurrence = Tache.NomReccurence(tache.Reccurence);
         }
     }
 }

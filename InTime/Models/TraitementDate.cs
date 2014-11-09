@@ -8,17 +8,20 @@ namespace InTime.Models
 {
     public static class TraitementDate
     {
+        public enum Reccurence { 
+            Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois,QuatreMois,ChaqueAnnee
+        }
+
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
-            return (dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+            return (dateTime - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
 
-            return dtDateTime;
+            return dtDateTime.AddSeconds(unixTimeStamp);
         }
 
         public static DateTime DateDebut(Tache tache)

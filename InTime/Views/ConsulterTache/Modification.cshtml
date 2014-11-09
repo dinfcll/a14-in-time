@@ -74,12 +74,13 @@
                     items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
                 });
                 $('#Jour').html(items);
-                document.getElementById("Jour").selectedIndex = 10;
+                document.getElementById("Jour").selectedIndex = @tache.Jour;
             });
         </script>
           Jour :
         <select id="Jour" name="Jour"></select>
         @Html.ValidationMessage("Jour", "*")
+
         <br />
 
         Récurrence de la tache :<br />
@@ -124,7 +125,7 @@
         @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
         @Html.ValidationMessage("rapTacheHeure", "*")
         <script type="text/javascript">
-            document.getElementById("HRappel").selectedIndex = @tache.HRappel
+            document.getElementById("HRappel").selectedIndex = parseInt(@tache.HRappel)+1
         </script>
         H
         @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
