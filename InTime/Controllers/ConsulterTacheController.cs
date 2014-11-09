@@ -147,8 +147,8 @@ namespace InTime.Controllers
 
                         InitialiseViewBags();
                         InitialiseViewBag(tache);
+                        Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
-                        IdMin(tache);
                     }
                     catch (Exception ex)
                     {
@@ -300,7 +300,6 @@ namespace InTime.Controllers
                 );
             DateTime DateRappel = DateDebut.Subtract(tsRappel);
 
-
             if (DateRappel == DateDebut)
             {
                 ViewBag.DateRappel = "Aucun";
@@ -311,58 +310,6 @@ namespace InTime.Controllers
             }
 
             ViewBag.Recurrence = Tache.NomReccurence(tache.Reccurence);
-        }
-
-
-        private void IdMin(Tache tache)
-        {
-            switch (tache.mDebut)
-            {
-                case "00":
-                    tache.mDebut = "1";
-                    break;
-                case "15":
-                    tache.mDebut = "2";
-                    break;
-                case "30":
-                    tache.mDebut = "3";
-                    break;
-                case "45":
-                    tache.mDebut = "4";
-                    break;
-            }
-
-            switch (tache.mFin)
-            {
-                case "00":
-                    tache.mFin = "1";
-                    break;
-                case "15":
-                    tache.mFin = "2";
-                    break;
-                case "30":
-                    tache.mFin = "3";
-                    break;
-                case "45":
-                    tache.mFin = "4";
-                    break;
-            }
-
-            switch (tache.mRappel)
-            {
-                case "00":
-                    tache.mRappel = "1";
-                    break;
-                case "15":
-                    tache.mRappel = "2";
-                    break;
-                case "30":
-                    tache.mRappel = "3";
-                    break;
-                case "45":
-                    tache.mRappel = "4";
-                    break;
-            }
         }
     }
 }

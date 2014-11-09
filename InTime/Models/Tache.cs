@@ -133,6 +133,40 @@ namespace InTime.Models
                     return "Aucune";
             }
         }
+
+
+        public static void InitChampsTache(ref Tache tache)
+        {
+            DateTime debut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin);
+
+            tache.mDebut = InitialiseTempsMinute(Convert.ToString(debut.Minute));
+            tache.mFin = InitialiseTempsMinute(Convert.ToString(fin.Minute));
+            tache.mRappel = InitialiseTempsMinute(Convert.ToString(tache.mRappel));
+            tache.HDebut = Convert.ToString(debut.Hour);
+            tache.HFin = Convert.ToString(fin.Hour);
+            tache.Jour = Convert.ToString(debut.Day);
+            tache.Mois = Convert.ToString(debut.Month);
+            tache.Annee = Convert.ToString(debut.Year);
+        }
+
+
+        private static string InitialiseTempsMinute(string Temps)
+        {
+            switch (Temps)
+            {
+                case "0":
+                    return "1";
+                case "15":
+                    return "2";
+                case "30":
+                    return "3";
+                case "45":
+                    return "4";
+                default:
+                    return "1";
+            }
+        }
     }
 }
 
