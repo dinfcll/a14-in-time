@@ -6,4 +6,5 @@
 	[Description]	VARCHAR(MAX)	NULL,
 	PRIMARY KEY CLUSTERED (NouvIdTache),
 	CONSTRAINT [FK_Taches_DescTacheReccu] FOREIGN KEY ([IdTache]) REFERENCES [dbo].[Taches] ([IdTache])
+	ON DELETE CASCADE
 	);
