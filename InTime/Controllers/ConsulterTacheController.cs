@@ -84,7 +84,7 @@ namespace InTime.Controllers
         }
 
 
-        public ActionResult ModifTache(int? id, double? dep, double? fn)
+        public ActionResult ModifTache(int? id, double? dep, double? fn,bool? Existe)
         {
             if (id == null)
             {
@@ -122,6 +122,20 @@ namespace InTime.Controllers
                             tache.unixDebut = Convert.ToDouble(dep);
                             tache.unixFin = Convert.ToDouble(fn);
                             ViewBag.Modif = true;
+
+                            string queryString2 = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
+                            List<SqlParameter> Parametres2 = new List<SqlParameter>
+                            {
+                                new SqlParameter("@Id", id),
+                                new SqlParameter("@Debut", tache.unixDebut)
+                            };
+                            SqlDataReader reader2 = RequeteSql.Select(queryString2, Parametres2);
+                            while (reader2.Read())
+                            {
+                                Object[] values = new Object[reader2.FieldCount];
+                                reader2.GetValues(values);
+                                tache.Description = Convert.ToString(values[4]);
+                            }
                         }
 
                         InitialiseViewBags();
@@ -143,7 +157,7 @@ namespace InTime.Controllers
         }
 
         [HttpPost]
-        public ActionResult Modification(Tache Model, string modif)
+        public ActionResult Modification(Tache Model, string modif, bool Existe)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -172,8 +186,16 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        SqlCommande = "INSERT INTO DescTacheReccu (IdTache,DateDebut,DateFin,Description)"
-                        + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                        if (!Existe)
+                        {
+                            SqlCommande = "INSERT INTO DescTacheReccu (IdTache,DateDebut,DateFin,Description)"
+                            + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                        }
+                        else
+                        {
+                            SqlCommande = "UPDATE DescTacheReccu SET Description=@Description WHERE IdTache=@IdTache "
+                                + "AND DateDebut=@DateDebut AND DateFin=@DateFin;";
+                        }
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                         listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                         listParametres.Add(new SqlParameter("@DateFin", unixFin));
@@ -207,13 +229,13 @@ namespace InTime.Controllers
                     try
                     {
                         Tache tache = null;
-                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
-                        List<SqlParameter> Parametre = new List<SqlParameter>
+                        string queryString = "SELECT * FROM Taches WHERE IdTache=@Id";
+                        List<SqlParameter> Parametres = new List<SqlParameter>
                         {
                             new SqlParameter("@Id", id)
                         };
 
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
@@ -228,6 +250,21 @@ namespace InTime.Controllers
                             tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
                             tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
                             ViewBag.Modif = true;
+                        }
+
+                        string queryString2 = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
+                        List<SqlParameter> Parametres2 = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id),
+                            new SqlParameter("@Debut", tache.unixDebut)
+                        };
+                        SqlDataReader reader2 = RequeteSql.Select(queryString2, Parametres2);
+                        while (reader2.Read())
+                        {
+                            Object[] values = new Object[reader2.FieldCount];
+                            reader2.GetValues(values);
+                            tache.Description = Convert.ToString(values[4]);
+                            ViewBag.Existe = true;
                         }
 
                         InitialiseViewBag(tache);

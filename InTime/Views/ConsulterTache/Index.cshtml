@@ -8,12 +8,12 @@
 
 <head>
     <script>
-    $(window).load(function () {
-        $(function () {
-            $("[id^=Consultation").attr('readonly', 'true');
-            $("[id^=Consultation").css('background-color', '#DEDEDE');
+        $(window).load(function () {
+            $(function () {
+                $("[id^=Consultation").attr('readonly', 'true');
+                $("[id^=Consultation").css('background-color', '#DEDEDE');
+            });
         });
-    });
     </script>
 
     <title>Consulter</title>
@@ -59,7 +59,7 @@
     {
         
         <input type="button" value="Modifier Description" 
-               onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin})'" />
+               onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
     }
 
 </body>

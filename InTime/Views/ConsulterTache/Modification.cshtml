@@ -151,6 +151,7 @@
             @Html.TextArea("Description", tache.Description, new { style = "width:95%;", id = "Description" })
             <br />
             @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache, @type = "Hidden" })
+            @Html.TextBox("Existe", "false", new { @type = "Hidden" })
             <input id="modif" name="modif" type="text" value="False" style="display:none" />
             <script>
                 var JourDuMois = function () {
@@ -180,10 +181,6 @@
     {
         <script>
             $('#div2').css('display','none');
-            //$('div').find('input','select','#Annee').css('display','none');
-            //$('div').find('select').attr('disabled',true);
-            //$( "#Annee" ).spinner( "option", "disabled", true );
-            //$('input,select').css('background-color', '#DEDEDE');
             $("#modif").val("True");
         </script>
     }
