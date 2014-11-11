@@ -84,7 +84,7 @@ namespace InTime.Controllers
         }
 
 
-        public ActionResult ModifTache(int? id, double? dep, double? fn,bool? Existe)
+        public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
             if (id == null)
             {
@@ -201,7 +201,7 @@ namespace InTime.Controllers
                     try
                     {
                         Tache tache = RechercherTache(id);
-                        
+
                         if (dep != null && fn != null)
                         {
                             tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
@@ -213,7 +213,7 @@ namespace InTime.Controllers
                             ViewBag.Modif = false;
                         }
 
-                        string result = RechercheDescriptionTache(id,tache.unixDebut);
+                        string result = RechercheDescriptionTache(id, tache.unixDebut);
                         if (!String.IsNullOrEmpty(result))
                         {
                             ViewBag.Existe = true;
@@ -269,6 +269,7 @@ namespace InTime.Controllers
             {
                 Object[] values = new Object[reader.FieldCount];
                 reader.GetValues(values);
+
                 return Convert.ToString(values[4]);
             }
 
