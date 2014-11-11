@@ -107,10 +107,10 @@ namespace InTime.Controllers
                         else
                         {
                             ViewBag.Modif = false;
-                            InitialiseViewBags();
-                            InitialiseViewBag(tache);
                         }
 
+                        InitialiseViewBag(tache);
+                        InitialiseViewBags();
                         Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
                     }
