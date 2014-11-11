@@ -8,16 +8,6 @@
     @{
         var tache = (InTime.Models.Tache)ViewData["Tache"];
     }
-
-    <script>
-        //$(document).ready(function () {
-        //    if (parseBoolean('@ViewBag.Modif') == true)
-        //    {
-        $('div').find('input,select').attr('readonly',true);
-        //    }
-        //});
-    </script>
-
 </head>
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 @{

@@ -95,51 +95,22 @@ namespace InTime.Controllers
                 {
                     try
                     {
-                        Tache tache = null;
-                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
-                        List<SqlParameter> Parametre = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", id)
-                        };
+                        Tache tache = RechercherTache(id);
 
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
-                        while (reader.Read())
-                        {
-                            Object[] values = new Object[reader.FieldCount];
-                            reader.GetValues(values);
-                            tache = ObtenirTache(values);
-                        }
-                        reader.Close();
-
-                        if (tache == null)
-                        {
-                            return HttpNotFound();
-                        }
-
-                        ViewBag.Modif = false;
                         if (dep != null && fn != null)
                         {
                             tache.unixDebut = Convert.ToDouble(dep);
                             tache.unixFin = Convert.ToDouble(fn);
+                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut);
                             ViewBag.Modif = true;
-
-                            string queryString2 = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
-                            List<SqlParameter> Parametres2 = new List<SqlParameter>
-                            {
-                                new SqlParameter("@Id", id),
-                                new SqlParameter("@Debut", tache.unixDebut)
-                            };
-                            SqlDataReader reader2 = RequeteSql.Select(queryString2, Parametres2);
-                            while (reader2.Read())
-                            {
-                                Object[] values = new Object[reader2.FieldCount];
-                                reader2.GetValues(values);
-                                tache.Description = Convert.ToString(values[4]);
-                            }
+                        }
+                        else
+                        {
+                            ViewBag.Modif = false;
+                            InitialiseViewBags();
+                            InitialiseViewBag(tache);
                         }
 
-                        InitialiseViewBags();
-                        InitialiseViewBag(tache);
                         Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
                     }
@@ -168,6 +139,7 @@ namespace InTime.Controllers
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+
                     if (modif == "False")
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
@@ -228,43 +200,24 @@ namespace InTime.Controllers
                 {
                     try
                     {
-                        Tache tache = null;
-                        string queryString = "SELECT * FROM Taches WHERE IdTache=@Id";
-                        List<SqlParameter> Parametres = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", id)
-                        };
-
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-                        while (reader.Read())
-                        {
-                            Object[] values = new Object[reader.FieldCount];
-                            reader.GetValues(values);
-                            tache = ObtenirTache(values);
-                        }
-                        reader.Close();
-
-                        ViewBag.Modif = false;
+                        Tache tache = RechercherTache(id);
+                        
                         if (dep != null && fn != null)
                         {
                             tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
                             tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
                             ViewBag.Modif = true;
                         }
+                        else
+                        {
+                            ViewBag.Modif = false;
+                        }
 
-                        string queryString2 = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
-                        List<SqlParameter> Parametres2 = new List<SqlParameter>
+                        string result = RechercheDescriptionTache(id,tache.unixDebut);
+                        if (!String.IsNullOrEmpty(result))
                         {
-                            new SqlParameter("@Id", id),
-                            new SqlParameter("@Debut", tache.unixDebut)
-                        };
-                        SqlDataReader reader2 = RequeteSql.Select(queryString2, Parametres2);
-                        while (reader2.Read())
-                        {
-                            Object[] values = new Object[reader2.FieldCount];
-                            reader2.GetValues(values);
-                            tache.Description = Convert.ToString(values[4]);
                             ViewBag.Existe = true;
+                            tache.Description = result;
                         }
 
                         InitialiseViewBag(tache);
@@ -281,6 +234,45 @@ namespace InTime.Controllers
                 {
                     return View(UrlErreur.Authentification);
                 }
+        }
+
+        private Tache RechercherTache(int? id)
+        {
+            string queryString = "SELECT * FROM Taches where IdTache=@Id";
+            List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
+
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return ObtenirTache(values);
+            }
+
+            return null;
+        }
+
+        private String RechercheDescriptionTache(int? id, double Debut)
+        {
+            string queryString = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
+            List<SqlParameter> Parametres = new List<SqlParameter>
+                            {
+                                new SqlParameter("@Id", id),
+                                new SqlParameter("@Debut", Debut)
+                            };
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+                return Convert.ToString(values[4]);
+            }
+
+            return null;
         }
 
 
