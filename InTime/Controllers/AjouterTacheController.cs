@@ -69,7 +69,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    var message = InsertionTache(model) ? "Reussi" : "Erreur";
+                    var message = InsertionTache(model) ? "Reussi" : "Echec";
                     TempData["Message"] = message;
 
                     return RedirectToAction("Index", "AjouterTache");
@@ -145,8 +145,8 @@ namespace InTime.Controllers
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                 double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                 double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,Reccurence)"
-                    + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@Reccurence);";
+                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence)"
+                    + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@recurrence);";
 
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
@@ -158,7 +158,7 @@ namespace InTime.Controllers
                     new SqlParameter("@Description", Model.Description),
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Reccurence", Model.Reccurence)
+                    new SqlParameter("@recurrence", Model.Recurrence)
                 };
 
                 return RequeteSql.ExecuteQuery(SqlInsert, listParametres);
@@ -177,7 +177,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
+            ViewBag.recurrence = new SelectList(Tache.options, "Value","Text");
         }
     }
 }

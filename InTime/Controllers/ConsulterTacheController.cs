@@ -31,7 +31,7 @@ namespace InTime.Controllers
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                     };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString,Parametres);
+                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -57,63 +57,33 @@ namespace InTime.Controllers
 
         public ActionResult SuppTache(int? id)
         {
-            try
+            if (User.Identity.IsAuthenticated)
             {
-                string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
-                List<SqlParameter> Parametres = new List<SqlParameter>
+                try
+                {
+                    string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                    List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@IdTache",id)
                     };
-                RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-                var message = "Reussi";
+                    RequeteSql.ExecuteQuery(SqlDelete, Parametres);
 
-                return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-        }
-
-
-        [HttpPost]
-        public ActionResult Modification(Tache Model)
-        {
-            try
-            {
-                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
-                double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlUpdate = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
-                +"DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                +"Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
-
-                List<SqlParameter> listParametres = new List<SqlParameter>
+                    return RedirectToAction("Taches", "ConsulterTache");
+                }
+                catch (Exception ex)
                 {
-                    new SqlParameter("@IdTache",Model.IdTache),
-                    new SqlParameter("@UserId", UserId),
-                    new SqlParameter("@NomTache", Model.NomTache),
-                    new SqlParameter("@Lieu", Model.Lieu),
-                    new SqlParameter("@DateDebut",unixDebut),
-                    new SqlParameter("@DateFin",unixFin),
-                    new SqlParameter("@Description", Model.Description),
-                    new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@Reccurence", Model.Reccurence)
-                };
-                var message = RequeteSql.ExecuteQuery(SqlUpdate, listParametres) ? "Modif" : "Erreur";
-                TempData["Modification"] = message;
-
-                return RedirectToAction("Taches", "ConsulterTache");
+                    throw new Exception(ex.ToString());
+                }
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception(ex.ToString());
+                return View(UrlErreur.Authentification);
             }
         }
 
-        public ActionResult ModifTache(int? id)
+
+        public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
             if (id == null)
             {
@@ -124,29 +94,22 @@ namespace InTime.Controllers
                 {
                     try
                     {
-                        Tache tache = null;
-                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
-                        List<SqlParameter> Parametre = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", id)
-                        };
+                        Tache tache = RechercherTache(id);
 
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
-                        while (reader.Read())
+                        if (dep != null && fn != null)
                         {
-                            Object[] values = new Object[reader.FieldCount];
-                            reader.GetValues(values);
-                            tache = ObtenirTache(values);
+                            tache.unixDebut = Convert.ToDouble(dep);
+                            tache.unixFin = Convert.ToDouble(fn);
+                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut);
+                            ViewBag.Modif = true;
                         }
-                        reader.Close();
-
-                        if (tache == null)
+                        else
                         {
-                            return HttpNotFound();
+                            ViewBag.Modif = false;
                         }
 
-                        InitialiseViewBags();
                         InitialiseViewBag(tache);
+                        InitialiseViewBags();
                         Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
                     }
@@ -163,7 +126,69 @@ namespace InTime.Controllers
                 }
         }
 
-        public ActionResult Index(int? id)
+        [HttpPost]
+        public ActionResult Modification(Tache Model, string modif, bool Existe)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    string SqlCommande;
+                    List<SqlParameter> listParametres = new List<SqlParameter>();
+                    int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                    double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
+                    double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+
+                    if (modif == "False")
+                    {
+                        SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
+                        + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
+                        + "recurrence=@recurrence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                        listParametres.Add(new SqlParameter("@UserId", UserId));
+                        listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
+                        listParametres.Add(new SqlParameter("@Lieu", Model.Lieu));
+                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                        listParametres.Add(new SqlParameter("@Description", Model.Description));
+                        listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
+                        listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
+                        listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
+                    }
+                    else
+                    {
+                        if (!Existe)
+                        {
+                            SqlCommande = "INSERT INTO InfoSupplTacheRecurrente (IdTache,DateDebut,DateFin,Description)"
+                            + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                        }
+                        else
+                        {
+                            SqlCommande = "UPDATE InfoSupplTacheRecurrente SET Description=@Description WHERE IdTache=@IdTache "
+                                + "AND DateDebut=@DateDebut AND DateFin=@DateFin;";
+                        }
+                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                        listParametres.Add(new SqlParameter("@Description", Model.Description));
+                    }
+                    var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
+                    TempData["Modification"] = message;
+
+                    return RedirectToAction("Taches", "ConsulterTache");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+            }
+            else
+            {
+                return View(UrlErreur.Authentification);
+            }
+        }
+
+        public ActionResult Index(int? id, DateTime? dep, DateTime? fn)
         {
             if (id == null)
             {
@@ -174,21 +199,25 @@ namespace InTime.Controllers
                 {
                     try
                     {
-                        Tache tache = null;
-                        string queryString = "SELECT * FROM Taches where IdTache=@Id";
-                        List<SqlParameter> Parametre = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", id)
-                        };
+                        Tache tache = RechercherTache(id);
 
-                        SqlDataReader reader = RequeteSql.Select(queryString,Parametre);
-                        while (reader.Read())
+                        if (dep != null && fn != null)
                         {
-                            Object[] values = new Object[reader.FieldCount];
-                            reader.GetValues(values);
-                            tache = ObtenirTache(values);
+                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
+                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
+                            ViewBag.Modif = true;
                         }
-                        reader.Close();
+                        else
+                        {
+                            ViewBag.Modif = false;
+                        }
+
+                        string result = RechercheDescriptionTache(id, tache.unixDebut);
+                        if (!String.IsNullOrEmpty(result))
+                        {
+                            ViewBag.Existe = true;
+                            tache.Description = result;
+                        }
 
                         InitialiseViewBag(tache);
                         ViewData["Tache"] = tache;
@@ -204,6 +233,46 @@ namespace InTime.Controllers
                 {
                     return View(UrlErreur.Authentification);
                 }
+        }
+
+        private Tache RechercherTache(int? id)
+        {
+            string queryString = "SELECT * FROM Taches where IdTache=@Id";
+            List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
+
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return ObtenirTache(values);
+            }
+
+            return null;
+        }
+
+        private String RechercheDescriptionTache(int? id, double Debut)
+        {
+            string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
+            List<SqlParameter> Parametres = new List<SqlParameter>
+                            {
+                                new SqlParameter("@Id", id),
+                                new SqlParameter("@Debut", Debut)
+                            };
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return Convert.ToString(values[4]);
+            }
+
+            return null;
         }
 
 
@@ -269,7 +338,7 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Reccurence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9])
             };
 
             return tache;
@@ -283,15 +352,15 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options, "Value","Text");
+            ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
         }
 
         private void InitialiseViewBag(Tache tache)
         {
             DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
 
-            ViewBag.DateDebut = DateDebut.ToString(culture);
-            ViewBag.DateFin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin).ToString(culture);
+            ViewBag.DateDebut = TraitementDate.UnixTimeStampToString(tache.unixDebut);
+            ViewBag.DateFin = TraitementDate.UnixTimeStampToString(tache.unixFin);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
@@ -309,7 +378,7 @@ namespace InTime.Controllers
                 ViewBag.DateRappel = TempsRappel(DateRappel);
             }
 
-            ViewBag.Recurrence = Tache.NomReccurence(tache.Reccurence);
+            ViewBag.Recurrence = Tache.Nomrecurrence(tache.Recurrence);
         }
     }
 }
