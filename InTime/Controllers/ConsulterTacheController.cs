@@ -68,9 +68,8 @@ namespace InTime.Controllers
                         new SqlParameter("@IdTache",id)
                     };
                     RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-                    var message = "Reussi";
 
-                    return RedirectToAction("Taches", "ConsulterTache", new { strMessValidation = message });
+                    return RedirectToAction("Taches", "ConsulterTache");
                 }
                 catch (Exception ex)
                 {
