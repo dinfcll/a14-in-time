@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[InfoSupplTacheRecurrente] (
+CREATE TABLE [dbo].[InfoSupplTacheRecurrente] (
 	[NouvIdTache]	INT				IDENTITY(1,1) NOT NULL,
 	[IdTache]		INT				NOT NULL,
 	[DateDebut]		NUMERIC(10,0)	NOT NULL,
