@@ -6,11 +6,11 @@
 
     <div>
         @{
-            if (ViewBag.Message == "Reussi")
+            if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
             {
                 <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
             }
-            if (ViewBag.Message == "Erreur")
+            if (ViewBag.Message == InTime.Models.RequeteSql.Message.Echec)
             {
                 <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
             }

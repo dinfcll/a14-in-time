@@ -144,7 +144,7 @@ namespace InTime.Controllers
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
                         + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                        + "Reccurence=@Reccurence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        + "recurrence=@recurrence WHERE UserId=@UserId AND IdTache=@IdTache;";
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                         listParametres.Add(new SqlParameter("@UserId", UserId));
                         listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
@@ -154,18 +154,18 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@Description", Model.Description));
                         listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
-                        listParametres.Add(new SqlParameter("@Reccurence", Model.Reccurence));
+                        listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
                     }
                     else
                     {
                         if (!Existe)
                         {
-                            SqlCommande = "INSERT INTO DescTacheReccu (IdTache,DateDebut,DateFin,Description)"
+                            SqlCommande = "INSERT INTO InfoSupplTacheRecurrente (IdTache,DateDebut,DateFin,Description)"
                             + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
                         }
                         else
                         {
-                            SqlCommande = "UPDATE DescTacheReccu SET Description=@Description WHERE IdTache=@IdTache "
+                            SqlCommande = "UPDATE InfoSupplTacheRecurrente SET Description=@Description WHERE IdTache=@IdTache "
                                 + "AND DateDebut=@DateDebut AND DateFin=@DateFin;";
                         }
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
@@ -173,7 +173,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@DateFin", unixFin));
                         listParametres.Add(new SqlParameter("@Description", Model.Description));
                     }
-                    var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Erreur";
+                    var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
                     TempData["Modification"] = message;
 
                     return RedirectToAction("Taches", "ConsulterTache");
@@ -258,7 +258,7 @@ namespace InTime.Controllers
 
         private String RechercheDescriptionTache(int? id, double Debut)
         {
-            string queryString = "SELECT * FROM DescTacheReccu WHERE IdTache=@Id AND DateDebut=@Debut";
+            string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
             List<SqlParameter> Parametres = new List<SqlParameter>
                             {
                                 new SqlParameter("@Id", id),
@@ -339,7 +339,7 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Reccurence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9])
             };
 
             return tache;
@@ -353,7 +353,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.Reccurence = new SelectList(Tache.options, "Value", "Text");
+            ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
         }
 
         private void InitialiseViewBag(Tache tache)
@@ -379,7 +379,7 @@ namespace InTime.Controllers
                 ViewBag.DateRappel = TempsRappel(DateRappel);
             }
 
-            ViewBag.Recurrence = Tache.NomReccurence(tache.Reccurence);
+            ViewBag.Recurrence = Tache.Nomrecurrence(tache.Recurrence);
         }
     }
 }

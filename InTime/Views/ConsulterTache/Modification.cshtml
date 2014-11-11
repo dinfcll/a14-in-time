@@ -15,7 +15,7 @@
 }
 <body>
     @{
-        if (ViewBag.Message == "Reussi")
+        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
         {
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
@@ -84,9 +84,9 @@
                 <br />
 
                 Récurrence de la tache :<br />
-                @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+                @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
                 <script type="text/javascript">
-                    document.getElementById("Reccurence").selectedIndex = @tache.Reccurence;
+                    document.getElementById("recurrence").selectedIndex = @tache.Recurrence;
                 </script>
 
                 <br />
@@ -174,6 +174,6 @@
             $("#modif").val("True");
         </script>
     }
-    
+
 </body>
 </html>

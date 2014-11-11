@@ -340,11 +340,11 @@ namespace InTime.Controllers
 
                     if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
                     {
-                        ViewBag.Message = "Reussi";
+                        ViewBag.Message = RequeteSql.Message.Reussi;
                     }
                     else
                     {
-                        ViewBag.Message = "Erreur";
+                        ViewBag.Message = RequeteSql.Message.Echec;
                     }
 
                     RegisterModel userProfile = new RegisterModel()

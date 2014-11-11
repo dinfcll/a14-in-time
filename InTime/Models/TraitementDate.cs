@@ -8,7 +8,7 @@ namespace InTime.Models
 {
     public static class TraitementDate
     {
-        public enum Reccurence { 
+        public enum recurrence { 
             Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois,QuatreMois,ChaqueAnnee
         }
 

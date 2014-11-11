@@ -41,7 +41,7 @@ namespace InTime.Models
         public string mFin { get; set; }
         public string HRappel { get; set; }
         public string mRappel { get; set; }
-        public int Reccurence { get; set; }
+        public int Recurrence { get; set; }
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
 
@@ -107,7 +107,7 @@ namespace InTime.Models
             }
         }
 
-        public static string NomReccurence(int index)
+        public static string Nomrecurrence(int index)
         {
             switch (index)
             {
