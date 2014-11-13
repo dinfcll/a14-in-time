@@ -25,45 +25,44 @@
 
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 
-<div id="1">
     @using (Html.BeginForm())
     {
         <article>
             <p>
-                <div id="2">
                     Votre prénom :
                     <br />
-                    @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? "" })
+                    @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? "", id = "Consultation"})
                     @Html.ValidationMessageFor(model => model.Prenom, "*")
                     <br />
                     Votre nom :
                     <br />
-                    @Html.TextBoxFor(model => model.Nom, new { Value = information.Nom ?? "" })
+                    @Html.TextBoxFor(model => model.Nom, new { Value = information.Nom ?? "", id = "Consultation" })
                     @Html.ValidationMessageFor(model => model.Nom, "*")
                     <br />
                     Votre adresse courriel :
                     <br />
-                    @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "" })
+                    @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "", id = "Consultation" })
                     @Html.ValidationMessageFor(model => model.Email, "*")
                     <br />
-                </div>
-
-                <div id="3">
-                    <input type="submit" value="Sauvegarder" />
-                </div>
-
-                <div id="4">
-                    <input type="button" value="Modifier vos renseignements" />
-                </div>
-
+                    <br />
+                    <input id="Sauv" type="submit" value="Sauvegarder" />
+                    <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
             </p>
         </article>
     }
-</div>
 
 @if (ViewBag.Affichage == 1)
 {
     <script>
-
+        $("#Sauv").css("display", "none");
+        $("#Mod").css("display", "block");
+        $("[id^=Consultation").attr('readonly', 'true');
+        $("[id^=Consultation").css('background-color', '#DEDEDE');
+        $("#Mod").click(function () {
+            $("[id^=Consultation").attr('readonly', 'false');
+            $("[id^=Consultation").css('background-color', 'white');
+            $("#Sauv").css("display", "block");
+            $("#Mod").css("display", "none");
+        });
     </script>
 }
