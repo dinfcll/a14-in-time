@@ -258,16 +258,14 @@ namespace InTime.Controllers
             return View(model);
         }
 
-        public ActionResult Renseignements()
+        public ActionResult Renseignements(int? Affichage)
         {
             if (User.Identity.IsAuthenticated)
             {
                 RegisterModel userProfile = null;
 
                 string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-
-                List<SqlParameter> Parametres = new List<SqlParameter>
-                        {
+                List<SqlParameter> Parametres = new List<SqlParameter> {
                             new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                         };
                 SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
@@ -283,12 +281,16 @@ namespace InTime.Controllers
                         Email = Convert.ToString(values[4])
                     };
                 }
-                if (userProfile == null)
-                {
-                    return HttpNotFound();
-                }
                 ViewData["utilisateur"] = userProfile;
 
+                if (Affichage != null)
+                {
+                    ViewBag.Affichage = Affichage;
+                }
+                else
+                {
+                    ViewBag.Affichage = 0;
+                }
 
                 return View();
             }

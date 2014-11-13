@@ -2,39 +2,28 @@
     ViewBag.Title = "TacheForm";
 }
 
-<html>
-<body>
     <h2>Bonjour, voici les actions que vous pouvez effectuer : </h2>
-
 
     <ol class="round">
         <li class="one">
             
             <h5>@Html.ActionLink("Ajouter une tâche", "Index", "AjouterTache",null, new { style = "color:blue;" })</h5>
-            Organisez votre travail avec un calendrier contenant vos tâches que vous devez effectuer.
+            <p>Organisez votre travail avec un calendrier contenant vos tâches que vous devez effectuer.</p>
         </li>
         <li class="two">
            
             <h5>@Html.ActionLink("Consulter vos tâches", "Taches", "ConsulterTache",null, new { style = "color:blue;" })</h5>
-            Visualisez les tâches que vous devez faire en sélectionnant la journée de votre choix.
+            <p>Visualisez les tâches que vous devez faire en sélectionnant la journée de votre choix.</p>
         </li>
         <li class="three">
             
             <h5>@Html.ActionLink("Consulter votre calendrier", "Index", "Calendrier",null, new { style = "color:blue;" })</h5>
-            Consulter votre calendrier pour voir votre agenda.
+            <p>Consulter votre calendrier pour voir votre agenda.</p>
         </li>
+
         <li class="four">
-            
-            <h5>@Html.ActionLink("Modifier vos renseignements personnels", "Renseignements", "Account",null, new { style = "color:blue;" })</h5>
-            Consulter vos renseignements personnels pour vous assurez qu'il n'y a aucune erreur.
-        </li>
-        <li class="five">
-            
-            <h5>@Html.ActionLink("Changer votre mot de passe", "Manage", "Account",null, new { style = "color:blue;" })</h5>
-            Changer votre mot de passe pour un nouveau mot de passe.
+            <h5>@Html.ActionLink("Gérer votre compte","Index","GererCompte",null, new { style = "color:blue;" })</h5>
+            <p>Accéder aux outils de gestion qui vous permettront de changer votre mot de passe, visualiser vos renseignements personnels
+            ou de les modifier.</p>
         </li>
     </ol>
-
-
-</body>
-</html>
