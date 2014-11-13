@@ -283,9 +283,9 @@ namespace InTime.Controllers
                 }
                 ViewData["utilisateur"] = userProfile;
 
-                if (Affichage == 1)
+                if (Affichage != null)
                 {
-                    ViewBag.Affichage = 1;
+                    ViewBag.Affichage = Affichage;
                 }
                 else
                 {

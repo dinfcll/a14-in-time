@@ -12,6 +12,5 @@ namespace InTime.Controllers
         {
             return View();
         }
-
     }
 }
