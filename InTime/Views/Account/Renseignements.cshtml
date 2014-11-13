@@ -25,43 +25,46 @@
 
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 
-    @using (Html.BeginForm())
-    {
-        <article>
-            <p>
-                    Votre prénom :
-                    <br />
-                    @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? "", id = "Consultation"})
-                    @Html.ValidationMessageFor(model => model.Prenom, "*")
-                    <br />
-                    Votre nom :
-                    <br />
-                    @Html.TextBoxFor(model => model.Nom, new { Value = information.Nom ?? "", id = "Consultation" })
-                    @Html.ValidationMessageFor(model => model.Nom, "*")
-                    <br />
-                    Votre adresse courriel :
-                    <br />
-                    @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "", id = "Consultation" })
-                    @Html.ValidationMessageFor(model => model.Email, "*")
-                    <br />
-                    <br />
-                    <input id="Sauv" type="submit" value="Sauvegarder" />
-                    <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
-            </p>
-        </article>
-    }
+@using (Html.BeginForm())
+{
+    <article>
+        <p>
+            Votre prénom :
+            <br />
+            @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? "", id = "Consultation" })
+            @Html.ValidationMessageFor(model => model.Prenom, "*")
+            <br />
+            Votre nom :
+            <br />
+            @Html.TextBoxFor(model => model.Nom, new { Value = information.Nom ?? "", id = "Consultation" })
+            @Html.ValidationMessageFor(model => model.Nom, "*")
+            <br />
+            Votre adresse courriel :
+            <br />
+            @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "", id = "Consultation" })
+            @Html.ValidationMessageFor(model => model.Email, "*")
+            <br />
+            <br />
+            <div style="display:inline-block">
+                <input id="Sauv" type="submit" value="Sauvegarder" />
+                <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
+                <input type="button" value="Retour" onclick="location.href = '@Url.Action("Index","GererCompte",null)'" />
+            </div>
+        </p>
+    </article>
+}
 
 @if (ViewBag.Affichage == 1)
 {
     <script>
         $("#Sauv").css("display", "none");
-        $("#Mod").css("display", "block");
+        $("#Mod").css("display", "inherit");
         $("[id^=Consultation").attr('readonly', 'true');
         $("[id^=Consultation").css('background-color', '#DEDEDE');
         $("#Mod").click(function () {
-            $("[id^=Consultation").attr('readonly', 'false');
+            $("[id^=Consultation").removeAttr('readonly');
             $("[id^=Consultation").css('background-color', 'white');
-            $("#Sauv").css("display", "block");
+            $("#Sauv").css("display", "inherit");
             $("#Mod").css("display", "none");
         });
     </script>
