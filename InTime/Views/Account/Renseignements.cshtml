@@ -4,51 +4,66 @@
     ViewBag.Title = "Renseignements";
 }
 
-    <div>
-        @{
-            if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
-            {
-                <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
-            }
-            if (ViewBag.Message == InTime.Models.RequeteSql.Message.Echec)
-            {
-                <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
-            }
-        }
-    </div>
-
-
-<body>
-    <h2>Vos renseignements personnels</h2>
-
+<div>
     @{
-        var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
+        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
+        {
+            <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
+        }
+        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Echec)
+        {
+            <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
+        }
     }
+</div>
 
-    @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+<h2>Vos renseignements personnels</h2>
 
-@using (Html.BeginForm())
-{ 
-    <article>
-        <p>
-            Votre prénom :
-            <br />
-            @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? ""} )
-            @Html.ValidationMessageFor(model => model.Prenom, "*")
-            <br />
-            Votre nom :
-            <br/>
-            @Html.TextBoxFor(model => model.Nom, new {  Value = information.Nom ?? ""})
-            @Html.ValidationMessageFor(model => model.Nom, "*")
-            <br/>
-            Votre adresse courriel :
-            <br/>
-            @Html.TextBoxFor(model => model.Email, new {  Value = information.Email ?? ""})
-            @Html.ValidationMessageFor(model => model.Email, "*")
-            <br/>
+@{
+    var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
+}
 
-            <input type="submit" value="Sauvegarder"/>
-        </p>
-    </article>
+@Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+
+<div id="1">
+    @using (Html.BeginForm())
+    {
+        <article>
+            <p>
+                <div id="2">
+                    Votre prénom :
+                    <br />
+                    @Html.TextBoxFor(model => model.Prenom, new { Value = information.Prenom ?? "" })
+                    @Html.ValidationMessageFor(model => model.Prenom, "*")
+                    <br />
+                    Votre nom :
+                    <br />
+                    @Html.TextBoxFor(model => model.Nom, new { Value = information.Nom ?? "" })
+                    @Html.ValidationMessageFor(model => model.Nom, "*")
+                    <br />
+                    Votre adresse courriel :
+                    <br />
+                    @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "" })
+                    @Html.ValidationMessageFor(model => model.Email, "*")
+                    <br />
+                </div>
+
+                <div id="3">
+                    <input type="submit" value="Sauvegarder" />
+                </div>
+
+                <div id="4">
+                    <input type="button" value="Modifier vos renseignements" />
+                </div>
+
+            </p>
+        </article>
     }
-</body>
+</div>
+
+@if (ViewBag.Affichage == 1)
+{
+    <script>
+
+    </script>
+}

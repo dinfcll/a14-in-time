@@ -185,6 +185,7 @@
     <Compile Include="Controllers\AjouterTacheController.cs" />
     <Compile Include="Controllers\CalendrierController.cs" />
     <Compile Include="Controllers\ConsulterTacheController.cs" />
+    <Compile Include="Controllers\GererCompteController.cs" />
     <Compile Include="Controllers\GererController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TacheController.cs" />
@@ -340,6 +341,7 @@
     <Content Include="Views\ConsulterTache\Taches.cshtml" />
     <Content Include="Views\ConsulterTache\Modification.cshtml" />
     <Content Include="Views\Account\Renseignements.cshtml" />
+    <Content Include="Views\GererCompte\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
