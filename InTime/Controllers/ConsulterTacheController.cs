@@ -235,6 +235,11 @@ namespace InTime.Controllers
                 }
         }
 
+        public ActionResult Historique()
+        {
+            return View();
+        }
+
         private Tache RechercherTache(int? id)
         {
             string queryString = "SELECT * FROM Taches where IdTache=@Id";
