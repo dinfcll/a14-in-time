@@ -1,6 +1,9 @@
 ﻿@model InTime.Models.Tache
-<html>
-<head>
+
+@{
+    ViewBag.Title = "Modification";
+}
+
     <title>Modification</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
@@ -8,12 +11,11 @@
     @{
         var tache = (InTime.Models.Tache)ViewData["Tache"];
     }
-</head>
+
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 @{
     ViewBag.Title = "Ajouter une nouvelle tâche";
 }
-<body>
     @{
         if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
         {
@@ -174,6 +176,3 @@
             $("#modif").val("True");
         </script>
     }
-
-</body>
-</html>

@@ -45,6 +45,7 @@ namespace InTime.Models
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
 
+
         public static List<string> tempsHeure
         {
             get
@@ -81,6 +82,20 @@ namespace InTime.Models
                     new SelectListItem { Text = "Aux trois mois", Value = "6"},
                     new SelectListItem { Text = "Aux quatre mois", Value = "7"},
                     new SelectListItem { Text = "À chaque année", Value = "8"}
+                };
+            }
+        }
+
+        public static List<SelectListItem> Choix_Historique
+        {
+            get
+            {
+                return new List<SelectListItem>
+                {
+                    new SelectListItem {Text = "Choisir une option", Value = "0"},
+                    new SelectListItem {Text = "Les 3 derniers mois", Value = "1"},
+                    new SelectListItem {Text = "Lapse de temps", Value = "2"},
+                    new SelectListItem {Text = "Depuis le début", Value = "3"}
                 };
             }
         }

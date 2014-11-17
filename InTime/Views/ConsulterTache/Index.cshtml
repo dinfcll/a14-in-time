@@ -4,9 +4,6 @@
     ViewBag.Title = "Consultation de votre tâche";
 }
 
-<html>
-
-<head>
     <script>
         $(window).load(function () {
             $(function () {
@@ -16,14 +13,12 @@
         });
     </script>
 
-    <title>Consulter</title>
-</head>
-<body>
     <h2>Voici votre tâche</h2>
 
     @{
         var tache = (Tache)ViewData["Tache"];
     }
+
     <p>
         Nom de la tâche :
         <br />
@@ -60,7 +55,3 @@
         <input type="button" value="Modifier Description"
                onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
     }
-
-</body>
-</html>
-
