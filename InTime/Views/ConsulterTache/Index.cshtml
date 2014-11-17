@@ -19,12 +19,9 @@
     <title>Consulter</title>
 </head>
 <body>
-    <ol class="breadcrumb">
-        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
-        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
-        <li>@Html.ActionLink("Consulter tâches", "Taches", "ConsulterTache")</li>
-        <li class="active">Détails</li>
-    </ol>
+    <div id="menucontainer">
+        @Html.MvcSiteMap().Menu(true)
+    </div>
     <h2>Voici votre tâche</h2>
 
     @{
