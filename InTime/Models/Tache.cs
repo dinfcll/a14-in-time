@@ -45,7 +45,6 @@ namespace InTime.Models
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
 
-
         public static List<string> tempsHeure
         {
             get
