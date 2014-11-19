@@ -235,6 +235,106 @@ namespace InTime.Controllers
                 }
         }
 
+        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewBag.ChoixTemps = Tache.Choix_Historique;
+                ViewBag.ChoixMoisFin = Tache.les_mois;
+                ViewBag.ChoixMoisDebut = Tache.les_mois;
+
+                if (!String.IsNullOrEmpty(ChoixTemps))
+                {
+                    int Choix;
+                    if (!Int32.TryParse(ChoixTemps, out Choix))
+                    {
+                        Choix = 0;
+                    }
+                    ViewBag.Choix = Choix;
+
+                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut);
+                }
+                else
+                {
+                    ViewBag.Choix = 0;
+                }
+
+                return View();
+            }
+            else
+            {
+                return View(UrlErreur.Authentification);
+            }
+        }
+
+        private List<Tache> TraitementChoixHistorique(int Choix, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut)
+        {
+            string Select = "";
+            var lstTache = new List<Tache>();
+            List<SqlParameter> listParametres = new List<SqlParameter>();
+            DateTime Maintenant = DateTime.Now;
+
+            switch (Choix)
+            {
+                case 0:
+                    break;
+                case 1:
+                    DateTime TroisMoisEnArriere = Maintenant.AddMonths(-3);
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant";
+                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
+                    listParametres.Add(new SqlParameter("@TroisMoisArriere", TraitementDate.DateTimeToUnixTimestamp(TroisMoisEnArriere)));
+                    listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
+                    break;
+                case 2:
+                    try
+                    {
+                        DateTime Date1 = new DateTime(Convert.ToInt32(DebAnn), Convert.ToInt32(ChoixMoisDebut), 1);
+                        DateTime Date2 = new DateTime(Convert.ToInt32(FinAnn), Convert.ToInt32(ChoixMoisFin), 1);
+                        Date2 = Date2.AddMonths(1);
+                        Date2 = Date2.AddDays(-1);
+
+                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2";
+                        listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
+                        listParametres.Add(new SqlParameter("@Date1", TraitementDate.DateTimeToUnixTimestamp(Date1)));
+                        listParametres.Add(new SqlParameter("@Date2", TraitementDate.DateTimeToUnixTimestamp(Date2)));
+                    }
+                    catch (Exception ex)
+                    {
+                        Select = "";
+                    }
+                    break;
+                case 3:
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant";
+                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
+                    listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
+                    break;
+                default:
+                    break;
+            }
+
+            try
+            {
+                if (!String.IsNullOrEmpty(Select))
+                {
+                    SqlDataReader reader = RequeteSql.Select(Select, listParametres);
+                    while (reader.Read())
+                    {
+                        Object[] values = new Object[reader.FieldCount];
+                        reader.GetValues(values);
+                        var tache = ObtenirTache(values);
+                        lstTache.Add(tache);
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                lstTache = new List<Tache>();
+            }
+
+            return lstTache;
+        }
+
         private Tache RechercherTache(int? id)
         {
             string queryString = "SELECT * FROM Taches where IdTache=@Id";
