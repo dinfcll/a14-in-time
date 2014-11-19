@@ -28,7 +28,7 @@ namespace InTime.Controllers
             var lstTache = new List<Tache>();
             try
             {
-                string queryString = "SELECT * FROM Taches where UserId=@Id;";
+                string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
                 List<SqlParameter> param = new List<SqlParameter>
                     {
                         new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))

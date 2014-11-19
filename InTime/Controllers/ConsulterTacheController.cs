@@ -25,10 +25,12 @@ namespace InTime.Controllers
                 try
                 {
                     var lstTache = new List<Tache>();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id";
+                    double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
                     List<SqlParameter> Parametres = new List<SqlParameter>
                     {
-                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@DateDebut", DateAuj)
                     };
 
                     SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
