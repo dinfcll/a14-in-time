@@ -282,7 +282,7 @@ namespace InTime.Controllers
                     break;
                 case 1:
                     DateTime TroisMoisEnArriere = Maintenant.AddMonths(-3);
-                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant";
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0;";
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@TroisMoisArriere", TraitementDate.DateTimeToUnixTimestamp(TroisMoisEnArriere)));
                     listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
@@ -295,7 +295,7 @@ namespace InTime.Controllers
                         Date2 = Date2.AddMonths(1);
                         Date2 = Date2.AddDays(-1);
 
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2";
+                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0;";
                         listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                         listParametres.Add(new SqlParameter("@Date1", TraitementDate.DateTimeToUnixTimestamp(Date1)));
                         listParametres.Add(new SqlParameter("@Date2", TraitementDate.DateTimeToUnixTimestamp(Date2)));
@@ -306,7 +306,7 @@ namespace InTime.Controllers
                     }
                     break;
                 case 3:
-                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant";
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant AND Recurrence = 0;";
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
                     break;
