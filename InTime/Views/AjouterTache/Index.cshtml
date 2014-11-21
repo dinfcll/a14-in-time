@@ -23,7 +23,7 @@
         {
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
-        if (@TempData["Message"] == "Erreur")
+        if (@TempData["Message"] == "Echec")
         {
             <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
         }
@@ -89,7 +89,7 @@
         <br />
 
         Récurrence de la tache :<br/>
-        @Html.DropDownList("Reccurence", ViewBag.Reccurence as SelectList, new { id = "Reccurence" })
+        @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
         <br/>
 
 

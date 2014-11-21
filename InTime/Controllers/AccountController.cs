@@ -41,23 +41,8 @@ namespace InTime.Controllers
         {
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                SqlConnection con = null;
-                try
-                {
-                    con = RequeteSql.ConnexionBD(con);
-                    int id = RequeteSql.RechercheID(con, model.UserName);
+                CookieNomUtilisateur(model.UserName);
 
-                    InTime.Models.Cookie.CreationCookie(model.UserName, Convert.ToString(id), InTime.Models.Cookie.Heure);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.ToString());
-                }
-                finally
-                {
-                    if (con != null)
-                        con.Close();
-                }
                 return RedirectToLocal(returnUrl);
             }
 
@@ -105,7 +90,7 @@ namespace InTime.Controllers
                 // Tentative d'inscription de l'utilisateur
                 try
                 {
-                    if (!UtilisateurPresent(model.UserName, model.Password))
+                    if (!UtilisateurPresent(model.UserName, model.Email))
                     {
                         ModelState.AddModelError("", "Votre nom d'utilisateur ou votre courriel n'est pas unique");
                     }
@@ -113,6 +98,7 @@ namespace InTime.Controllers
                     {
                         WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
                         WebSecurity.Login(model.UserName, model.Password);
+                        CookieNomUtilisateur(model.UserName);
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -123,29 +109,23 @@ namespace InTime.Controllers
             }
 
             // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
-            return View(model);
+            return View();
         }
 
         private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
         {
-            String query = "SELECT * FROM UserProfile";
-            SqlDataReader reader = RequeteSql.Select(query, null);
+            String query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
 
-            while (reader.Read())
-            {
-                Object[] values = new Object[reader.FieldCount];
-                int fieldCounts = reader.GetValues(values);
-                var account = new RegisterModel()
+            List<SqlParameter> listParametres = new List<SqlParameter>
                 {
-                    UserName = Convert.ToString(values[1]),
-                    Email = Convert.ToString(values[4])
+                    new SqlParameter("@UserName", NomUtilisateur),
+                    new SqlParameter("@Email", adresseCourriel)
                 };
 
-                if (account.UserName.ToLower() == NomUtilisateur.ToLower() ||
-                    account.Email.ToLower() == adresseCourriel.ToLower())
-                {
-                    return false;
-                }
+            SqlDataReader reader = RequeteSql.Select(query, listParametres);
+            if (reader.Read())
+            {
+                return false;
             }
 
             return true;
@@ -258,16 +238,14 @@ namespace InTime.Controllers
             return View(model);
         }
 
-        public ActionResult Renseignements()
+        public ActionResult Renseignements(int? Affichage)
         {
             if (User.Identity.IsAuthenticated)
             {
                 RegisterModel userProfile = null;
 
                 string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-
-                List<SqlParameter> Parametres = new List<SqlParameter>
-                        {
+                List<SqlParameter> Parametres = new List<SqlParameter> {
                             new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                         };
                 SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
@@ -283,12 +261,16 @@ namespace InTime.Controllers
                         Email = Convert.ToString(values[4])
                     };
                 }
-                if (userProfile == null)
-                {
-                    return HttpNotFound();
-                }
                 ViewData["utilisateur"] = userProfile;
 
+                if (Affichage != null)
+                {
+                    ViewBag.Affichage = Affichage;
+                }
+                else
+                {
+                    ViewBag.Affichage = 0;
+                }
 
                 return View();
             }
@@ -340,11 +322,11 @@ namespace InTime.Controllers
 
                     if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
                     {
-                        ViewBag.Message = "Reussi";
+                        ViewBag.Message = RequeteSql.Message.Reussi;
                     }
                     else
                     {
-                        ViewBag.Message = "Erreur";
+                        ViewBag.Message = RequeteSql.Message.Echec;
                     }
 
                     RegisterModel userProfile = new RegisterModel()
@@ -398,6 +380,26 @@ namespace InTime.Controllers
             ChangePasswordSuccess,
             SetPasswordSuccess,
             RemoveLoginSuccess,
+        }
+
+        private void CookieNomUtilisateur(string UserName)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = RequeteSql.ConnexionBD(con);
+                int id = RequeteSql.RechercheID(con, UserName);
+                InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Heure);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (con != null)
+                    con.Close();
+            }
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)

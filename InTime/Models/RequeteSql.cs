@@ -12,7 +12,9 @@ namespace InTime.Models
 {
     public static class RequeteSql
     {
-        public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
+        public enum Message { Reussi, Echec, Modif };
+
+        public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {
@@ -36,10 +38,10 @@ namespace InTime.Models
             {
                 cmdId.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
             }
-                return (Int32)cmdId.ExecuteScalar();
+            return (Int32)cmdId.ExecuteScalar();
         }
 
-        public static SqlDataReader Select (string Query, List<SqlParameter> Parametres)
+        public static SqlDataReader Select(string Query, List<SqlParameter> Parametres)
         {
             SqlConnection con = null;
             try
@@ -77,51 +79,6 @@ namespace InTime.Models
             {
                 return false;
             }
-        }
-
-        public static string EnleverApostrophe(string texte)
-        {
-            string Text = "";
-            char apostrophe = Convert.ToChar(39);
-            char doubleApostrophe = Convert.ToChar(34);
-
-            foreach (char ch in texte)
-            {
-                if (ch == apostrophe)
-                {
-
-                    Text += doubleApostrophe;
-                }
-                else
-                {
-                    Text += ch;
-                }
-            }
-
-            return Text;
-        }
-
-
-        public static string RemettreApostrophe(string texte)
-        {
-            string Text = "";
-            char apostrophe = Convert.ToChar(39);
-            char doubleApostrophe = Convert.ToChar(34);
-
-            foreach (char ch in texte)
-            {
-                if (ch == doubleApostrophe)
-                {
-
-                    Text += Convert.ToChar(apostrophe);
-                }
-                else
-                {
-                    Text += ch;
-                }
-            }
-
-            return Text;
         }
     }
 }

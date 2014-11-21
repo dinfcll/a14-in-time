@@ -4,29 +4,26 @@
     ViewBag.Title = "Consultation de votre tâche";
 }
 
-<html>
-
-<head>
-    <script>
+<script>
     $(window).load(function () {
         $(function () {
             $("[id^=Consultation").attr('readonly', 'true');
             $("[id^=Consultation").css('background-color', '#DEDEDE');
         });
     });
-    </script>
-
-    <title>Consulter</title>
-</head>
-<body>
-    <div id="menucontainer">
-        @Html.MvcSiteMap().Menu(true)
-    </div>
+</script>
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li>@Html.ActionLink("Consulter Tâches", "Taches", "ConsulterTache")</li>
+    <li class="active">Détails</li>
+</ol>
     <h2>Voici votre tâche</h2>
 
     @{
         var tache = (Tache)ViewData["Tache"];
     }
+
     <p>
         Nom de la tâche :
         <br />
@@ -38,7 +35,7 @@
         <br />
         Récurrence de la tâche :
         <br />
-        @Html.TextBox("Reccurence", tache.Reccurence, new { disabled = "disabled", id = "Consultation" })
+        @Html.TextBox("Recurrence", (string)ViewBag.Recurrence, new { disabled = "disabled", id = "Consultation" })
         <br />
         Début  de la tâche :
         <br />
@@ -58,6 +55,8 @@
         <br />
     </p>
 
-</body>
-</html>
-
+    @if (ViewBag.Modif == true)
+    {
+        <input type="button" value="Modifier Description"
+               onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
+    }

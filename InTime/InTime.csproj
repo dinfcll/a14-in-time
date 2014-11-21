@@ -197,6 +197,7 @@
     <Compile Include="Controllers\AjouterTacheController.cs" />
     <Compile Include="Controllers\CalendrierController.cs" />
     <Compile Include="Controllers\ConsulterTacheController.cs" />
+    <Compile Include="Controllers\GererCompteController.cs" />
     <Compile Include="Controllers\GererController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TacheController.cs" />
@@ -372,6 +373,10 @@
     <Content Include="Views\Shared\DisplayTemplates\MetaRobotsHelperModel.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\MenuHelperModel.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
+    <Content Include="Views\GererCompte\Index.cshtml" />
+    <Content Include="Views\ConsulterTache\Historique.cshtml" />
+    <Content Include="Views\ConsulterTache\_TableauDonnees.cshtml" />
+    <Content Include="Views\ConsulterTache\_LapseDeTemps.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

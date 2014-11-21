@@ -28,7 +28,7 @@ namespace InTime.Controllers
             var lstTache = new List<Tache>();
             try
             {
-                string queryString = "SELECT * FROM Taches where UserId=@Id;";
+                string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
                 List<SqlParameter> param = new List<SqlParameter>
                     {
                         new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
@@ -51,36 +51,39 @@ namespace InTime.Controllers
 
             var rows = new List<object>();
             UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
+
             foreach (Tache tache in lstTache)
             {
-
-                if (tache.Reccurence != "Aucune")
+                TraitementDate.recurrence recurrence =
+                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+                if (recurrence != TraitementDate.recurrence.Aucune)
                 {
                     List<string[]> result = null;
-                    switch(tache.Reccurence)
+
+                    switch (recurrence)
                     {
-                        case "À chaque jour":
+                        case TraitementDate.recurrence.ChaqueJour:
                             result = TraitementDate.ChaqueJour(tache, end);
                             break;
-                        case "Chaque semaine":
+                        case TraitementDate.recurrence.ChaqueSemaine:
                             result = TraitementDate.ChaqueSemaine(tache, end);
                             break;
-                        case "Aux deux semaines":
+                        case TraitementDate.recurrence.DeuxSemaines:
                             result = TraitementDate.DeuxSemaine(tache, end);
                             break;
-                        case "Aux trois semaines":
+                        case TraitementDate.recurrence.TroisSemaine:
                             result = TraitementDate.TroisSemaine(tache, end);
                             break;
-                        case "À chaque mois":
+                        case TraitementDate.recurrence.ChaqueMois:
                             result = TraitementDate.ChaqueMois(tache, end);
                             break;
-                        case "Aux trois mois":
+                        case TraitementDate.recurrence.TroisMois:
                             result = TraitementDate.TroisMois(tache, end);
                             break;
-                        case "Aux quatre mois":
+                        case TraitementDate.recurrence.QuatreMois:
                             result = TraitementDate.QuatreMois(tache, end);
                             break;
-                        case "À chaque année":
+                        case TraitementDate.recurrence.ChaqueAnnee:
                             result = TraitementDate.ChaqueAnnee(tache, end);
                             break;
                     }
@@ -89,22 +92,15 @@ namespace InTime.Controllers
                     {
                         foreach(string[] str in result)
                         {
-                            string urll = UrlH.Action("Index", "ConsulterTache", new { @id = str[3] });
-                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = urll, id=str[3] });
+                            string url = UrlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
+                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id=str[3] });
                         }
                     }
                 }
                 else
                 {
-
-                    string dateDebut = TraitementDate.DateFormatCalendrier(
-                        tache.Annee, tache.Mois, tache.Jour, tache.HDebut, tache.mDebut);
-                    string dateFin = TraitementDate.DateFormatCalendrier(
-                       tache.Annee, tache.Mois, tache.Jour, tache.HFin, tache.mFin);
-
-                    string urll = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
-
-                    rows.Add(new { title = tache.NomTache, start = dateDebut, end = dateFin, url = urll });
+                    string url = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
+                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url });
                 }
             }
 
@@ -117,15 +113,10 @@ namespace InTime.Controllers
             var tache = new Tache()
             {
                 IdTache = Convert.ToInt32(values[0]),
-                NomTache = RequeteSql.RemettreApostrophe(Convert.ToString(values[2])),
-                Mois = Convert.ToString(values[5]),
-                Jour = Convert.ToString(values[6]),
-                HDebut = Convert.ToString(values[7]),
-                HFin = Convert.ToString(values[8]),
-                mDebut = Convert.ToString(values[9]),
-                mFin = Convert.ToString(values[10]),
-                Annee = Convert.ToString(values[13]),
-                Reccurence = Convert.ToString(values[14])
+                NomTache = Convert.ToString(values[2]),
+                unixDebut = Convert.ToDouble(values[5]),
+                unixFin = Convert.ToDouble(values[6]),
+                Recurrence = Convert.ToInt32(values[9])
             };
 
             return tache;

@@ -8,17 +8,33 @@ namespace InTime.Models
 {
     public static class TraitementDate
     {
+        public enum recurrence { 
+            Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois,QuatreMois,ChaqueAnnee
+        }
+
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
-            return (dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
+            return (dateTime - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        public static double DateTimeToUnixTimestamp()
+        {
+            DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            return (dt - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
 
-            return dtDateTime;
+            return dtDateTime.AddSeconds(unixTimeStamp);
+        }
+
+        public static string UnixTimeStampToString(double unixTimeStamp)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            
+            return dtDateTime.AddSeconds(unixTimeStamp).ToString("yyyy-MM-dd HH:mm");
         }
 
         public static DateTime DateDebut(Tache tache)
@@ -60,8 +76,8 @@ namespace InTime.Models
         {
             bool Changement = false;
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
             debutCalendrier = debutCalendrier.AddMonths(-1);
 
@@ -121,8 +137,8 @@ namespace InTime.Models
         private static List<string[]> VerificationMois(Tache tache,double FinMois,int Bond)
         {
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
             debutCalendrier = debutCalendrier.AddMonths(-1);
             bool Changement = false;
@@ -191,8 +207,8 @@ namespace InTime.Models
             bool Changement = false;
             bool Jour = false;
             List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
+            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
+            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
             DateTime debutCalendrier = UnixTimeStampToDateTime(start);
             debutCalendrier = debutCalendrier.AddMonths(-1);
 

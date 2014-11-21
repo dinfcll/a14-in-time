@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Gestion";
+}
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li class="active">Gérer Compte</li>
+</ol>
+<h2>Gestion du compte</h2>
+
+<ol class="round">
+    <li class="one">
+        <h5>@Html.ActionLink("Renseignements personnels", "Renseignements", "Account", new { @Affichage = 1 }, new { style = "color:blue;" })</h5>
+        <p>Visualiser vos renseignements personnels.</p>
+    </li>
+
+    <li class="two">
+        <h5>@Html.ActionLink("Modifier vos renseignements personnels", "Renseignements", "Account", null, new { style = "color:blue;" })</h5>
+        <p>Mettre à jour vos renseignements personnels.</p>
+    </li>
+
+    <li class="three">
+
+        <h5>@Html.ActionLink("Changer votre mot de passe", "Manage", "Account", null, new { style = "color:blue;" })</h5>
+        <p>Changer votre mot de passe pour un nouveau mot de passe.</p>
+    </li>
+</ol>
