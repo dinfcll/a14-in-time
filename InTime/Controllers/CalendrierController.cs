@@ -31,7 +31,9 @@ namespace InTime.Controllers
                 string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
                 List<SqlParameter> param = new List<SqlParameter>
                     {
-                        new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                        new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@DateDebut", start),
+                        new SqlParameter("@DateFin", end)
                     };
 
                 SqlDataReader reader = RequeteSql.Select(queryString,param);
