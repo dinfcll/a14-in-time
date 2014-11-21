@@ -22,6 +22,12 @@
             <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
         }
     }
+    <ol class="breadcrumb">
+        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+        <li>@Html.ActionLink("Consulter tâches", "Taches", "ConsulterTache")</li>
+        <li class="active">Modifier</li>
+    </ol>
     @using (Html.BeginForm("Modification", "ConsulterTache"))
     {
         <div id="div1">
@@ -64,7 +70,7 @@
                 @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
                 @Html.ValidationMessage("Mois", "*")<br />
                 <script>
-                    document.getElementById("Mois").selectedIndex = @tache.Mois;
+                    document.getElementById("Mois").selectedIndex = @tache.Mois
                 </script>
                 <script>
                     var params = {};
@@ -76,7 +82,7 @@
                             items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
                         });
                         $('#Jour').html(items);
-                        document.getElementById("Jour").selectedIndex = @tache.Jour;
+                        document.getElementById("Jour").selectedIndex = @tache.Jour
                     });
                 </script>
                 Jour :
@@ -88,7 +94,7 @@
                 Récurrence de la tache :<br />
                 @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
                 <script type="text/javascript">
-                    document.getElementById("recurrence").selectedIndex = @tache.Recurrence;
+                    document.getElementById("recurrence").selectedIndex = @tache.Recurrence
                 </script>
 
                 <br />
@@ -103,7 +109,7 @@
                 H
                 @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
                 <script type="text/javascript">
-                    document.getElementById("mDebut").selectedIndex = @tache.mDebut;
+                    document.getElementById("mDebut").selectedIndex = @tache.mDebut
                 </script>
 
                 @Html.ValidationMessage("dbTacheMinute", "*")
@@ -119,7 +125,7 @@
                 @Html.ValidationMessage("finTacheMinute", "*")
                 Min
                 <script type="text/javascript">
-                    document.getElementById("mFin").selectedIndex = @tache.mFin;
+                    document.getElementById("mFin").selectedIndex = @tache.mFin
                 </script>
 
                 <br />

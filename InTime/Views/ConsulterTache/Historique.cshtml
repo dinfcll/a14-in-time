@@ -2,33 +2,38 @@
 @{
     ViewBag.Title = "Historique";
 }
-<h2>Historique</h2>
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li class="active">Historique</li>
+</ol>
+    <h2>Historique</h2>
 
-@using (Html.BeginForm("Historique", "ConsulterTache", FormMethod.Get))
-{
-    @Html.DropDownList("ChoixTemps")
+    @using (Html.BeginForm("Historique", "ConsulterTache", FormMethod.Get))
+    {
+        @Html.DropDownList("ChoixTemps")
 
-    <div id="Partiel" style="display:none">
-        @Html.Partial("_LapseDeTemps")
-    </div>
+        <div id="Partiel" style="display:none">
+            @Html.Partial("_LapseDeTemps")
+        </div>
 
-    <p>
-        <input type="submit" value="Regarder" />
-    </p>
-}
+        <p>
+            <input type="submit" value="Regarder" />
+        </p>
+    }
 
-<script>
-    $('select').on('change',function (e) {
-        if (this.value == 2) {
-            $('#Partiel').show();
-        }
-    });
-</script>
-
-@if (ViewBag.Choix > 0)
-{
-    @Html.Partial("_TableauDonnees")
     <script>
-        $("#ChoixTemps").val("0");
+        $('select').on('change', function (e) {
+            if (this.value == 2) {
+                $('#Partiel').show();
+            }
+        });
     </script>
-}
+
+    @if (ViewBag.Choix > 0)
+    {
+        @Html.Partial("_TableauDonnees")
+        <script>
+            $("#ChoixTemps").val("0");
+        </script>
+    }

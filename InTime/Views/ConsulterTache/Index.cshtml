@@ -4,15 +4,20 @@
     ViewBag.Title = "Consultation de votre tâche";
 }
 
-    <script>
-        $(window).load(function () {
-            $(function () {
-                $("[id^=Consultation").attr('readonly', 'true');
-                $("[id^=Consultation").css('background-color', '#DEDEDE');
-            });
+<script>
+    $(window).load(function () {
+        $(function () {
+            $("[id^=Consultation").attr('readonly', 'true');
+            $("[id^=Consultation").css('background-color', '#DEDEDE');
         });
-    </script>
-
+    });
+</script>
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li>@Html.ActionLink("Consulter Tâches", "Taches", "ConsulterTache")</li>
+    <li class="active">Détails</li>
+</ol>
     <h2>Voici votre tâche</h2>
 
     @{

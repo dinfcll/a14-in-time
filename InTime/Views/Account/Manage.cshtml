@@ -2,7 +2,12 @@
 @{
     ViewBag.Title = "Gérer le compte";
 }
-
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li>@Html.ActionLink("Gérer Compte", "Index", "GererCompte")</li>
+    <li class="active">Modifier votre mot de passe</li>
+</ol>
 <hgroup class="title">
     <h1>@ViewBag.Title.</h1>
 </hgroup>
