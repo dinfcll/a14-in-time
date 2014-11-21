@@ -25,10 +25,12 @@ namespace InTime.Controllers
                 try
                 {
                     var lstTache = new List<Tache>();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id";
+                    double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
                     List<SqlParameter> Parametres = new List<SqlParameter>
                     {
-                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@DateDebut", DateAuj)
                     };
 
                     SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
@@ -37,6 +39,10 @@ namespace InTime.Controllers
                         Object[] values = new Object[reader.FieldCount];
                         reader.GetValues(values);
                         var tache = ObtenirTache(values);
+                        DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                        tache.Annee = Convert.ToString(DateTache.Year);
+                        tache.Mois = Convert.ToString(DateTache.Month);
+                        tache.Jour = Convert.ToString(DateTache.Day);
                         lstTache.Add(tache);
                     }
                     reader.Close();
@@ -280,7 +286,7 @@ namespace InTime.Controllers
                     break;
                 case 1:
                     DateTime TroisMoisEnArriere = Maintenant.AddMonths(-3);
-                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant";
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0;";
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@TroisMoisArriere", TraitementDate.DateTimeToUnixTimestamp(TroisMoisEnArriere)));
                     listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
@@ -293,7 +299,7 @@ namespace InTime.Controllers
                         Date2 = Date2.AddMonths(1);
                         Date2 = Date2.AddDays(-1);
 
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2";
+                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0;";
                         listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                         listParametres.Add(new SqlParameter("@Date1", TraitementDate.DateTimeToUnixTimestamp(Date1)));
                         listParametres.Add(new SqlParameter("@Date2", TraitementDate.DateTimeToUnixTimestamp(Date2)));
@@ -304,7 +310,7 @@ namespace InTime.Controllers
                     }
                     break;
                 case 3:
-                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant";
+                    Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant AND Recurrence = 0;";
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@Maintenant", TraitementDate.DateTimeToUnixTimestamp(Maintenant)));
                     break;

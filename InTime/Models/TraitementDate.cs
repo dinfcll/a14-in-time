@@ -17,6 +17,12 @@ namespace InTime.Models
             return (dateTime - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
+        public static double DateTimeToUnixTimestamp()
+        {
+            DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            return (dt - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
