@@ -83,7 +83,7 @@ namespace InTime.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model)
+        public ActionResult Register(RegisterModel model, ConnexionUtilisateur Connexion)
         {
             if (ModelState.IsValid)
             {
@@ -96,8 +96,10 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
-                        WebSecurity.Login(model.UserName, model.Password);
+                        Connexion.CreerUsager(model);
+                        Connexion.LoginUsager(model);
+                        //WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
+                        //WebSecurity.Login(model.UserName, model.Password);
                         CookieNomUtilisateur(model.UserName);
                         return RedirectToAction("Index", "Home");
                     }
