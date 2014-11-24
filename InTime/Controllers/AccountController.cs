@@ -98,9 +98,9 @@ namespace InTime.Controllers
                     {
                         Connexion.CreerUsager(model);
                         Connexion.LoginUsager(model);
+                        Connexion.Cookie(model.UserName);
                         //WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
                         //WebSecurity.Login(model.UserName, model.Password);
-                        CookieNomUtilisateur(model.UserName);
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -384,7 +384,7 @@ namespace InTime.Controllers
             RemoveLoginSuccess,
         }
 
-        private void CookieNomUtilisateur(string UserName)
+        public void CookieNomUtilisateur(string UserName)
         {
             SqlConnection con = null;
             try

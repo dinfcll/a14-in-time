@@ -7,16 +7,10 @@ using System.Threading.Tasks;
 
 namespace InTime
 {
-    interface ConnexionUtilisateur
+    public interface ConnexionUtilisateur
     {
-        void CreerUsager(RegisterModel model)
-        {
-
-        }
-
-        void LoginUsager(RegisterModel model)
-        {
-
-        }
+        void CreerUsager(RegisterModel model);
+        void LoginUsager(RegisterModel model);
+        void Cookie(string username);
     }
 }

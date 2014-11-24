@@ -9,14 +9,18 @@ namespace InTime
 {
     public class DummyConnexion : ConnexionUtilisateur
     {
-        void CreerUsager(RegisterModel model)
+       public void CreerUsager(RegisterModel model)
         {
 
         }
 
-        void LoginUsager(RegisterModel model)
+       public void LoginUsager(RegisterModel model)
         {
 
         }
+       public void Cookie(string username)
+       {
+
+       }
     }
 }

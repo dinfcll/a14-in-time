@@ -1,5 +1,6 @@
 ﻿using InTime.Models;
 using System;
+using InTime.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,20 @@ namespace InTime
 {
     public class RealConnexion : ConnexionUtilisateur
     {
-        void CreerUsager(RegisterModel model)
+        public void CreerUsager(RegisterModel model)
         {
             WebMatrix.WebData.WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
         }
 
-        void LoginUsager(RegisterModel model)
+        public void LoginUsager(RegisterModel model)
         {
             WebMatrix.WebData.WebSecurity.Login(model.UserName, model.Password);
+        }
+
+        public void Cookie(string username)
+        {
+           AccountController Account = new AccountController();
+            Account.CookieNomUtilisateur(username);
         }
     }
 }

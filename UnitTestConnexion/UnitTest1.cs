@@ -5,6 +5,7 @@ using InTime.Models;
 using InTime.Controllers;
 using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using InTime;
 
 namespace UnitTestConnexion
 {
@@ -35,9 +36,9 @@ namespace UnitTestConnexion
             model.Password = "abc1234";
             model.ConfirmPassword = "abc1234";
             //When
-            //var result = Account.Register(model) as ViewResult;
+            var result = Account.Register(model, new DummyConnexion()) as RedirectToRouteResult;
             //Then
-            //Assert.AreEqual("Index", result.View);
+            Assert.IsTrue(result.RouteValues.ContainsValue("Index"));
         }
     }
 }
