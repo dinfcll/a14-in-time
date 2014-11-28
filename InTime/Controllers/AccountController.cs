@@ -83,7 +83,7 @@ namespace InTime.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model, ConnexionUtilisateur Connexion)
+        public ActionResult Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
@@ -96,6 +96,15 @@ namespace InTime.Controllers
                     }
                     else
                     {
+                        ConnexionUtilisateur Connexion;
+                        if(model.TypeConnec==null)
+                        {
+                            Connexion = new RealConnexion();
+                        }
+                        else
+                        {
+                            Connexion = new DummyConnexion();
+                        }
                         Connexion.CreerUsager(model);
                         Connexion.LoginUsager(model);
                         Connexion.Cookie(model.UserName);
@@ -113,7 +122,6 @@ namespace InTime.Controllers
             // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
             return View();
         }
-
         private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
         {
             String query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";

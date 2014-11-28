@@ -35,8 +35,9 @@ namespace UnitTestConnexion
             model.UserName = "UT";
             model.Password = "abc1234";
             model.ConfirmPassword = "abc1234";
+            model.TypeConnec = "Dummy";
             //When
-            var result = Account.Register(model, new DummyConnexion()) as RedirectToRouteResult;
+            var result = Account.Register(model) as RedirectToRouteResult;
             //Then
             Assert.IsTrue(result.RouteValues.ContainsValue("Index"));
         }
