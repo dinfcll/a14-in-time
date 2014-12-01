@@ -20,42 +20,49 @@ namespace InTime.Controllers
 
         public ActionResult Taches(string strMessValidation)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                try
+                if (User.Identity.IsAuthenticated)
                 {
-                    var lstTache = new List<Tache>();
-                    double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
-                    List<SqlParameter> Parametres = new List<SqlParameter>
+                    try
+                    {
+                        var lstTache = new List<Tache>();
+                        double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                        string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
+                        List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@DateDebut", DateAuj)
                     };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-                    while (reader.Read())
-                    {
-                        Object[] values = new Object[reader.FieldCount];
-                        reader.GetValues(values);
-                        var tache = ObtenirTache(values);
-                        DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-                        tache.Annee = Convert.ToString(DateTache.Year);
-                        tache.Mois = Convert.ToString(DateTache.Month);
-                        tache.Jour = Convert.ToString(DateTache.Day);
-                        lstTache.Add(tache);
-                    }
-                    reader.Close();
-                    ViewBag.Taches = lstTache;
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+                        while (reader.Read())
+                        {
+                            Object[] values = new Object[reader.FieldCount];
+                            reader.GetValues(values);
+                            var tache = ObtenirTache(values);
+                            DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                            tache.Annee = Convert.ToString(DateTache.Year);
+                            tache.Mois = Convert.ToString(DateTache.Month);
+                            tache.Jour = Convert.ToString(DateTache.Day);
+                            lstTache.Add(tache);
+                        }
+                        reader.Close();
+                        ViewBag.Taches = lstTache;
 
-                    return View();
+                        return View();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new Exception(ex.ToString());
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }
@@ -91,45 +98,52 @@ namespace InTime.Controllers
 
         public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            else
-                if (User.Identity.IsAuthenticated)
+                if (id == null)
                 {
-                    try
-                    {
-                        Tache tache = RechercherTache(id);
-
-                        if (dep != null && fn != null)
-                        {
-                            tache.unixDebut = Convert.ToDouble(dep);
-                            tache.unixFin = Convert.ToDouble(fn);
-                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut);
-                            ViewBag.Modif = true;
-                        }
-                        else
-                        {
-                            ViewBag.Modif = false;
-                        }
-
-                        InitialiseViewBag(tache);
-                        InitialiseViewBags();
-                        Tache.InitChampsTache(ref tache);
-                        ViewData["Tache"] = tache;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.ToString());
-                    }
-
-                    return View("Modification");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
                 else
-                {
-                    return View(UrlErreur.Authentification);
-                }
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        try
+                        {
+                            Tache tache = RechercherTache(id);
+
+                            if (dep != null && fn != null)
+                            {
+                                tache.unixDebut = Convert.ToDouble(dep);
+                                tache.unixFin = Convert.ToDouble(fn);
+                                tache.Description = RechercheDescriptionTache(id, tache.unixDebut);
+                                ViewBag.Modif = true;
+                            }
+                            else
+                            {
+                                ViewBag.Modif = false;
+                            }
+
+                            InitialiseViewBag(tache);
+                            InitialiseViewBags();
+                            Tache.InitChampsTache(ref tache);
+                            ViewData["Tache"] = tache;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.ToString());
+                        }
+
+                        return View("Modification");
+                    }
+                    else
+                    {
+                        return View(UrlErreur.Authentification);
+                    }
+            }
+            catch
+            {
+                return View(UrlErreur.Authentification);
+            }
         }
 
         [HttpPost]
@@ -196,41 +210,82 @@ namespace InTime.Controllers
 
         public ActionResult Index(int? id, DateTime? dep, DateTime? fn)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                else
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        try
+                        {
+                            Tache tache = RechercherTache(id);
+
+                            if (dep != null && fn != null)
+                            {
+                                tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
+                                tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
+                                ViewBag.Modif = true;
+                            }
+                            else
+                            {
+                                ViewBag.Modif = false;
+                            }
+
+                            string result = RechercheDescriptionTache(id, tache.unixDebut);
+                            if (!String.IsNullOrEmpty(result))
+                            {
+                                ViewBag.Existe = true;
+                                tache.Description = result;
+                            }
+
+                            InitialiseViewBag(tache);
+                            ViewData["Tache"] = tache;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.ToString());
+                        }
+
+                        return View();
+                    }
+                    else
+                    {
+                        return View(UrlErreur.Authentification);
+                    }
             }
-            else
+            catch
+            {
+                return View(UrlErreur.Authentification);
+            }
+        }
+
+        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut)
+        {
+            try
+            {
                 if (User.Identity.IsAuthenticated)
                 {
-                    try
+                    ViewBag.ChoixTemps = Tache.Choix_Historique;
+                    ViewBag.ChoixMoisFin = Tache.les_mois;
+                    ViewBag.ChoixMoisDebut = Tache.les_mois;
+
+                    if (!String.IsNullOrEmpty(ChoixTemps))
                     {
-                        Tache tache = RechercherTache(id);
-
-                        if (dep != null && fn != null)
+                        int Choix;
+                        if (!Int32.TryParse(ChoixTemps, out Choix))
                         {
-                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
-                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
-                            ViewBag.Modif = true;
+                            Choix = 0;
                         }
-                        else
-                        {
-                            ViewBag.Modif = false;
-                        }
+                        ViewBag.Choix = Choix;
 
-                        string result = RechercheDescriptionTache(id, tache.unixDebut);
-                        if (!String.IsNullOrEmpty(result))
-                        {
-                            ViewBag.Existe = true;
-                            tache.Description = result;
-                        }
-
-                        InitialiseViewBag(tache);
-                        ViewData["Tache"] = tache;
+                        ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        throw new Exception(ex.ToString());
+                        ViewBag.Choix = 0;
                     }
 
                     return View();
@@ -239,35 +294,8 @@ namespace InTime.Controllers
                 {
                     return View(UrlErreur.Authentification);
                 }
-        }
-
-        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                ViewBag.ChoixTemps = Tache.Choix_Historique;
-                ViewBag.ChoixMoisFin = Tache.les_mois;
-                ViewBag.ChoixMoisDebut = Tache.les_mois;
-
-                if (!String.IsNullOrEmpty(ChoixTemps))
-                {
-                    int Choix;
-                    if (!Int32.TryParse(ChoixTemps, out Choix))
-                    {
-                        Choix = 0;
-                    }
-                    ViewBag.Choix = Choix;
-
-                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut);
-                }
-                else
-                {
-                    ViewBag.Choix = 0;
-                }
-
-                return View();
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }

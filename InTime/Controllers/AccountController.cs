@@ -108,8 +108,6 @@ namespace InTime.Controllers
                         Connexion.CreerUsager(model);
                         Connexion.LoginUsager(model);
                         Connexion.Cookie(model.UserName);
-                        //WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
-                        //WebSecurity.Login(model.UserName, model.Password);
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -193,59 +191,66 @@ namespace InTime.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Manage(LocalPasswordModel model)
         {
-            bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            ViewBag.HasLocalPassword = hasLocalAccount;
-            ViewBag.ReturnUrl = Url.Action("Manage");
-            if (hasLocalAccount)
+            try
             {
-                if (ModelState.IsValid)
+                bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
+                ViewBag.HasLocalPassword = hasLocalAccount;
+                ViewBag.ReturnUrl = Url.Action("Manage");
+                if (hasLocalAccount)
                 {
-                    // ChangePassword va lever une exception plutôt que de renvoyer la valeur False dans certains scénarios de défaillance.
-                    bool changePasswordSucceeded;
-                    try
+                    if (ModelState.IsValid)
                     {
-                        changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
-                    }
-                    catch (Exception)
-                    {
-                        changePasswordSucceeded = false;
-                    }
+                        // ChangePassword va lever une exception plutôt que de renvoyer la valeur False dans certains scénarios de défaillance.
+                        bool changePasswordSucceeded;
+                        try
+                        {
+                            changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
+                        }
+                        catch (Exception)
+                        {
+                            changePasswordSucceeded = false;
+                        }
 
-                    if (changePasswordSucceeded)
-                    {
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Le mot de passe actuel est incorrect ou le nouveau mot de passe n'est pas valide.");
+                        if (changePasswordSucceeded)
+                        {
+                            return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Le mot de passe actuel est incorrect ou le nouveau mot de passe n'est pas valide.");
+                        }
                     }
                 }
+                else
+                {
+                    // L'utilisateur n'a pas de mot de passe local. Veuillez donc supprimer les erreurs de validation provoquées par un
+                    // champ OldPassword manquant
+                    ModelState state = ModelState["OldPassword"];
+                    if (state != null)
+                    {
+                        state.Errors.Clear();
+                    }
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
+                            return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
+                        }
+                        catch (Exception)
+                        {
+                            ModelState.AddModelError("", String.Format("Le compte local ne peut pas être créé. Un compte portant le même nom \"{0}\" existe peut-être déjà.", User.Identity.Name));
+                        }
+                    }
+                }
+
+                // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
+                return View(model);
             }
-            else
+            catch
             {
-                // L'utilisateur n'a pas de mot de passe local. Veuillez donc supprimer les erreurs de validation provoquées par un
-                // champ OldPassword manquant
-                ModelState state = ModelState["OldPassword"];
-                if (state != null)
-                {
-                    state.Errors.Clear();
-                }
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
-                    }
-                    catch (Exception)
-                    {
-                        ModelState.AddModelError("", String.Format("Le compte local ne peut pas être créé. Un compte portant le même nom \"{0}\" existe peut-être déjà.", User.Identity.Name));
-                    }
-                }
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
-
-            // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
-            return View(model);
         }
 
         public ActionResult Renseignements(int? Affichage)
@@ -293,67 +298,74 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Renseignements(RegisterModel model)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                ModelState.Remove("Password");
-                ModelState.Remove("Username");
-                if (!ModelState.IsValid)
+                if (User.Identity.IsAuthenticated)
                 {
-                    RegisterModel userProfile = null;
-                    string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-                    List<SqlParameter> Parametres = new List<SqlParameter>
+                    ModelState.Remove("Password");
+                    ModelState.Remove("Username");
+                    if (!ModelState.IsValid)
+                    {
+                        RegisterModel userProfile = null;
+                        string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+                        List<SqlParameter> Parametres = new List<SqlParameter>
                         {
                             new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
                         };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-                    while (reader.Read())
-                    {
-                        Object[] values = new Object[reader.FieldCount];
-                        int fieldCounts = reader.GetValues(values);
-                        userProfile = new RegisterModel()
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+                        while (reader.Read())
                         {
-                            Nom = Convert.ToString(values[2]),
-                            Prenom = Convert.ToString(values[3]),
-                            Email = Convert.ToString(values[4])
-                        };
-                    }
+                            Object[] values = new Object[reader.FieldCount];
+                            int fieldCounts = reader.GetValues(values);
+                            userProfile = new RegisterModel()
+                            {
+                                Nom = Convert.ToString(values[2]),
+                                Prenom = Convert.ToString(values[3]),
+                                Email = Convert.ToString(values[4])
+                            };
+                        }
 
-                    if (userProfile == null)
-                    {
-                        return HttpNotFound();
-                    }
+                        if (userProfile == null)
+                        {
+                            return HttpNotFound();
+                        }
 
-                    ViewData["utilisateur"] = userProfile;
-                    return View();
-                }
-                else
-                {
-
-                    if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
-                    {
-                        ViewBag.Message = RequeteSql.Message.Reussi;
+                        ViewData["utilisateur"] = userProfile;
+                        return View();
                     }
                     else
                     {
-                        ViewBag.Message = RequeteSql.Message.Echec;
+
+                        if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
+                        {
+                            ViewBag.Message = RequeteSql.Message.Reussi;
+                        }
+                        else
+                        {
+                            ViewBag.Message = RequeteSql.Message.Echec;
+                        }
+
+                        RegisterModel userProfile = new RegisterModel()
+                        {
+                            Nom = model.Nom,
+                            Prenom = model.Prenom,
+                            Email = model.Email
+                        };
+
+                        ViewData["utilisateur"] = userProfile;
+
+                        return View();
                     }
-
-                    RegisterModel userProfile = new RegisterModel()
-                    {
-                        Nom = model.Nom,
-                        Prenom = model.Prenom,
-                        Email = model.Email
-                    };
-
-                    ViewData["utilisateur"] = userProfile;
-
-                    return View();
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View("~/Views/ErreurAuthentification.cshtml");
             }
         }
 

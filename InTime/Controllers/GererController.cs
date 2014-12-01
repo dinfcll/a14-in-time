@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InTime.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,13 +14,20 @@ namespace InTime.Controllers
 
         public ActionResult GererForm()
         {
-            if (User.Identity.IsAuthenticated && User.Identity.Name=="Superuser")
+            try
             {
-                return View();
+                if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+                {
+                    return View();
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
             }
-            else
+            catch
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.Authentification);
             }
         }
 

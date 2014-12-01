@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InTime.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,21 @@ namespace InTime.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            try
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    return View();
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
+            }
+            catch
+            {
+                return View(UrlErreur.Authentification);
+            }
         }
     }
 }
