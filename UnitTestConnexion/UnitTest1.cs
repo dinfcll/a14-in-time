@@ -166,5 +166,15 @@ namespace UnitTestConnexion
             //Then
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
+        [TestMethod]
+        public void AccesTacheFormSansEtreConnecter()
+        {
+            //Given
+            TacheController controller = new TacheController();
+            //When
+            ViewResult result = controller.TacheForm() as ViewResult;
+            //Then
+            Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
+        }
     }
 }
