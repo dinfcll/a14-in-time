@@ -1,13 +1,8 @@
-﻿using System;
-using System.Web.Mvc;
-using InTime.Filters;
+﻿using System.Web.Mvc;
 using InTime.Models;
 using InTime.Controllers;
 using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using InTime;
-using System.Security.Principal;
-using System.Threading;
 
 namespace UnitTestConnexion
 {
@@ -30,14 +25,16 @@ namespace UnitTestConnexion
         {
             //Given
             var Account = new AccountController();
-            RegisterModel model = new RegisterModel();
-            model.Nom = "Unit";
-            model.Prenom = "Test";
-            model.Email = "Unit@test.com";
-            model.UserName = "UT";
-            model.Password = "abc1234";
-            model.ConfirmPassword = "abc1234";
-            model.TypeConnec = "Dummy";
+            RegisterModel model = new RegisterModel
+            {
+                Nom = "Unit",
+                Prenom = "Test",
+                Email = "Unit@test.com",
+                UserName = "UT",
+                Password = "abc1234",
+                ConfirmPassword = "abc1234",
+                TypeConnec = "Dummy"
+            };
             //When
             var result = Account.Register(model) as RedirectToRouteResult;
             //Then
@@ -57,12 +54,14 @@ namespace UnitTestConnexion
         public void AccesManageSansEtreConnecté()
         {
             //Given
-            LocalPasswordModel model = new LocalPasswordModel();
+            LocalPasswordModel model = new LocalPasswordModel
+            {
+                OldPassword = "abc123",
+                NewPassword = "abc456",
+                ConfirmPassword = "abc456"
+            };
             AccountController controller = new AccountController();
             //When
-            model.OldPassword = "abc123";
-            model.NewPassword = "abc456";
-            model.ConfirmPassword = "abc456";
             ViewResult result = controller.Manage(model) as ViewResult;
             //Then
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
@@ -82,24 +81,26 @@ namespace UnitTestConnexion
         public void AccesAjouterTacheSansEtreConnecté()
         {
             //Given
-            Tache model = new Tache();
+            Tache model = new Tache
+            {
+                Annee = "2015",
+                Mois = "10",
+                Jour = "15",
+                Description = "UnitTest",
+                HDebut = "10",
+                mDebut = "30",
+                HFin = "14",
+                mFin = "30",
+                IdTache = 0,
+                NomTache = "UnitTest5",
+                Recurrence = 0,
+                Lieu = "G-264",
+                HRappel = "0",
+                mRappel = "00",
+                UserId = 0
+            };
             AjouterTacheController controller = new AjouterTacheController();
             //When
-            model.Annee = "2015";
-            model.Mois = "10";
-            model.Jour = "15";
-            model.Description = "UnitTest";
-            model.HDebut = "10";
-            model.mDebut = "30";
-            model.HFin = "14";
-            model.mFin = "30";
-            model.IdTache = 0;
-            model.NomTache = "UnitTest5";
-            model.Recurrence = 0;
-            model.Lieu = "G-264";
-            model.HRappel = "0";
-            model.mRappel = "00";
-            model.UserId = 0;
 
             ViewResult result = controller.Index(model) as ViewResult;
             //Then

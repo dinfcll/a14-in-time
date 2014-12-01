@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
-using System.Data.Entity;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
 using System.Globalization;
 using System.Data.SqlClient;
-using System.Configuration;
 
 
 namespace InTime.Controllers
