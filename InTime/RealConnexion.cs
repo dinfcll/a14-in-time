@@ -1,7 +1,5 @@
 ﻿using InTime.Models;
-using System;
 using InTime.Controllers;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +21,7 @@ namespace InTime
         public void Cookie(string username)
         {
            AccountController Account = new AccountController();
-            Account.CookieNomUtilisateur(username);
+           Account.CookieNomUtilisateur(username);
         }
     }
 }

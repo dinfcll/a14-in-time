@@ -41,10 +41,10 @@ namespace UnitTestConnexion
             //When
             var result = Account.Register(model) as RedirectToRouteResult;
             //Then
-            Assert.IsTrue(result.RouteValues.ContainsValue("Index"));
+            Assert.IsTrue(result.RouteValues["action"].Equals("Index"));
         }
         [TestMethod]
-        public void AccesGererSansEtreConnecter()
+        public void AccesGererSansEtreConnecté()
         {
             //Given
             GererController controller = new GererController();
@@ -54,7 +54,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesManageSansEtreConnecter()
+        public void AccesManageSansEtreConnecté()
         {
             //Given
             LocalPasswordModel model = new LocalPasswordModel();
@@ -68,7 +68,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesRenseignementsSansEtreConnecter()
+        public void AccesRenseignementsSansEtreConnecté()
         {
             //Given
             RegisterModel model = new RegisterModel();
@@ -79,7 +79,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesAjouterTacheSansEtreConnecter()
+        public void AccesAjouterTacheSansEtreConnecté()
         {
             //Given
             Tache model = new Tache();
@@ -106,7 +106,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesCalendrierSansEtreConnecter()
+        public void AccesCalendrierSansEtreConnecté()
         {
             //Given
             RegisterModel model = new RegisterModel();
@@ -117,7 +117,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesHistoriqueSansEtreConnecter()
+        public void AccesHistoriqueSansEtreConnecté()
         {
             //Given
             ConsulterTacheController controller = new ConsulterTacheController();
@@ -127,17 +127,18 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesIndexSansEtreConnecter()
+        public void AccesIndexSansEtreConnecté()
         {
             //Given
+            int idTache = 2;
             ConsulterTacheController controller = new ConsulterTacheController();
             //When
-            ViewResult result = controller.Index(2,null,null) as ViewResult;
+            ViewResult result = controller.Index(idTache,null,null) as ViewResult;
             //Then
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesModificationSansEtreConnecter()
+        public void AccesModificationSansEtreConnecté()
         {
             //Given
             ConsulterTacheController controller = new ConsulterTacheController();
@@ -147,7 +148,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesTachesSansEtreConnecter()
+        public void AccesTachesSansEtreConnecté()
         {
             //Given
             ConsulterTacheController controller = new ConsulterTacheController();
@@ -157,7 +158,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesGererCompteSansEtreConnecter()
+        public void AccesGererCompteSansEtreConnecté()
         {
             //Given
             GererCompteController controller = new GererCompteController();
@@ -167,7 +168,7 @@ namespace UnitTestConnexion
             Assert.AreEqual("~/Views/ErreurAuthentification.cshtml", result.ViewName);
         }
         [TestMethod]
-        public void AccesTacheFormSansEtreConnecter()
+        public void AccesTacheFormSansEtreConnecté()
         {
             //Given
             TacheController controller = new TacheController();
