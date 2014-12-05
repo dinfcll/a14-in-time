@@ -17,7 +17,7 @@
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay',
                 },
-                defaultView: 'agendaDay',
+                defaultView: 'agendaWeek',
                 editable: true,
                 allDaySlot: false,
                 selectable: true,
@@ -35,11 +35,18 @@
                     day:'Jour'
                 },
 
-                events: '/Calendrier/Taches'
+                events: {
+                    url: '/Calendrier/Taches',
+                    cache: true
+                }
             });
 
         });
+
+        $('#calendar').fullCalendar('render');
     </script>
+
+
 </head>
 
 <body>
