@@ -26,7 +26,7 @@ namespace InTime.Controllers
                 {
                     var lstTache = new List<Tache>();
                     double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
+                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
                     List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
@@ -444,7 +444,8 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Recurrence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9]),
+                PriorityColor= Convert.ToString(values[10])
             };
 
             return tache;

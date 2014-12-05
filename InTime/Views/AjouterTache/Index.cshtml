@@ -1,4 +1,5 @@
-﻿@model InTime.Models.Tache
+﻿@using System.Drawing
+@model InTime.Models.Tache
 
 <header>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
@@ -88,9 +89,9 @@
         @Html.ValidationMessage("Jour", "*")
         <br />
 
-        Récurrence de la tache :<br/>
+        Récurrence de la tache :<br />
         @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
-        <br/>
+        <br />
 
 
         Heure : <br />
@@ -123,9 +124,13 @@
         Description de la tâche : <br />
         @Html.TextAreaFor(model => model.Description, "*")
         <br />
+        <form>
+            Priorité:
+            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value="#01DF3A">
 
-        <input type="submit" value="Enregistrer" />
-    </p>
+            <input type="submit" value="Enregistrer" />
+        </form>
+</p>
 }
 
 

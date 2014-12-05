@@ -7,6 +7,7 @@ using InTime.Models;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Data;
+using Microsoft.Ajax.Utilities;
 
 
 namespace InTime.Controllers
@@ -69,7 +70,8 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    var message = InsertionTache(model) ? "Reussi" : "Echec";
+                    var couleur = Request.Form.GetValues(13).GetValue(0);
+                    var message = InsertionTache(model, couleur) ? "Reussi" : "Echec";
                     TempData["Message"] = message;
 
                     return RedirectToAction("Index", "AjouterTache");
@@ -138,15 +140,16 @@ namespace InTime.Controllers
             }
         }
 
-        private bool InsertionTache(Tache Model)
+        private bool InsertionTache(Tache Model, object couleur)
         {
             try
             {
+                Model.PriorityColor = couleur.ToString();
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                 double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                 double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence)"
-                    + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@recurrence);";
+                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence,PriorityColor)"
+                    + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@recurrence,@PriorityColor);";
 
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
@@ -158,7 +161,8 @@ namespace InTime.Controllers
                     new SqlParameter("@Description", Model.Description),
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
-                    new SqlParameter("@recurrence", Model.Recurrence)
+                    new SqlParameter("@recurrence", Model.Recurrence),
+                    new SqlParameter("@PriorityColor", Model.PriorityColor)
                 };
 
                 return RequeteSql.ExecuteQuery(SqlInsert, listParametres);
