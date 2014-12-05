@@ -144,12 +144,13 @@ namespace InTime.Controllers
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-
+                    string couleur = (Request.Form.GetValues(16).GetValue(0)).ToString();
+                    Model.PriorityColor = couleur;
                     if (modif == "False")
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
                         + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                        + "recurrence=@recurrence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        + "recurrence=@recurrence, PriorityColor=@PriorityColor WHERE UserId=@UserId AND IdTache=@IdTache;";
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                         listParametres.Add(new SqlParameter("@UserId", UserId));
                         listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
@@ -160,6 +161,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     else
                     {
@@ -177,6 +179,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                         listParametres.Add(new SqlParameter("@DateFin", unixFin));
                         listParametres.Add(new SqlParameter("@Description", Model.Description));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
                     TempData["Modification"] = message;
