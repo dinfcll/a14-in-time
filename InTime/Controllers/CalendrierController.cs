@@ -95,14 +95,14 @@ namespace InTime.Controllers
                         foreach(string[] str in result)
                         {
                             string url = UrlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
-                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id=str[3] });
+                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id = str[3], backgroundColor = tache.PriorityColor });
                         }
                     }
                 }
                 else
                 {
                     string url = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
-                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url });
+                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url, backgroundColor = tache.PriorityColor });
                 }
             }
 
@@ -118,7 +118,8 @@ namespace InTime.Controllers
                 NomTache = Convert.ToString(values[2]),
                 unixDebut = Convert.ToDouble(values[5]),
                 unixFin = Convert.ToDouble(values[6]),
-                Recurrence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9]),
+                PriorityColor = Convert.ToString(values[10])
             };
 
             return tache;
