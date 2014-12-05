@@ -7,7 +7,7 @@
     Année :
     <input readonly id="DebAnn" name="DebAnn" width="20">
     <script>
-            var DebAnn = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
+            var DebAnn = parseInt(@ViewBag.anneeDebut);
             $("#DebAnn").spinner();
             $("#DebAnn").spinner("option", "culture", "fr");
             $("#DebAnn").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
@@ -23,7 +23,7 @@
     Année :
     <input readonly id="FinAnn" name="FinAnn" width="20">
     <script>
-            var FinAnn = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
+            var FinAnn = parseInt(@ViewBag.anneeFin);
             $("#FinAnn").spinner();
             $("#FinAnn").spinner("option", "culture", "fr");
             $("#FinAnn").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));

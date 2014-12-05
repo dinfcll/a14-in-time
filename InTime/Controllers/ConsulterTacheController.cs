@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data;
-using System.Data.Entity;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
 using System.Globalization;
 using System.Data.SqlClient;
-using System.Configuration;
 
 
 namespace InTime.Controllers
@@ -245,25 +241,29 @@ namespace InTime.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                int Choix = 1;
+                int anneeDebut;
+                int anneeFin;
+
+                anneeDebut = anneeFin = DateTime.Now.Year;
                 ViewBag.ChoixTemps = Tache.Choix_Historique;
                 ViewBag.ChoixMoisFin = Tache.les_mois;
                 ViewBag.ChoixMoisDebut = Tache.les_mois;
 
                 if (!String.IsNullOrEmpty(ChoixTemps))
                 {
-                    int Choix;
-                    if (!Int32.TryParse(ChoixTemps, out Choix))
+                    if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
                     {
-                        Choix = 0;
+                        Choix = 1;
                     }
-                    ViewBag.Choix = Choix;
+                    Int32.TryParse(FinAnn,out anneeFin);
+                    Int32.TryParse(DebAnn,out anneeDebut);
+                }
 
-                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut);
-                }
-                else
-                {
-                    ViewBag.Choix = 0;
-                }
+                ViewBag.Choix = Choix;
+                ViewBag.anneeDebut = anneeDebut;
+                ViewBag.anneeFin = anneeFin;
+                ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut);
 
                 return View();
             }

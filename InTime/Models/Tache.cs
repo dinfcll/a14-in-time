@@ -91,7 +91,6 @@ namespace InTime.Models
             {
                 return new List<SelectListItem>
                 {
-                    new SelectListItem {Text = "Choisir une option", Value = "0"},
                     new SelectListItem {Text = "Les 3 derniers mois", Value = "1"},
                     new SelectListItem {Text = "Lapse de temps", Value = "2"},
                     new SelectListItem {Text = "Depuis le début", Value = "3"}
