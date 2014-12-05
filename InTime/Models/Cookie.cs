@@ -34,6 +34,14 @@ namespace InTime.Models
             }
         }
 
+        public static TimeSpan Journee
+        {
+            get
+            {
+                return new TimeSpan(24, 0, 0);
+            }
+        }
+
         public static string ObtenirCookie(string NomCookie)
         {
             string value = "";
