@@ -14,7 +14,7 @@ namespace InTime.Models
     {
         public enum Message { Reussi, Echec, Modif };
 
-        public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
+        public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
         {
@@ -38,6 +38,7 @@ namespace InTime.Models
             {
                 cmdId.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
             }
+
             return (Int32)cmdId.ExecuteScalar();
         }
 
