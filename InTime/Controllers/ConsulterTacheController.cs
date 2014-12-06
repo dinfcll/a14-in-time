@@ -328,6 +328,10 @@ namespace InTime.Controllers
                         Object[] values = new Object[reader.FieldCount];
                         reader.GetValues(values);
                         var tache = ObtenirTache(values);
+                        DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                        tache.Annee = Convert.ToString(DateTache.Year);
+                        tache.Mois = Convert.ToString(DateTache.Month);
+                        tache.Jour = Convert.ToString(DateTache.Day);
                         lstTache.Add(tache);
                     }
                     reader.Close();

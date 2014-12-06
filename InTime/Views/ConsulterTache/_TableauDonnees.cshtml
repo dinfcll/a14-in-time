@@ -18,11 +18,10 @@
             @Html.DisplayNameFor(model => model.Annee)
         </th>
         <th>
-
+            @Html.DisplayName("Récurrente")
         </th>
-        <th>
-
-        </th>
+        <th></th>
+        <th></th>
         <th></th>
     </tr>
 
@@ -43,6 +42,14 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Annee)
+            </td>
+            <td>
+                @if (item.Recurrence == 0)
+                {
+                    @Html.DisplayName("Non");
+                } else {
+                    @Html.DisplayName("Oui");
+                }
             </td>
             <td>
                 @Html.ActionLink("Détails", "Index", new { id = item.IdTache })
