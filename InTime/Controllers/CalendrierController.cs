@@ -26,6 +26,7 @@ namespace InTime.Controllers
         public JsonResult Taches(double start, double end)
         {
             var lstTache = new List<Tache>();
+
             try
             {
                 string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
@@ -65,28 +66,28 @@ namespace InTime.Controllers
                     switch (recurrence)
                     {
                         case TraitementDate.recurrence.ChaqueJour:
-                            result = TraitementDate.ChaqueJour(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end,1,0);
                             break;
                         case TraitementDate.recurrence.ChaqueSemaine:
-                            result = TraitementDate.ChaqueSemaine(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 7, 0);
                             break;
                         case TraitementDate.recurrence.DeuxSemaines:
-                            result = TraitementDate.DeuxSemaine(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 14, 0);
                             break;
                         case TraitementDate.recurrence.TroisSemaine:
-                            result = TraitementDate.TroisSemaine(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 21, 0);
                             break;
                         case TraitementDate.recurrence.ChaqueMois:
-                            result = TraitementDate.ChaqueMois(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 1);
                             break;
                         case TraitementDate.recurrence.TroisMois:
-                            result = TraitementDate.TroisMois(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 3, 1);
                             break;
                         case TraitementDate.recurrence.QuatreMois:
-                            result = TraitementDate.QuatreMois(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 4, 1);
                             break;
                         case TraitementDate.recurrence.ChaqueAnnee:
-                            result = TraitementDate.ChaqueAnnee(tache, end);
+                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 0, 2);
                             break;
                     }
 
