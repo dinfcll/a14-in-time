@@ -9,13 +9,13 @@
             @Html.DisplayNameFor(model => model.Lieu)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Jour)
+            @Html.DisplayNameFor(model => model.Annee)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Mois)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Annee)
+            @Html.DisplayNameFor(model => model.Jour)
         </th>
         <th>
             @Html.DisplayName("Récurrente")
@@ -35,13 +35,13 @@
                 @Html.DisplayFor(modelItem => item.Lieu)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Jour)
+                @Html.DisplayFor(modelItem => item.Annee)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Mois)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Annee)
+                @Html.DisplayFor(modelItem => item.Jour)
             </td>
             <td>
                 @if (item.Recurrence == 0)

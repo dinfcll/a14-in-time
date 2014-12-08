@@ -45,6 +45,32 @@ namespace InTime.Models
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
 
+        public Tache()
+        {
+
+        }
+
+        public Tache(Tache tache)
+        {
+            IdTache = tache.IdTache;
+            UserId = tache.UserId;
+            NomTache = tache.NomTache;
+            Lieu = tache.Lieu;
+            Jour = tache.Jour;
+            Mois = tache.Mois;
+            Annee = tache.Annee;
+            Description = tache.Description;
+            HDebut = tache.HDebut;
+            mDebut = tache.mDebut;
+            HFin = tache.HFin;
+            mFin = tache.mFin;
+            HRappel = tache.HRappel;
+            mRappel = tache.mRappel;
+            Recurrence = tache.Recurrence;
+            unixDebut = tache.unixDebut;
+            unixFin = tache.unixFin;
+        }
+
         public static List<string> tempsHeure
         {
             get
