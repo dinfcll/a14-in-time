@@ -54,8 +54,18 @@
                 <input id="Sauv" type="submit" value="Sauvegarder" />
                 <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
                 <input type="button" value="Retour" onclick="location.href = '@Url.Action("Index","GererCompte",null)'" />
-            </div>
+            </div>            
         </p>
+        <form>
+            Usage principal de votre calendirer:
+            <select name="Catégories">
+                <option selected="selected" disabled="disabled">@information.Categorie</option>
+                <option value="Travail">Travail</option>
+                <option value="École">École</option>
+                <option value="Général">Général</option>
+            </select>
+        </form>
+        <br><br>
     </article>
 }
 
