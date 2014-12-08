@@ -70,8 +70,7 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    int IndexInput = 13;
-                    var couleur = Request.Form.GetValues(IndexInput).GetValue(0);
+                    var couleur = Request.Form.GetValues("Priorité").GetValue(0);
                     var message = InsertionTache(model, couleur) ? "Reussi" : "Echec";
                     TempData["Message"] = message;
 
