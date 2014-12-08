@@ -177,7 +177,9 @@ namespace InTime.Controllers
                     var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
                     TempData["Modification"] = message;
 
-                    return RedirectToAction("Taches", "ConsulterTache");
+                    DateTime date = TraitementDate.UnixTimeStampToDateTime(unixDebut);
+
+                    return RedirectToAction("Index", "Calendrier",new {@annee = date.Year , @mois = (date.Month - 1),@jour = date.Day} );
                 }
                 catch (Exception ex)
                 {
@@ -471,6 +473,9 @@ namespace InTime.Controllers
 
             ViewBag.DateDebut = TraitementDate.UnixTimeStampToString(tache.unixDebut);
             ViewBag.DateFin = TraitementDate.UnixTimeStampToString(tache.unixFin);
+            ViewBag.annee = DateDebut.Year;
+            ViewBag.mois = DateDebut.Month - 1;
+            ViewBag.jour = DateDebut.Day;
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;

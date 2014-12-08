@@ -11,10 +11,14 @@ namespace InTime.Controllers
 {
     public class CalendrierController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(int annee = 0, int mois = 0, int jour = 0)
         {
             if (User.Identity.IsAuthenticated)
             {
+                ViewBag.annee = annee;
+                ViewBag.mois = mois;
+                ViewBag.jour = jour;
+
                 return View();
             }
             else
