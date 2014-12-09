@@ -183,7 +183,6 @@ namespace InTime.Models
             return date;
         }
 
-
         private static List<Tache> TacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
         {
             List<Tache> taches = new List<Tache>();
@@ -240,13 +239,12 @@ namespace InTime.Models
             {
                 while (tacheDebut < end)
                 {
-                    string dateDebutCalen = DateFormatCalendrier(tacheDebut);
-                    string dateFinCalen = DateFormatCalendrier(tacheFin);
-
                     DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tacheDebut);
                     tache.Annee = Convert.ToString(DateTache.Year);
                     tache.Mois = Convert.ToString(DateTache.Month);
                     tache.Jour = Convert.ToString(DateTache.Day);
+                    tache.unixDebut = tacheDebut;
+                    tache.unixFin = tacheFin;
                     taches.Add(new Tache(tache));
 
                     if (Type == 2)
@@ -308,7 +306,6 @@ namespace InTime.Models
             return result;
 
         }
-
 
         public static List<Tache> TraitementRecurrenceTache(Tache tache, double start, double end)
         {

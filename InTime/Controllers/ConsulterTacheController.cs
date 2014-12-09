@@ -84,7 +84,6 @@ namespace InTime.Controllers
             }
         }
 
-
         public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
             if (id == null)
@@ -110,7 +109,7 @@ namespace InTime.Controllers
                             ViewBag.Modif = false;
                         }
 
-                        InitialiseViewBag(tache);
+                        PreparationPourAffichage(ref tache);
                         InitialiseViewBags();
                         Tache.InitChampsTache(ref tache);
                         ViewData["Tache"] = tache;
@@ -192,7 +191,7 @@ namespace InTime.Controllers
             }
         }
 
-        public ActionResult Index(int? id, DateTime? dep, DateTime? fn)
+        public ActionResult Index(int? id, DateTime? dep, DateTime? fn, double deb = 0, double fin = 0)
         {
             if (id == null)
             {
@@ -213,6 +212,11 @@ namespace InTime.Controllers
                         }
                         else
                         {
+                            if (deb > 0 && fin > 0)
+                            {
+                                tache.unixDebut = deb;
+                                tache.unixFin = fin;
+                            }
                             ViewBag.Modif = false;
                         }
 
@@ -223,7 +227,7 @@ namespace InTime.Controllers
                             tache.Description = result;
                         }
 
-                        InitialiseViewBag(tache);
+                        PreparationPourAffichage(ref tache);
                         ViewData["Tache"] = tache;
                     }
                     catch (Exception ex)
@@ -296,7 +300,7 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0;";
+                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
                     }
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@TroisMoisArriere", TacheRecDebut));
@@ -318,7 +322,7 @@ namespace InTime.Controllers
                         }
                         else
                         {
-                            Select = "SELECT * FROM Taches where UserId=@Id AND (DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0) OR Recurrence > 0;";
+                            Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0) OR Recurrence > 0);";
                         }
                         listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                         listParametres.Add(new SqlParameter("@Date1", TacheRecDebut));
@@ -338,7 +342,7 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND (DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0;";
+                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
                     }
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
@@ -425,7 +429,6 @@ namespace InTime.Controllers
             return null;
         }
 
-
         private string TempsRappel(DateTime rappel)
         {
             string strPhrase = "Il vous reste ";
@@ -474,7 +477,6 @@ namespace InTime.Controllers
             }
         }
 
-
         private Tache ObtenirTache(Object[] values)
         {
             var tache = new Tache()
@@ -505,15 +507,12 @@ namespace InTime.Controllers
             ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
         }
 
-        private void InitialiseViewBag(Tache tache)
+        private void PreparationPourAffichage(ref Tache tache)
         {
             DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-
-            ViewBag.DateDebut = TraitementDate.UnixTimeStampToString(tache.unixDebut);
-            ViewBag.DateFin = TraitementDate.UnixTimeStampToString(tache.unixFin);
-            ViewBag.annee = DateDebut.Year;
-            ViewBag.mois = DateDebut.Month - 1;
-            ViewBag.jour = DateDebut.Day;
+            tache.Annee = Convert.ToString(DateDebut.Year);
+            tache.Mois = Convert.ToString(DateDebut.Month - 1);
+            tache.Jour = Convert.ToString(DateDebut.Day);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
@@ -524,14 +523,14 @@ namespace InTime.Controllers
 
             if (DateRappel == DateDebut)
             {
-                ViewBag.DateRappel = "Aucun";
+                tache.DateRappelCalendrier = "Aucun";
             }
             else
             {
-                ViewBag.DateRappel = TempsRappel(DateRappel);
+                tache.DateRappelCalendrier = TempsRappel(DateRappel);
             }
 
-            ViewBag.Recurrence = Tache.Nomrecurrence(tache.Recurrence);
+            tache.RecurrenceAffichage = Tache.Nomrecurrence(tache.Recurrence);
         }
     }
 }

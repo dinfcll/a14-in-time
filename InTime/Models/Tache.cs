@@ -44,6 +44,8 @@ namespace InTime.Models
         public int Recurrence { get; set; }
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
+        public string DateRappelCalendrier { get; set; }
+        public string RecurrenceAffichage { get; set; }
 
         public Tache()
         {
@@ -173,7 +175,6 @@ namespace InTime.Models
             }
         }
 
-
         public static void InitChampsTache(ref Tache tache)
         {
             DateTime debut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
@@ -188,7 +189,6 @@ namespace InTime.Models
             tache.Mois = Convert.ToString(debut.Month);
             tache.Annee = Convert.ToString(debut.Year);
         }
-
 
         private static string InitialiseTempsMinute(string Temps)
         {
