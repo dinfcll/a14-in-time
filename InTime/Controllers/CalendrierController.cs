@@ -83,7 +83,6 @@ namespace InTime.Controllers
             return Json(rows, JsonRequestBehavior.AllowGet);
         }
 
-
         private Tache ObtenirTache(Object[] values)
         {
             var tache = new Tache()

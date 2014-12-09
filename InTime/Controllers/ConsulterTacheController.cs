@@ -96,12 +96,11 @@ namespace InTime.Controllers
                     try
                     {
                         Tache tache = RechercherTache(id);
-
                         if (dep != null && fn != null)
                         {
                             tache.unixDebut = Convert.ToDouble(dep);
                             tache.unixFin = Convert.ToDouble(fn);
-                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut);
+                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut) ?? tache.Description;
                             ViewBag.Modif = true;
                         }
                         else
