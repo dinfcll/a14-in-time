@@ -1,6 +1,6 @@
 ﻿@model InTime.Models.RegisterModel
 @{
-    ViewBag.Title = "S'inscrire";
+    ViewBag.Title = "S'inscrire"; 
 }
 
 <hgroup class="title">
@@ -11,7 +11,7 @@
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-
+    
     <fieldset>
         <legend>Formulaire d'inscription</legend>
         <ol>
@@ -39,9 +39,8 @@
                 @Html.LabelFor(m => m.ConfirmPassword)
                 @Html.PasswordFor(m => m.ConfirmPassword)
             </li>
-            
         </ol>
-        <input type="submit" value="S'inscrire" />
+        <input type="submit" value="S'inscrire"/>
     </fieldset>
 }
 
