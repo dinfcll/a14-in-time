@@ -22,13 +22,13 @@
             @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
             <div>
                 @{
-                    if (TempData["message"] == "Envoyer")
+                    if (TempData["message"] == @InTime.Models.Messages.Envoyer)
                     {
                         <h2><font color="green">Votre message a été envoyé.</font></h2>
                     }
                     else
                     {
-                        if (TempData["message"] == "Echec")
+                        if (TempData["message"] == @InTime.Models.Messages.Echec)
                         {
                             <h2><font color="red">Une erreur s’est produite. Votre commentaire n’a pas été transmis.</font></h2>
                         }
