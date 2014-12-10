@@ -8,8 +8,29 @@ namespace InTime.Models
 {
     public static class TraitementDate
     {
-        public enum recurrence { 
-            Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois,QuatreMois,ChaqueAnnee
+        public enum recurrence
+        {
+            Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois, QuatreMois, ChaqueAnnee
+        }
+
+        public static double DebutCalendrier()
+        {
+            DateTime DebutCalen = new DateTime(2014,1,1);
+            return (DebutCalen - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        public static double UnixXJour(int NbreJours)
+        {
+            return 60 * 60 * 24 * NbreJours;
+        }
+
+        public static double UnixXMois(double unixTime, int NbreMois)
+        {
+
+            DateTime DateInitial = UnixTimeStampToDateTime(unixTime);
+            DateTime DateFinal = DateInitial.AddMonths(NbreMois);
+
+            return 60 * 60 * 24 * (DateFinal - DateInitial).TotalDays;
         }
 
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
@@ -25,15 +46,15 @@ namespace InTime.Models
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
 
             return dtDateTime.AddSeconds(unixTimeStamp);
         }
 
         public static string UnixTimeStampToString(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+
             return dtDateTime.AddSeconds(unixTimeStamp).ToString("yyyy-MM-dd HH:mm");
         }
 
@@ -66,215 +87,95 @@ namespace InTime.Models
                 DateTime date = new DateTime(Annee, Mois, Jour, Heure, Minute, 0);
                 return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
         }
 
-        private static List<string[]> VerificationDateSemaine(Tache tache, double FinMois, int Bond)
+        public static string DateFormatCalendrier(double unix)
         {
-            bool Changement = false;
-            List<string[]> date = new List<string[]>();
-            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
-            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
-            DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
-            debutCalendrier = debutCalendrier.AddMonths(-1);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
 
-            if (debut.Month <= debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
-            {
-                if (debut.Year < debutCalendrier.Year)
-                {
-                    while (debut.Year < debutCalendrier.Year)
-                    {
-                        debut = debut.AddDays(Bond);
-                    }
-                }
-                if (debut.Month < debutCalendrier.Month)
-                {
-                    while (debut.Month < debutCalendrier.Month)
-                    {
-                        debut = debut.AddDays(Bond);
-                    }
-                }
-                Changement = true;
-            }
-            else
-            {
-                if (debut.Month > debutCalendrier.Month && debut.Year < debutCalendrier.Year)
-                {
-                    while (debut.Year < debutCalendrier.Year)
-                    {
-                        debut = debut.AddDays(Bond);
-                    }
-                    while (debut.Month < debutCalendrier.Month)
-                    {
-                        debut = debut.AddDays(Bond);
-                    }
-                    Changement = true;
-                }
-            }
-
-            if (Changement)
-            {
-                int days = DateTime.DaysInMonth(debut.Year, debut.Month);
-
-                while (debut.Month == debutCalendrier.Month)
-                {
-                    string dateDebut = TraitementDate.DateFormatCalendrier(
-                    debut.Year, debut.Month, debut.Day, debut.Hour, debut.Minute);
-                    string dateFin = TraitementDate.DateFormatCalendrier(
-                    debut.Year, debut.Month, debut.Day, fin.Hour, fin.Minute);
-
-                    date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
-                    debut = debut.AddDays(Bond);
-                }
-            }
-
-            return date;
+            return dtDateTime.AddSeconds(unix).ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
 
-        private static List<string[]> VerificationMois(Tache tache,double FinMois,int Bond)
+        private static List<string[]> DatesTacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
         {
             List<string[]> date = new List<string[]>();
-            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
-            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
-            DateTime debutCalendrier = UnixTimeStampToDateTime(FinMois);
-            debutCalendrier = debutCalendrier.AddMonths(-1);
-            bool Changement = false;
+            double tacheDebut = tache.unixDebut;
+            double tacheFin = tache.unixFin;
+            double differenceDebutFin = tacheFin - tacheDebut;
 
-            int nMonth = 0;
-            if (debut.Month <= debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
+            if (tacheDebut < start)
             {
-                nMonth = debut.Month;
-                while (nMonth < debutCalendrier.Month)
+                if (Type == 2)
                 {
-                    nMonth += Bond;
-                }
-
-                if (nMonth == debutCalendrier.Month)
-                {
-                    Changement = true;
-                }
-
-                if (debut.Year != debutCalendrier.Year)
-                {
-                    while (debut.Year < debutCalendrier.Year)
+                    while ((tacheDebut < start))
                     {
-                        debut = debut.AddYears(1);
+                        tacheDebut += UnixXMois(tacheDebut, 12);
                     }
                 }
-            }
-            else
-                if (debut.Month > debutCalendrier.Month && debut.Year < debutCalendrier.Year)
+                else
                 {
-                    nMonth = debutCalendrier.Month;
-                    while (nMonth < debut.Month)
+                    if (Bond == 1 || Type == 1)
                     {
-                        nMonth += Bond;
-                    }
-
-                    if (nMonth == debut.Month)
-                    {
-                        Changement = true;
-                    }
-
-                    if (debut.Year != debutCalendrier.Year)
-                    {
-                        while (debut.Year < debutCalendrier.Year)
+                        while ((tacheDebut + UnixXMois(tacheDebut, 12) < start))
                         {
-                            debut = debut.AddYears(1);
+                            tacheDebut += UnixXMois(tacheDebut, 12);
+                        }
+                    }
+
+                    if (Type == 1)
+                    {
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXMois(tacheDebut, Bond);
+                        }
+                    }
+                    else
+                    {
+                        if (Bond == 1)
+                        {
+                            while ((tacheDebut + UnixXMois(tacheDebut, 1) < start))
+                            {
+                                tacheDebut += UnixXMois(tacheDebut, 1);
+                            }
+                        }
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXJour(Bond);
                         }
                     }
                 }
 
-            if (Changement)
-            {
-                string dateDebut = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, debut.Hour, debut.Minute);
-                string dateFin = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, fin.Hour, fin.Minute);
-
-                date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
+                tacheFin = tacheDebut + differenceDebutFin;
             }
 
-            return date;
-        }
-
-
-        public static List<string[]> ChaqueJour(Tache tache, double start)
-        {
-            bool Changement = false;
-            bool Jour = false;
-            List<string[]> date = new List<string[]>();
-            DateTime debut = UnixTimeStampToDateTime(tache.unixDebut);
-            DateTime fin = UnixTimeStampToDateTime(tache.unixFin);
-            DateTime debutCalendrier = UnixTimeStampToDateTime(start);
-            debutCalendrier = debutCalendrier.AddMonths(-1);
-
-            if (debut.Month <= debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
+            if (tacheDebut > start && tacheDebut < end)
             {
-                if (debut.Month < debutCalendrier.Month)
+                while (tacheDebut < end)
                 {
-                    while (debut.Month < debutCalendrier.Month)
-                    {
-                        debut = debut.AddMonths(1);
-                    }
-                    Jour = true;
-                }
-                if (debut.Year < debutCalendrier.Year)
-                {
-                    while (debut.Year < debutCalendrier.Year)
-                    {
-                        debut = debut.AddYears(1);
-                    }
-                    Jour = true;
-                }
-                Changement = true;
-            }
-            else
-            {
-                if (debut.Month > debutCalendrier.Month && debut.Year < debutCalendrier.Year)
-                {
-                    while (debut.Month > debutCalendrier.Month)
-                    {
-                        debut = debut.AddMonths(-1);
-                    }
-                    while (debut.Year < debutCalendrier.Year)
-                    {
-                        debut = debut.AddYears(1);
-                    }
-                    Jour = true;
-                }
-            }
+                    string dateDebutCalen = DateFormatCalendrier(tacheDebut);
+                    string dateFinCalen = DateFormatCalendrier(tacheFin);
 
+                    date.Add(new string[] { tache.NomTache, dateDebutCalen, dateFinCalen, Convert.ToString(tache.IdTache) });
 
-            if (Jour)
-            {
-                int days = DateTime.DaysInMonth(debut.Year, debut.Month);
-                for (int day = 1; day <= days; day++)
-                {
-                    string dateDebut = TraitementDate.DateFormatCalendrier(
-                    debut.Year, debut.Month, day, debut.Hour, debut.Minute);
-                    string dateFin = TraitementDate.DateFormatCalendrier(
-                    debut.Year, debut.Month, day, fin.Hour, fin.Minute);
-
-                    date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
-                }
-            }
-            else
-            {
-                if (Changement)
-                {
-                    int days = DateTime.DaysInMonth(debut.Year, debut.Month);
-                    for (int day = debut.Day; day <= days; day++)
+                    if (Type == 2)
                     {
-                        string dateDebut = TraitementDate.DateFormatCalendrier(
-                        debut.Year, debut.Month, day, debut.Hour, debut.Minute);
-                        string dateFin = TraitementDate.DateFormatCalendrier(
-                        debut.Year, debut.Month, day, fin.Hour, fin.Minute);
+                        tacheDebut += UnixXMois(tacheDebut, 12);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
 
-                        date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
+                    if (Type == 1)
+                    {
+                        tacheDebut += UnixXMois(tacheDebut, Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+                    else
+                    {
+                        tacheDebut += UnixXJour(Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
                     }
                 }
             }
@@ -282,74 +183,166 @@ namespace InTime.Models
             return date;
         }
 
-        public static List<string[]> ChaqueSemaine(Tache tache, double start)
+        private static List<Tache> TacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
         {
-            return VerificationDateSemaine(tache, start, 7);
-        }
+            List<Tache> taches = new List<Tache>();
+            double tacheDebut = tache.unixDebut;
+            double tacheFin = tache.unixFin;
+            double differenceDebutFin = tacheFin - tacheDebut;
 
-
-        public static List<string[]> DeuxSemaine(Tache tache, double start)
-        {
-            return VerificationDateSemaine(tache,start,14);
-        }
-
-        public static List<string[]> TroisSemaine(Tache tache, double start)
-        {
-            return VerificationDateSemaine(tache, start, 21);
-        }
-
-        public static List<string[]> ChaqueMois(Tache tache, double start)
-        {
-            return VerificationMois(tache, start, 1);
-        }
-
-
-        public static List<string[]> TroisMois(Tache tache, double start)
-        {
-            return VerificationMois(tache, start, 3);
-        }
-
-
-        public static List<string[]> QuatreMois(Tache tache, double start)
-        {
-            return VerificationMois(tache,start,4);
-        }
-
-
-        public static List<string[]> ChaqueAnnee(Tache tache, double start)
-        {
-            List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
-            DateTime debutCalendrier = UnixTimeStampToDateTime(start);
-            debutCalendrier = debutCalendrier.AddMonths(-1);
-            bool Changement = false;
-
-            if (debut.Month == debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
+            if (tacheDebut < start)
             {
-                if (debut.Year != debutCalendrier.Year)
+                if (Type == 2)
                 {
-                    while (debut.Year < debutCalendrier.Year)
+                    while ((tacheDebut < start))
                     {
-                        debut = debut.AddYears(1);
+                        tacheDebut += UnixXMois(tacheDebut, 12);
+                    }
+                }
+                else
+                {
+                    if (Bond == 1 || Type == 1)
+                    {
+                        while ((tacheDebut + UnixXMois(tacheDebut, 12) < start))
+                        {
+                            tacheDebut += UnixXMois(tacheDebut, 12);
+                        }
+                    }
+
+                    if (Type == 1)
+                    {
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXMois(tacheDebut, Bond);
+                        }
+                    }
+                    else
+                    {
+                        if (Bond == 1)
+                        {
+                            while ((tacheDebut + UnixXMois(tacheDebut, 1) < start))
+                            {
+                                tacheDebut += UnixXMois(tacheDebut, 1);
+                            }
+                        }
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXJour(Bond);
+                        }
                     }
                 }
 
-                Changement = true;
+                tacheFin = tacheDebut + differenceDebutFin;
             }
 
-
-            if (Changement)
+            if (tacheDebut > start && tacheDebut < end)
             {
-                string dateDebut = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, debut.Hour, debut.Minute);
-                string dateFin = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, fin.Hour, fin.Minute);
+                while (tacheDebut < end)
+                {
+                    DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tacheDebut);
+                    tache.Annee = Convert.ToString(DateTache.Year);
+                    tache.Mois = Convert.ToString(DateTache.Month);
+                    tache.Jour = Convert.ToString(DateTache.Day);
+                    tache.unixDebut = tacheDebut;
+                    tache.unixFin = tacheFin;
+                    taches.Add(new Tache(tache));
 
-                date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
+                    if (Type == 2)
+                    {
+                        tacheDebut += UnixXMois(tacheDebut, 12);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+
+                    if (Type == 1)
+                    {
+                        tacheDebut += UnixXMois(tacheDebut, Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+                    else
+                    {
+                        tacheDebut += UnixXJour(Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+                }
             }
 
-            return date;
+            return taches;
+        }
+
+        public static List<string[]> TraitementRecurrence(Tache tache, double start, double end)
+        {
+            TraitementDate.recurrence recurrence =
+                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            List<string[]> result = null;
+
+            switch (recurrence)
+            {
+                case TraitementDate.recurrence.ChaqueJour:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueSemaine:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 7, 0);
+                    break;
+                case TraitementDate.recurrence.DeuxSemaines:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 14, 0);
+                    break;
+                case TraitementDate.recurrence.TroisSemaine:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 21, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 1);
+                    break;
+                case TraitementDate.recurrence.TroisMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 3, 1);
+                    break;
+                case TraitementDate.recurrence.QuatreMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 4, 1);
+                    break;
+                case TraitementDate.recurrence.ChaqueAnnee:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 0, 2);
+                    break;
+            }
+
+            return result;
+
+        }
+
+        public static List<Tache> TraitementRecurrenceTache(Tache tache, double start, double end)
+        {
+            TraitementDate.recurrence recurrence =
+                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            List<Tache> result = null;
+
+            switch (recurrence)
+            {
+                case TraitementDate.recurrence.ChaqueJour:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueSemaine:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 7, 0);
+                    break;
+                case TraitementDate.recurrence.DeuxSemaines:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 14, 0);
+                    break;
+                case TraitementDate.recurrence.TroisSemaine:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 21, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 1);
+                    break;
+                case TraitementDate.recurrence.TroisMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 3, 1);
+                    break;
+                case TraitementDate.recurrence.QuatreMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 4, 1);
+                    break;
+                case TraitementDate.recurrence.ChaqueAnnee:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 0, 2);
+                    break;
+            }
+
+            return result;
+
         }
     }
 }

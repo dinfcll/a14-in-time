@@ -1,6 +1,6 @@
 ﻿@if (Request.IsAuthenticated) {
     <text>
-        Bonjour, @Html.ActionLink(User.Identity.Name, "Index", "GererCompte", null, null)!
+        Bonjour, @Html.ActionLink(User.Identity.Name, "Renseignements", "Account", new { Affichage = 1 }, null)!
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
             @Html.AntiForgeryToken()
             <a href="javascript:document.getElementById('logoutForm').submit()">Se déconnecter</a>

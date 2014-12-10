@@ -11,10 +11,14 @@ namespace InTime.Controllers
 {
     public class CalendrierController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(int annee = 0, int mois = 0, int jour = 0)
         {
             if (User.Identity.IsAuthenticated)
             {
+                ViewBag.annee = annee;
+                ViewBag.mois = mois;
+                ViewBag.jour = jour;
+
                 return View();
             }
             else
@@ -26,6 +30,7 @@ namespace InTime.Controllers
         public JsonResult Taches(double start, double end)
         {
             var lstTache = new List<Tache>();
+
             try
             {
                 string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
@@ -56,40 +61,9 @@ namespace InTime.Controllers
 
             foreach (Tache tache in lstTache)
             {
-                TraitementDate.recurrence recurrence =
-                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
-                if (recurrence != TraitementDate.recurrence.Aucune)
+                if (tache.Recurrence != (int)TraitementDate.recurrence.Aucune)
                 {
-                    List<string[]> result = null;
-
-                    switch (recurrence)
-                    {
-                        case TraitementDate.recurrence.ChaqueJour:
-                            result = TraitementDate.ChaqueJour(tache, end);
-                            break;
-                        case TraitementDate.recurrence.ChaqueSemaine:
-                            result = TraitementDate.ChaqueSemaine(tache, end);
-                            break;
-                        case TraitementDate.recurrence.DeuxSemaines:
-                            result = TraitementDate.DeuxSemaine(tache, end);
-                            break;
-                        case TraitementDate.recurrence.TroisSemaine:
-                            result = TraitementDate.TroisSemaine(tache, end);
-                            break;
-                        case TraitementDate.recurrence.ChaqueMois:
-                            result = TraitementDate.ChaqueMois(tache, end);
-                            break;
-                        case TraitementDate.recurrence.TroisMois:
-                            result = TraitementDate.TroisMois(tache, end);
-                            break;
-                        case TraitementDate.recurrence.QuatreMois:
-                            result = TraitementDate.QuatreMois(tache, end);
-                            break;
-                        case TraitementDate.recurrence.ChaqueAnnee:
-                            result = TraitementDate.ChaqueAnnee(tache, end);
-                            break;
-                    }
-
+                    List<string[]> result = TraitementDate.TraitementRecurrence(tache, start, end);
                     if (result != null)
                     {
                         foreach(string[] str in result)
@@ -108,7 +82,6 @@ namespace InTime.Controllers
 
             return Json(rows, JsonRequestBehavior.AllowGet);
         }
-
 
         private Tache ObtenirTache(Object[] values)
         {
