@@ -48,8 +48,19 @@
             <br />
             @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "", id = "Consultation" })
             @Html.ValidationMessageFor(model => model.Email, "*")
-            <br />
-            <br />
+        </p>
+        <form name="frmlistbox">
+            <p>
+                Usage principal de votre calendirer:
+                <select name="choixcategories">
+                    <option selected="selected" disabled="disabled">@information.Categorie</option>
+                    <option value="Travail">Travail</option>
+                    <option value="École">École</option>
+                    <option value="Général">Général</option>
+                </select>
+            </p>
+        </form>
+        <p>
             <div style="display:inline-block">
                 <input id="Sauv" type="submit" value="Sauvegarder" />
                 <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
@@ -71,6 +82,13 @@
             $("[id^=Consultation").css('background-color', 'white');
             $("#Sauv").css("display", "inherit");
             $("#Mod").css("display", "none");
+            var listbox = $('select[name="choixcategories"]');
+            listbox.prop('disabled', false);
+            
+        });
+        $(function () {
+            var listbox = $('select[name="choixcategories"]');
+            listbox.prop('disabled', true);
         });
     </script>
 }

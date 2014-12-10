@@ -4,6 +4,7 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using InTime.Filters;
@@ -75,7 +76,7 @@ namespace InTime.Controllers
                     else
                     {
                         ConnexionUtilisateur Connexion;
-                        if(model.TypeConnec==null)
+                        if (model.TypeConnec == null)
                         {
                             Connexion = new RealConnexion();
                         }
@@ -86,6 +87,7 @@ namespace InTime.Controllers
                         Connexion.CreerUsager(model);
                         Connexion.LoginUsager(model);
                         Connexion.Cookie(model.UserName);
+
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -236,7 +238,8 @@ namespace InTime.Controllers
                     {
                         Nom = Convert.ToString(values[2]),
                         Prenom = Convert.ToString(values[3]),
-                        Email = Convert.ToString(values[4])
+                        Email = Convert.ToString(values[4]),
+                        Categorie = Convert.ToString(values[5])
                     };
                 }
                 ViewData["utilisateur"] = userProfile;
@@ -282,11 +285,12 @@ namespace InTime.Controllers
                             Object[] values = new Object[reader.FieldCount];
                             int fieldCounts = reader.GetValues(values);
                             userProfile = new RegisterModel()
-                            {
-                                Nom = Convert.ToString(values[2]),
-                                Prenom = Convert.ToString(values[3]),
-                                Email = Convert.ToString(values[4])
-                            };
+                        {
+                            Nom = Convert.ToString(values[2]),
+                            Prenom = Convert.ToString(values[3]),
+                            Email = Convert.ToString(values[4]),
+                            Categorie = Convert.ToString(values[5])
+                        };
                         }
 
                         if (userProfile == null)
@@ -295,6 +299,7 @@ namespace InTime.Controllers
                         }
 
                         ViewData["utilisateur"] = userProfile;
+
                         return View();
                     }
                     else
@@ -310,11 +315,12 @@ namespace InTime.Controllers
                         }
 
                         RegisterModel userProfile = new RegisterModel()
-                        {
-                            Nom = model.Nom,
-                            Prenom = model.Prenom,
-                            Email = model.Email
-                        };
+                    {
+                        Nom = model.Nom,
+                        Prenom = model.Prenom,
+                        Email = model.Email,
+                        Categorie = model.Categorie
+                    };
 
                         ViewData["utilisateur"] = userProfile;
 
@@ -334,14 +340,15 @@ namespace InTime.Controllers
 
         private bool ModifRenseig(RegisterModel model, int UserId)
         {
-            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email WHERE UserId = @Id;";
-
+            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email, Categorie = @Categorie WHERE UserId = @Id;";
+            model.Categorie = Request.Form.GetValues("choixcategories").GetValue(0).ToString();
             List<SqlParameter> Parametres = new List<SqlParameter>
             {
                 new SqlParameter("@Nom", model.Nom),
                 new SqlParameter("@Prenom", model.Prenom),
                 new SqlParameter("@Email", model.Email),
-                new SqlParameter("@Id", UserId)
+                new SqlParameter("@Id", UserId),
+                new SqlParameter("@Categorie",model.Categorie)
             };
 
             return RequeteSql.ExecuteQuery(SqlUpdate, Parametres);

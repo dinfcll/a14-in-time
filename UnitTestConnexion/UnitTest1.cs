@@ -33,6 +33,7 @@ namespace UnitTestConnexion
                 UserName = "UT",
                 Password = "abc1234",
                 ConfirmPassword = "abc1234",
+                Categorie = "Travail",
                 TypeConnec = "Dummy"
             };
             //When

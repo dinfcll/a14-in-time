@@ -40,7 +40,16 @@
                 @Html.PasswordFor(m => m.ConfirmPassword)
             </li>
         </ol>
-        <input type="submit" value="S'inscrire"/>
+            <p>
+                Usage principal de votre calendirer:
+                <select name="Categorie" id="Categorie">
+                    <option value="Travail">Travail</option>
+                    <option value="École">École</option>
+                    <option value="Général">Général</option>
+                </select>
+            </p>
+            <br><br>
+        <input type="submit" value="S'inscrire" />
     </fieldset>
 }
 
