@@ -1,5 +1,8 @@
 ﻿@model InTime.Models.Tache
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+
+
 @{
     ViewBag.Title = "Modification";
     var tache = (InTime.Models.Tache)ViewData["Tache"];
@@ -33,24 +36,26 @@
             Année :
             <input readonly id="Annee" name="Annee" width="20">
             <script>
-                $("#Annee").spinner({
-                    change : function(event, ui) { JourDuMois();},
-                    min : parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
-                    max : parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
-                    culture : "fr"
-                });
+                $("#Annee").spinner();
+                $("#Annee").spinner("option", "culture", "fr");
+                $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
+                $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
+                $("#Annee").spinner("value", parseInt(@tache.Annee));
                 $("#Annee").width(50);
 
-                $('#Annee').on("spinchange", function(event, ui) {
-
+                $('.ui-spinner-up').click(function () {
+                    if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal)) {
+                        annee += 1;
+                        JourDuMois();
+                    }
                 });
-
-                //$('.ui-spinner-up').click(function () {
-                //        JourDuMois();
-                //});
-                //$('.ui-spinner-down').click(function () {
-                //        JourDuMois();
-                //});
+                $('.ui-spinner-down').click(function () {
+                    if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal)) {
+                        annee -= 1;
+                        JourDuMois();
+                    }
+                });
+                $(selector, context).spinner("action");
             </script>
             Mois :
             @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
@@ -69,7 +74,7 @@
                     });
                     $('#Jour').html(items);
                     document.getElementById("Jour").selectedIndex = @tache.Jour
-                    });
+                });
             </script>
             Jour :
             <select id="Jour" name="Jour"></select>

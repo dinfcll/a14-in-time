@@ -22,7 +22,7 @@ namespace InTime.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                InitialiseLesListBoxes();
+                InitialiseViewBags();
 
                 return View();
             }
@@ -63,8 +63,7 @@ namespace InTime.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    InitialiseLesListBoxes();
-                    InitialiseDates(ref model);
+                    InitialiseViewBags();
 
                     return View("Index");
                 }
@@ -93,15 +92,6 @@ namespace InTime.Controllers
                 ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
                 ModelState.AddModelError("Annee", "");
                 ModelState.AddModelError("Jour", "");
-            } 
-            else
-            {
-                if (new DateTime(StrToInt(model.Annee), StrToInt(model.Mois), StrToInt(model.Jour)) < DateTime.Now.AddDays(-1))
-                {
-                    ModelState.AddModelError("Mois", "Vous ne pouvez pas créer une tâche avec une date inférieure à la date actuelle.");
-                    ModelState.AddModelError("Annee", "");
-                    ModelState.AddModelError("Jour", "");
-                }
             }
 
             if (model.HDebut == null || model.mDebut == null)
@@ -179,7 +169,7 @@ namespace InTime.Controllers
             }
         }
 
-        private void InitialiseLesListBoxes()
+        private void InitialiseViewBags()
         {
             ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
 
@@ -188,21 +178,6 @@ namespace InTime.Controllers
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
             ViewBag.recurrence = new SelectList(Tache.options, "Value","Text");
-        }
-
-        private void InitialiseDates(ref Tache nouvTache)
-        {
-            if (nouvTache.Annee != null && 
-                StrToInt(nouvTache.Annee) >= ValeursSpinner.ValeurMinimal &&
-                StrToInt(nouvTache.Annee) <= ValeursSpinner.ValeurMaximal)
-            {
-                ViewBag.Annee = nouvTache.Annee;
-            }
-
-            if (nouvTache.Mois != null)
-            {
-                ViewBag.Mois = nouvTache.Mois;
-            }
         }
     }
 }
