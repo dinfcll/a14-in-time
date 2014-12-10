@@ -16,18 +16,12 @@ namespace InTime.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
-        //
-        // GET: /Account/Login
-
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
-
-        //
-        // POST: /Account/Login
 
         [HttpPost]
         [AllowAnonymous]
@@ -41,13 +35,9 @@ namespace InTime.Controllers
                 return RedirectToLocal(returnUrl);
             }
 
-            // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
             ModelState.AddModelError("", "Le nom d'utilisateur ou mot de passe fourni est incorrect.");
             return View(model);
         }
-
-        //
-        // POST: /Account/LogOff
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -63,17 +53,11 @@ namespace InTime.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
-        // GET: /Account/Register
-
         [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
-
-        //
-        // POST: /Account/Register
 
         [HttpPost]
         [AllowAnonymous]
@@ -82,7 +66,6 @@ namespace InTime.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Tentative d'inscription de l'utilisateur
                 try
                 {
                     if (!UtilisateurPresent(model.UserName, model.Email))
@@ -112,9 +95,9 @@ namespace InTime.Controllers
                 }
             }
 
-            // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
             return View();
         }
+
         private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
         {
             String query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
@@ -134,9 +117,6 @@ namespace InTime.Controllers
             return true;
         }
 
-        //
-        // POST: /Account/Disassociate
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Disassociate(string provider, string providerUserId)
@@ -144,10 +124,8 @@ namespace InTime.Controllers
             string ownerAccount = OAuthWebSecurity.GetUserName(provider, providerUserId);
             ManageMessageId? message = null;
 
-            // Dissocier uniquement le compte si l'utilisateur actuellement connecté est le propriétaire
             if (ownerAccount == User.Identity.Name)
             {
-                // Utiliser une transaction pour empêcher l'utilisateur de supprimer ses dernières informations d'identification de connexion
                 using (var scope = new TransactionScope(TransactionScopeOption.Required,
                     new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
                 {
@@ -164,9 +142,6 @@ namespace InTime.Controllers
             return RedirectToAction("Manage", new { Message = message });
         }
 
-        //
-        // GET: /Account/Manage
-
         public ActionResult Manage(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -178,9 +153,6 @@ namespace InTime.Controllers
             ViewBag.ReturnUrl = Url.Action("Manage");
             return View();
         }
-
-        //
-        // POST: /Account/Manage
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -195,7 +167,6 @@ namespace InTime.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        // ChangePassword va lever une exception plutôt que de renvoyer la valeur False dans certains scénarios de défaillance.
                         bool changePasswordSucceeded;
                         try
                         {
@@ -218,8 +189,6 @@ namespace InTime.Controllers
                 }
                 else
                 {
-                    // L'utilisateur n'a pas de mot de passe local. Veuillez donc supprimer les erreurs de validation provoquées par un
-                    // champ OldPassword manquant
                     ModelState state = ModelState["OldPassword"];
                     if (state != null)
                     {
@@ -239,7 +208,6 @@ namespace InTime.Controllers
                     }
                 }
 
-                // Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
                 return View(model);
             }
             catch

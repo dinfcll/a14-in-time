@@ -213,6 +213,7 @@ namespace InTime.Controllers
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
                 else
+                {
                     if (User.Identity.IsAuthenticated)
                     {
                         try
@@ -251,6 +252,7 @@ namespace InTime.Controllers
                     {
                         return View(UrlErreur.Authentification);
                     }
+                }
             }
             catch
             {
