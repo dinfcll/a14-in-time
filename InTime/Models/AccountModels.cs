@@ -100,6 +100,7 @@ namespace InTime.Models
         [RegularExpression(@".*@.*")]
         public string Email { get; set; }
         public string Categorie { get; set; }
+        public string TypeConnec{ get; set; }
     }
 
     public class ExternalLogin

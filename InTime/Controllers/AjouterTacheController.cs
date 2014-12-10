@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.Data;
 
 
@@ -57,25 +54,32 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(Tache model)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                Validations(model);
-
-                if (!ModelState.IsValid)
+                if (User.Identity.IsAuthenticated)
                 {
-                    InitialiseViewBags();
+                    Validations(model);
 
-                    return View("Index");
+                    if (!ModelState.IsValid)
+                    {
+                        InitialiseViewBags();
+
+                        return View("Index");
+                    }
+                    else
+                    {
+                        var message = InsertionTache(model) ? "Reussi" : "Echec";
+                        TempData["Message"] = message;
+
+                        return RedirectToAction("Index", "AjouterTache");
+                    }
                 }
                 else
                 {
-                    var message = InsertionTache(model) ? "Reussi" : "Echec";
-                    TempData["Message"] = message;
-
-                    return RedirectToAction("Index", "AjouterTache");
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }

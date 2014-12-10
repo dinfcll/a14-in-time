@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using InTime.Models;
 
 
@@ -15,20 +11,26 @@ namespace InTime.Controllers
 
         public ActionResult TacheForm()
         {
-            if (User.Identity.IsAuthenticated && User.Identity.Name!= "Superuser")
+            try
             {
-                return View();
-            }
-            else
-                if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+                if (User.Identity.IsAuthenticated && User.Identity.Name != "Superuser")
                 {
-                    return RedirectToAction("GererForm", "Gerer");
+                    return View();
                 }
                 else
-                {
-                    return View("~/Views/ErreurAuthentification.cshtml");
-                }
-
+                    if (User.Identity.IsAuthenticated && User.Identity.Name == "Superuser")
+                    {
+                        return RedirectToAction("GererForm", "Gerer");
+                    }
+                    else
+                    {
+                        return View(UrlErreur.Authentification);
+                    }
+            }
+            catch
+            {
+                return View(UrlErreur.Authentification);
+            }
         }
 
     }

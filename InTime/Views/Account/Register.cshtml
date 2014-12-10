@@ -1,6 +1,6 @@
 ﻿@model InTime.Models.RegisterModel
 @{
-    ViewBag.Title = "S'inscrire";
+    ViewBag.Title = "S'inscrire"; 
 }
 
 <hgroup class="title">
@@ -11,7 +11,7 @@
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-
+    
     <fieldset>
         <legend>Formulaire d'inscription</legend>
         <ol>
@@ -40,17 +40,15 @@
                 @Html.PasswordFor(m => m.ConfirmPassword)
             </li>
         </ol>
-        <form>
             <p>
                 Usage principal de votre calendirer:
-                <select name="Catégories">
+                <select name="Categorie" id="Categorie">
                     <option value="Travail">Travail</option>
                     <option value="École">École</option>
                     <option value="Général">Général</option>
                 </select>
             </p>
             <br><br>
-        </form>
         <input type="submit" value="S'inscrire" />
     </fieldset>
 }
