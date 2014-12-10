@@ -12,7 +12,7 @@ namespace InTime.Controllers
     {
         public ActionResult Index()
         {
-            if (Session[User.Identity.Name] != null)
+            if (Session[User.Identity.Name]!=null)
             {
                 SqlConnection con = null;
                 try
@@ -21,7 +21,7 @@ namespace InTime.Controllers
                     int id = RequeteSql.RechercheID(con, User.Identity.Name);
 
                     Session[User.Identity.Name] = id;
-                }
+                } 
                 catch (Exception ex)
                 {
                     throw new Exception(ex.ToString());
@@ -52,21 +52,14 @@ namespace InTime.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    GMail mailer = new GMail(information.Subject, information.Body, true);
-                    mailer.Send();
-                    TempData["message"] = "Envoyer";
-                }
-                catch (Exception ex)
-                {
-                    TempData["message"] = "Echec";
-                }
+                GMail mailer = new GMail(information.Subject, information.Body, true);
+                mailer.Send();
+                TempData["message"] = RequeteSql.Message.Reussi;
 
                 return RedirectToAction("Contact", "Home");
             }
 
-            return View();
+                return View();
         }
     }
 }

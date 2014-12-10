@@ -1,10 +1,20 @@
 ﻿@model InTime.Models.GMail
 
-@{
-    ViewBag.Title = "Contact";
-}
+<html>
+<head>
+    <style>
+        hr {
+            width: 100%;
+            height: 1px;
+            background: #000;
+        }
+    </style>
+
+    <title>Contact</title>
+</head>
 
 
+<body>
     <h1>Nous rejoindre</h1>
     <article>
         <section>
@@ -22,18 +32,11 @@
             @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
             <div>
                 @{
-                    if (TempData["message"] == "Envoyer")
+                    if (TempData["message"] == "Reussi")
                     {
                         <h2><font color="green">Votre message a été envoyé.</font></h2>
                     }
-                    else
-                    {
-                        if (TempData["message"] == "Echec")
-                        {
-                            <h2><font color="red">Une erreur s’est produite. Votre commentaire n’a pas été transmis.</font></h2>
-                        }
-                    }
-}
+                }
             </div>
             <h3>Nous laisser un commentaire</h3>
             @using (Html.BeginForm())
@@ -55,3 +58,6 @@
         </section>
 
     </article>
+
+</body>
+</html>

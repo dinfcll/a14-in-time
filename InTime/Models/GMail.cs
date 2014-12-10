@@ -38,13 +38,6 @@ namespace InTime.Models
             IsHtml = Html;
         }
 
-        public GMail()
-        {
-            Subject = "Null";
-            Body = "Null";
-            IsHtml = false;
-        }
-
 
         public void Send()
         {
