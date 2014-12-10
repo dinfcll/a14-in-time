@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.Data;
 using Microsoft.Ajax.Utilities;
 
@@ -58,28 +55,36 @@ namespace InTime.Controllers
         [HttpPost]
         public ActionResult Index(Tache model)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                Validations(model);
-
-                if (!ModelState.IsValid)
+                if (User.Identity.IsAuthenticated)
                 {
-                    InitialiseViewBags();
+                    Validations(model);
 
-                    return View("Index");
+                    if (!ModelState.IsValid)
+                    {
+                        InitialiseViewBags();
+
+                        return View("Index");
+                    }
+                    else
+                    {
+                        var couleur = Request.Form.GetValues("Priorité").GetValue(0);
+                        var message = InsertionTache(model, couleur) ? "Reussi" : "Echec";
+                        TempData["Message"] = message;
+
+                        return RedirectToAction("Index", "AjouterTache");
+                    }
                 }
                 else
                 {
-                    var couleur = Request.Form.GetValues("Priorité").GetValue(0);
-                    var message = InsertionTache(model, couleur) ? "Reussi" : "Echec";
-                    TempData["Message"] = message;
-
-                    return RedirectToAction("Index", "AjouterTache");
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                TempData["Message"] =  "Echec";
+                return RedirectToAction("Index", "AjouterTache");
             }
         }
 
@@ -181,7 +186,7 @@ namespace InTime.Controllers
 
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
-            ViewBag.recurrence = new SelectList(Tache.options, "Value","Text");
+            ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
         }
     }
 }
