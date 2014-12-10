@@ -10,6 +10,9 @@ namespace InTime.Controllers
 {
     public class TacheController : Controller
     {
+        //
+        // GET: /Tache/
+
         public ActionResult TacheForm()
         {
             if (User.Identity.IsAuthenticated && User.Identity.Name!= "Superuser")

@@ -119,7 +119,7 @@ namespace InTime.Controllers
 
         private void ValHeureFinDebut(ref Tache model)
         {
-            const string strMessageErreur = "Vos heures ne sont pas valide.";
+            const string strMessageErreur = "Vos heures ne sont pas valide";
 
             if (model.HDebut != null && model.mDebut != null)
             {

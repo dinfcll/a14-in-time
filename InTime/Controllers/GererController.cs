@@ -8,6 +8,9 @@ namespace InTime.Controllers
 {
     public class GererController : Controller
     {
+        //
+        // GET: /Gerer/
+
         public ActionResult GererForm()
         {
             if (User.Identity.IsAuthenticated && User.Identity.Name=="Superuser")
