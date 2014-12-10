@@ -61,40 +61,9 @@ namespace InTime.Controllers
 
             foreach (Tache tache in lstTache)
             {
-                TraitementDate.recurrence recurrence =
-                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
-                if (recurrence != TraitementDate.recurrence.Aucune)
+                if (tache.Recurrence != (int)TraitementDate.recurrence.Aucune)
                 {
-                    List<string[]> result = null;
-
-                    switch (recurrence)
-                    {
-                        case TraitementDate.recurrence.ChaqueJour:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end,1,0);
-                            break;
-                        case TraitementDate.recurrence.ChaqueSemaine:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 7, 0);
-                            break;
-                        case TraitementDate.recurrence.DeuxSemaines:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 14, 0);
-                            break;
-                        case TraitementDate.recurrence.TroisSemaine:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 21, 0);
-                            break;
-                        case TraitementDate.recurrence.ChaqueMois:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 1);
-                            break;
-                        case TraitementDate.recurrence.TroisMois:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 3, 1);
-                            break;
-                        case TraitementDate.recurrence.QuatreMois:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 4, 1);
-                            break;
-                        case TraitementDate.recurrence.ChaqueAnnee:
-                            result = TraitementDate.DatesTacheRecurrente(tache, start, end, 0, 2);
-                            break;
-                    }
-
+                    List<string[]> result = TraitementDate.TraitementRecurrence(tache, start, end);
                     if (result != null)
                     {
                         foreach(string[] str in result)
@@ -113,7 +82,6 @@ namespace InTime.Controllers
 
             return Json(rows, JsonRequestBehavior.AllowGet);
         }
-
 
         private Tache ObtenirTache(Object[] values)
         {

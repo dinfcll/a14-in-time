@@ -172,6 +172,8 @@
                 });
             </script>
             <input style="float:left; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
+            <input type="button" value="Annuler"
+                   onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
         </div>
     }
 

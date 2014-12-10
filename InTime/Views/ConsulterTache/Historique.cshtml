@@ -11,7 +11,12 @@
 
 @using (Html.BeginForm("Historique", "ConsulterTache", FormMethod.Get))
 {
-    @Html.DropDownList("ChoixTemps")
+    <p>
+        @Html.DropDownList("ChoixTemps")  
+          Afficher les tâches récurrentes :
+        @Html.CheckBox("Recurrence")
+    </p>
+    
 
     <div id="Partiel" style="display:none">
         @Html.Partial("_LapseDeTemps")

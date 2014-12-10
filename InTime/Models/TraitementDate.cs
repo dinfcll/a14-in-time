@@ -13,6 +13,12 @@ namespace InTime.Models
             Aucune, ChaqueJour, ChaqueSemaine, DeuxSemaines, TroisSemaine, ChaqueMois, TroisMois, QuatreMois, ChaqueAnnee
         }
 
+        public static double DebutCalendrier()
+        {
+            DateTime DebutCalen = new DateTime(2014,1,1);
+            return (DebutCalen - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
         public static double UnixXJour(int NbreJours)
         {
             return 60 * 60 * 24 * NbreJours;
@@ -94,7 +100,7 @@ namespace InTime.Models
             return dtDateTime.AddSeconds(unix).ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
 
-        public static List<string[]> DatesTacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
+        private static List<string[]> DatesTacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
         {
             List<string[]> date = new List<string[]>();
             double tacheDebut = tache.unixDebut;
@@ -177,43 +183,166 @@ namespace InTime.Models
             return date;
         }
 
-        public static List<string[]> ChaqueAnnee(Tache tache, double start, int Affichage)
+        private static List<Tache> TacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
         {
-            List<string[]> date = new List<string[]>();
-            DateTime debut = DateDebut(tache);
-            DateTime fin = DateFin(tache);
-            DateTime debutCalendrier = UnixTimeStampToDateTime(start);
-            if (Affichage == 2)
-            {
-                debutCalendrier = debutCalendrier.AddMonths(-1);
-            }
-            bool Changement = false;
+            List<Tache> taches = new List<Tache>();
+            double tacheDebut = tache.unixDebut;
+            double tacheFin = tache.unixFin;
+            double differenceDebutFin = tacheFin - tacheDebut;
 
-            if (debut.Month == debutCalendrier.Month && debut.Year <= debutCalendrier.Year)
+            if (tacheDebut < start)
             {
-                if (debut.Year != debutCalendrier.Year)
+                if (Type == 2)
                 {
-                    while (debut.Year < debutCalendrier.Year)
+                    while ((tacheDebut < start))
                     {
-                        debut = debut.AddYears(1);
+                        tacheDebut += UnixXMois(tacheDebut, 12);
+                    }
+                }
+                else
+                {
+                    if (Bond == 1 || Type == 1)
+                    {
+                        while ((tacheDebut + UnixXMois(tacheDebut, 12) < start))
+                        {
+                            tacheDebut += UnixXMois(tacheDebut, 12);
+                        }
+                    }
+
+                    if (Type == 1)
+                    {
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXMois(tacheDebut, Bond);
+                        }
+                    }
+                    else
+                    {
+                        if (Bond == 1)
+                        {
+                            while ((tacheDebut + UnixXMois(tacheDebut, 1) < start))
+                            {
+                                tacheDebut += UnixXMois(tacheDebut, 1);
+                            }
+                        }
+                        while (tacheDebut < start)
+                        {
+                            tacheDebut += UnixXJour(Bond);
+                        }
                     }
                 }
 
-                Changement = true;
+                tacheFin = tacheDebut + differenceDebutFin;
             }
 
-
-            if (Changement)
+            if (tacheDebut > start && tacheDebut < end)
             {
-                string dateDebut = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, debut.Hour, debut.Minute);
-                string dateFin = TraitementDate.DateFormatCalendrier(
-                debut.Year, debutCalendrier.Month, debut.Day, fin.Hour, fin.Minute);
+                while (tacheDebut < end)
+                {
+                    DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tacheDebut);
+                    tache.Annee = Convert.ToString(DateTache.Year);
+                    tache.Mois = Convert.ToString(DateTache.Month);
+                    tache.Jour = Convert.ToString(DateTache.Day);
+                    tache.unixDebut = tacheDebut;
+                    tache.unixFin = tacheFin;
+                    taches.Add(new Tache(tache));
 
-                date.Add(new string[] { tache.NomTache, dateDebut, dateFin, Convert.ToString(tache.IdTache) });
+                    if (Type == 2)
+                    {
+                        tacheDebut += UnixXMois(tacheDebut, 12);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+
+                    if (Type == 1)
+                    {
+                        tacheDebut += UnixXMois(tacheDebut, Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+                    else
+                    {
+                        tacheDebut += UnixXJour(Bond);
+                        tacheFin = tacheDebut + differenceDebutFin;
+                    }
+                }
             }
 
-            return date;
+            return taches;
+        }
+
+        public static List<string[]> TraitementRecurrence(Tache tache, double start, double end)
+        {
+            TraitementDate.recurrence recurrence =
+                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            List<string[]> result = null;
+
+            switch (recurrence)
+            {
+                case TraitementDate.recurrence.ChaqueJour:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueSemaine:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 7, 0);
+                    break;
+                case TraitementDate.recurrence.DeuxSemaines:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 14, 0);
+                    break;
+                case TraitementDate.recurrence.TroisSemaine:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 21, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 1);
+                    break;
+                case TraitementDate.recurrence.TroisMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 3, 1);
+                    break;
+                case TraitementDate.recurrence.QuatreMois:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 4, 1);
+                    break;
+                case TraitementDate.recurrence.ChaqueAnnee:
+                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 0, 2);
+                    break;
+            }
+
+            return result;
+
+        }
+
+        public static List<Tache> TraitementRecurrenceTache(Tache tache, double start, double end)
+        {
+            TraitementDate.recurrence recurrence =
+                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            List<Tache> result = null;
+
+            switch (recurrence)
+            {
+                case TraitementDate.recurrence.ChaqueJour:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueSemaine:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 7, 0);
+                    break;
+                case TraitementDate.recurrence.DeuxSemaines:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 14, 0);
+                    break;
+                case TraitementDate.recurrence.TroisSemaine:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 21, 0);
+                    break;
+                case TraitementDate.recurrence.ChaqueMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 1);
+                    break;
+                case TraitementDate.recurrence.TroisMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 3, 1);
+                    break;
+                case TraitementDate.recurrence.QuatreMois:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 4, 1);
+                    break;
+                case TraitementDate.recurrence.ChaqueAnnee:
+                    result = TraitementDate.TacheRecurrente(tache, start, end, 0, 2);
+                    break;
+            }
+
+            return result;
+
         }
     }
 }
