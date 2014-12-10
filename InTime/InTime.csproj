@@ -208,6 +208,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\GMail.cs" />
     <Compile Include="Models\Cookie.cs" />
+    <Compile Include="Models\Messages.cs" />
     <Compile Include="Models\RequeteSql.cs" />
     <Compile Include="Models\Tache.cs" />
     <Compile Include="Models\TraitementDate.cs" />

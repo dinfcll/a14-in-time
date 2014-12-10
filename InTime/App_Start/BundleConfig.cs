@@ -33,7 +33,6 @@ namespace InTime
                 "~/Content/site.css",
                 "~/Content/justified-nav.css",
                 "~/Content/fullcalendar.css",
-                "~/Content/fullcalendar.print.css",
                 "~/Content/bootstrap.css"));
 
 

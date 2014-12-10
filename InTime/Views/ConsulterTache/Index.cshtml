@@ -53,6 +53,10 @@
         <br />
         @Html.TextArea("Desc", tache.Description, new { disabled = "disabled", id = "Consultation" })
         <br />
+        <form>
+            Priorité:
+            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor disabled="true">
+        </form>
     </p>
 
     @if (ViewBag.Modif == true)

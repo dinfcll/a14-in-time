@@ -16,42 +16,49 @@ namespace InTime.Controllers
 
         public ActionResult Taches(string strMessValidation)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                try
+                if (User.Identity.IsAuthenticated)
                 {
                     var lstTache = new List<Tache>();
                     double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
+                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
                     List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@DateDebut", DateAuj)
                     };
 
-                    SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-                    while (reader.Read())
+                    try
                     {
-                        Object[] values = new Object[reader.FieldCount];
-                        reader.GetValues(values);
-                        var tache = ObtenirTache(values);
-                        DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-                        tache.Annee = Convert.ToString(DateTache.Year);
-                        tache.Mois = Convert.ToString(DateTache.Month);
-                        tache.Jour = Convert.ToString(DateTache.Day);
-                        lstTache.Add(tache);
-                    }
-                    reader.Close();
-                    ViewBag.Taches = lstTache;
+                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+                        while (reader.Read())
+                        {
+                            Object[] values = new Object[reader.FieldCount];
+                            reader.GetValues(values);
+                            var tache = ObtenirTache(values);
+                            DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                            tache.Annee = Convert.ToString(DateTache.Year);
+                            tache.Mois = Convert.ToString(DateTache.Month);
+                            tache.Jour = Convert.ToString(DateTache.Day);
+                            lstTache.Add(tache);
+                        }
+                        reader.Close();
+                        ViewBag.Taches = lstTache;
 
-                    return View();
+                        return View();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new Exception(ex.ToString());
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }
@@ -86,44 +93,52 @@ namespace InTime.Controllers
 
         public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            else
-                if (User.Identity.IsAuthenticated)
+                if (id == null)
                 {
-                    try
-                    {
-                        Tache tache = RechercherTache(id);
-                        if (dep != null && fn != null)
-                        {
-                            tache.unixDebut = Convert.ToDouble(dep);
-                            tache.unixFin = Convert.ToDouble(fn);
-                            tache.Description = RechercheDescriptionTache(id, tache.unixDebut) ?? tache.Description;
-                            ViewBag.Modif = true;
-                        }
-                        else
-                        {
-                            ViewBag.Modif = false;
-                        }
-
-                        PreparationPourAffichage(ref tache);
-                        InitialiseViewBags();
-                        Tache.InitChampsTache(ref tache);
-                        ViewData["Tache"] = tache;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.ToString());
-                    }
-
-                    return View("Modification");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
                 else
-                {
-                    return View(UrlErreur.Authentification);
-                }
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        try
+                        {
+                            Tache tache = RechercherTache(id);
+
+                            if (dep != null && fn != null)
+                            {
+                                tache.unixDebut = Convert.ToDouble(dep);
+                                tache.unixFin = Convert.ToDouble(fn);
+                                tache.Description = RechercheDescriptionTache(id, tache.unixDebut) ?? tache.Description;
+                                ViewBag.Modif = true;
+                            }
+                            else
+                            {
+                                ViewBag.Modif = false;
+                            }
+
+                            PreparationPourAffichage(tache);
+                            InitialiseViewBags();
+                            Tache.InitChampsTache(ref tache);
+                            ViewData["Tache"] = tache;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.ToString());
+                        }
+
+                        return View("Modification");
+                    }
+                    else
+                    {
+                        return View(UrlErreur.Authentification);
+                    }
+            }
+            catch
+            {
+                return View(UrlErreur.Authentification);
+            }
         }
 
         [HttpPost]
@@ -138,12 +153,13 @@ namespace InTime.Controllers
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-
+                    string couleur = (Request.Form.GetValues(16).GetValue(0)).ToString();
+                    Model.PriorityColor = couleur;
                     if (modif == "False")
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
                         + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                        + "recurrence=@recurrence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        + "recurrence=@recurrence, PriorityColor=@PriorityColor WHERE UserId=@UserId AND IdTache=@IdTache;";
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                         listParametres.Add(new SqlParameter("@UserId", UserId));
                         listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
@@ -154,6 +170,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     else
                     {
@@ -171,6 +188,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                         listParametres.Add(new SqlParameter("@DateFin", unixFin));
                         listParametres.Add(new SqlParameter("@Description", Model.Description));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
                     TempData["Modification"] = message;
@@ -192,57 +210,59 @@ namespace InTime.Controllers
 
         public ActionResult Index(int? id, DateTime? dep, DateTime? fn, double deb = 0, double fin = 0)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            else
-                if (User.Identity.IsAuthenticated)
+                if (id == null)
                 {
-                    try
-                    {
-                        Tache tache = RechercherTache(id);
-
-                        if (dep != null && fn != null)
-                        {
-                            tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
-                            tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
-                            ViewBag.Modif = true;
-                        }
-                        else
-                        {
-                            if (deb > 0 && fin > 0)
-                            {
-                                tache.unixDebut = deb;
-                                tache.unixFin = fin;
-                            }
-                            ViewBag.Modif = false;
-                        }
-
-                        string result = RechercheDescriptionTache(id, tache.unixDebut);
-                        if (!String.IsNullOrEmpty(result))
-                        {
-                            ViewBag.Existe = true;
-                            tache.Description = result;
-                        }
-
-                        PreparationPourAffichage(ref tache);
-                        ViewData["Tache"] = tache;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.ToString());
-                    }
-
-                    return View();
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
                 else
                 {
-                    return View(UrlErreur.Authentification);
-                }
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        try
+                        {
+                            Tache tache = RechercherTache(id);
+
+                            if (dep != null && fn != null)
+                            {
+                                tache.unixDebut = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(dep));
+                                tache.unixFin = TraitementDate.DateTimeToUnixTimestamp(Convert.ToDateTime(fn));
+                                ViewBag.Modif = true;
+                            }
+                            else
+                             {
+                                if (deb > 0 && fin > 0)
+                                {
+                                    tache.unixDebut = deb;
+                                    tache.unixFin = fin;
+                                }
+                                ViewBag.Modif = false;
+                            }
+
+                            string result = RechercheDescriptionTache(id, tache.unixDebut);
+                            if (!String.IsNullOrEmpty(result))
+                            {
+                                ViewBag.Existe = true;
+                                tache.Description = result;
+                            }
+
+                            PreparationPourAffichage(ref tache);
+                        ViewData["Tache"] = tache;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.ToString());
+                        }
+
+                        return View();
+                    }
+                    else
+                    {
+                        return View(UrlErreur.Authentification);
+                    }
+            }
         }
 
-        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut,bool Recurrence = false)
+        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence = false)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -250,7 +270,7 @@ namespace InTime.Controllers
                 int anneeDebut;
                 int anneeFin;
                 anneeDebut = anneeFin = DateTime.Now.Year;
-                
+
 
                 if (!String.IsNullOrEmpty(ChoixTemps))
                 {
@@ -258,8 +278,8 @@ namespace InTime.Controllers
                     {
                         Choix = 1;
                     }
-                    Int32.TryParse(FinAnn,out anneeFin);
-                    Int32.TryParse(DebAnn,out anneeDebut);
+                    Int32.TryParse(FinAnn, out anneeFin);
+                    Int32.TryParse(DebAnn, out anneeDebut);
                 }
 
                 ViewBag.Choix = Choix;
@@ -489,7 +509,8 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Recurrence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9]),
+                PriorityColor= Convert.ToString(values[10])
             };
 
             return tache;

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using InTime.Models;
-using System.Data;
 using System.Data.SqlClient;
 
 namespace InTime.Controllers
@@ -13,15 +10,22 @@ namespace InTime.Controllers
     {
         public ActionResult Index(int annee = 0, int mois = 0, int jour = 0)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                ViewBag.annee = annee;
-                ViewBag.mois = mois;
-                ViewBag.jour = jour;
+                if (User.Identity.IsAuthenticated)
+                {
+                    ViewBag.annee = annee;
+                    ViewBag.mois = mois;
+                    ViewBag.jour = jour;
 
-                return View();
+                    return View();
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }
@@ -41,7 +45,7 @@ namespace InTime.Controllers
                         new SqlParameter("@DateFin", end)
                     };
 
-                SqlDataReader reader = RequeteSql.Select(queryString,param);
+                SqlDataReader reader = RequeteSql.Select(queryString, param);
                 while (reader.Read())
                 {
                     Object[] values = new Object[reader.FieldCount];
@@ -66,17 +70,17 @@ namespace InTime.Controllers
                     List<string[]> result = TraitementDate.TraitementRecurrence(tache, start, end);
                     if (result != null)
                     {
-                        foreach(string[] str in result)
+                        foreach (string[] str in result)
                         {
                             string url = UrlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
-                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id=str[3] });
+                            rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id = str[3], backgroundColor = tache.PriorityColor });
                         }
                     }
                 }
                 else
                 {
                     string url = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
-                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url });
+                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url, backgroundColor = tache.PriorityColor });
                 }
             }
 
@@ -91,7 +95,8 @@ namespace InTime.Controllers
                 NomTache = Convert.ToString(values[2]),
                 unixDebut = Convert.ToDouble(values[5]),
                 unixFin = Convert.ToDouble(values[6]),
-                Recurrence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9]),
+                PriorityColor = Convert.ToString(values[10])
             };
 
             return tache;

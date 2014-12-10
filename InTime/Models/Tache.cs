@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -46,6 +43,7 @@ namespace InTime.Models
         public double unixFin { get; set; }
         public string DateRappelCalendrier { get; set; }
         public string RecurrenceAffichage { get; set; }
+        public string PriorityColor { get; set; }
 
         public Tache()
         {
@@ -71,6 +69,7 @@ namespace InTime.Models
             Recurrence = tache.Recurrence;
             unixDebut = tache.unixDebut;
             unixFin = tache.unixFin;
+            PriorityColor = tache.PriorityColor;
         }
 
         public static List<string> tempsHeure
