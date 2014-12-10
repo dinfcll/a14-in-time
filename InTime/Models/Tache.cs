@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -44,6 +41,7 @@ namespace InTime.Models
         public int Recurrence { get; set; }
         public double unixDebut { get; set; }
         public double unixFin { get; set; }
+        public string PriorityColor { get; set; }
 
         public static List<string> tempsHeure
         {
@@ -120,6 +118,8 @@ namespace InTime.Models
                 };
             }
         }
+
+        public string PriorityColorvalue { get; set; }
 
         public static string Nomrecurrence(int index)
         {

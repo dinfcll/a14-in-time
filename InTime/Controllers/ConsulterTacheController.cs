@@ -20,17 +20,17 @@ namespace InTime.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    try
-                    {
-                        var lstTache = new List<Tache>();
-                        double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                        string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence > 0)";
-                        List<SqlParameter> Parametres = new List<SqlParameter>
+                    var lstTache = new List<Tache>();
+                    double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
+                    List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@DateDebut", DateAuj)
                     };
 
+                    try
+                    {
                         SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                         while (reader.Read())
                         {
@@ -154,12 +154,13 @@ namespace InTime.Controllers
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-
+                    string couleur = (Request.Form.GetValues(16).GetValue(0)).ToString();
+                    Model.PriorityColor = couleur;
                     if (modif == "False")
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
                         + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                        + "recurrence=@recurrence WHERE UserId=@UserId AND IdTache=@IdTache;";
+                        + "recurrence=@recurrence, PriorityColor=@PriorityColor WHERE UserId=@UserId AND IdTache=@IdTache;";
                         listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                         listParametres.Add(new SqlParameter("@UserId", UserId));
                         listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
@@ -170,6 +171,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
                         listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     else
                     {
@@ -187,6 +189,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                         listParametres.Add(new SqlParameter("@DateFin", unixFin));
                         listParametres.Add(new SqlParameter("@Description", Model.Description));
+                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                     }
                     var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
                     TempData["Modification"] = message;
@@ -470,7 +473,8 @@ namespace InTime.Controllers
                 unixFin = Convert.ToDouble(values[6]),
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
-                Recurrence = Convert.ToInt32(values[9])
+                Recurrence = Convert.ToInt32(values[9]),
+                PriorityColor= Convert.ToString(values[10])
             };
 
             return tache;
