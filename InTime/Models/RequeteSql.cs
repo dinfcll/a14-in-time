@@ -38,6 +38,7 @@ namespace InTime.Models
             {
                 cmdId.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
             }
+
             return (Int32)cmdId.ExecuteScalar();
         }
 

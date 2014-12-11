@@ -9,20 +9,19 @@
             @Html.DisplayNameFor(model => model.Lieu)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Jour)
+            @Html.DisplayNameFor(model => model.Annee)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Mois)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Annee)
+            @Html.DisplayNameFor(model => model.Jour)
         </th>
         <th>
-
+            @Html.DisplayName("Récurrente")
         </th>
-        <th>
-
-        </th>
+        <th></th>
+        <th></th>
         <th></th>
     </tr>
 
@@ -36,22 +35,38 @@
                 @Html.DisplayFor(modelItem => item.Lieu)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Jour)
+                @Html.DisplayFor(modelItem => item.Annee)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Mois)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Annee)
+                @Html.DisplayFor(modelItem => item.Jour)
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index", new { id = item.IdTache })
+                @if (item.Recurrence == 0)
+                {
+                    @Html.DisplayName("Non");
+                }
+                else
+                {
+                    @Html.DisplayName("Oui");
+                }
             </td>
             <td>
-                @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache })
+                @Html.ActionLink("Détails", "Index", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin })
             </td>
             <td>
-                @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
+                @if (ViewBag.Title != "Historique")
+                {
+                    @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache })
+                }
+            </td>
+            <td>
+                @if (ViewBag.Title != "Historique")
+                {
+                    @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
+                }
             </td>
         </tr>
     }

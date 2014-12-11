@@ -20,8 +20,8 @@ namespace InTime
 
         public void Cookie(string username)
         {
-           AccountController Account = new AccountController();
-           Account.CookieNomUtilisateur(username);
+            AccountController Account = new AccountController();
+            Account.CookieNomUtilisateur(username);
         }
     }
 }

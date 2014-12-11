@@ -148,6 +148,8 @@
             Description de la tâche : <br />
             @Html.TextArea("Description", tache.Description, new { style = "width:95%;", id = "Description" })
             <br />
+            Priorité:
+            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor/>
             @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache, @type = "Hidden" })
             @Html.TextBox("Existe", "false", new { @type = "Hidden" })
             <input id="modif" name="modif" type="text" value="False" style="display:none" />
@@ -171,11 +173,10 @@
                     });
                 });
             </script>
-            <form>
-                Priorité:
-                <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor>
-            </form>
-            <input style="float:left; margin-right:12px;" type="submit" name="Modifier" value="Modifier" onclick=" return confirm('voulez-vous modifier cette tâche?')" />
+            <input style="float:left; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
+            <input type="button" value="Annuler"
+                   onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
+
         </div>
     }
 

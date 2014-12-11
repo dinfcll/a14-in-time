@@ -381,7 +381,7 @@ namespace InTime.Controllers
             {
                 con = RequeteSql.ConnexionBD(con);
                 int id = RequeteSql.RechercheID(con, UserName);
-                InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Heure);
+                InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Journee);
             }
             catch (Exception ex)
             {

@@ -64,8 +64,11 @@
             <div style="display:inline-block">
                 <input id="Sauv" type="submit" value="Sauvegarder" />
                 <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
-                <input type="button" value="Retour" onclick="location.href = '@Url.Action("Index","GererCompte",null)'" />
+                <input type="button" value="Retour" onclick="location.href = '@Url.Action("TacheForm","Tache",null)'" />
             </div>
+            <br/>
+            <br/>
+            <input type="button" value="Modifier votre mot de passe" onclick="location.href = '@Url.Action("Manage","Account",null)'" />
         </p>
     </article>
 }

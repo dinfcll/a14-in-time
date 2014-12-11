@@ -2,14 +2,18 @@
     ViewBag.Title = "Index";
 }
 
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/moment-min.js")"></script>
+}
+
 
 <head>
 
     <title>Calendrier</title>
     <script>
-        $(document).ready(function () {
 
-            // page is now ready, initialize the calendar...
+        $(document).ready(function () {
             $('#calendar').fullCalendar({
                 // put your options and callbacks here
                 header: {
@@ -17,7 +21,7 @@
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay',
                 },
-                defaultView: 'agendaDay',
+                defaultView: 'agendaWeek',
                 editable: true,
                 allDaySlot: false,
                 selectable: true,
@@ -25,21 +29,35 @@
                 slotMinutes: 15,
                 monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
                     "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-                monthNamesShort:['Janv','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],
-                dayNames: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-                dayNamesShort: ['Lun','Mar','Mer','Jeu','Vend','Sam','Dim'],
+                monthNamesShort: ['Janv', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                dayNamesShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Vend', 'Sam'],
                 buttonText: {
-                    today:'Aujourd\'hui',
-                    month:'Mois',
-                    week:'Semaine',
-                    day:'Jour'
+                    today: 'Aujourd\'hui',
+                    month: 'Mois',
+                    week: 'Semaine',
+                    day: 'Jour'
                 },
 
-                events: '/Calendrier/Taches'
+                events: {
+                    url: '/Calendrier/Taches',
+                    cache: true
+                }
             });
-
         });
+
     </script>
+
+    @if (ViewBag.annee != 0)
+    {
+        <script>
+            $(window).load(function () {
+                $('#calendar').fullCalendar('gotoDate', @ViewBag.annee, @ViewBag.mois,@ViewBag.jour);
+            })
+        </script>
+    }
+
+
 </head>
 
 <body>

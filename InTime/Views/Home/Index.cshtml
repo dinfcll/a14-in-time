@@ -1,6 +1,7 @@
 ﻿@{
-    ViewBag.Title = "";
+    ViewBag.Title = "Accueil";
 }
+
 @section featured {
     <section class="featured">
         <div class="content-wrapper">
@@ -20,15 +21,15 @@
 <h3>Nos suggestions:</h3>
 <ol class="round">
     <li class="one">
-        <h5>Pour Commencer</h5>
+        <h5>@Html.ActionLink("Pour Commencer", "Register", "Account", null, new { style = "color:blue;" })</h5>
         Inscrivez-vous gratuitement ou connectez-vous et profitez de fonctionnalités très utiles!!!
     </li>
     <li class="two">
-        <h5>Création de tâches</h5>
+        <h5>@Html.ActionLink("Création de tâches", "Index", "AjouterTache", null, new { style = "color:blue;" })</h5>
         Créer des tâches pour des rencontes, rendez-vous ou pour tout autres raisons.
     </li>
     <li class="three">
-        <h5>Consulter</h5>
+        <h5>@Html.ActionLink("Consulter vos tâches", "Taches", "ConsulterTache", null, new { style = "color:blue;" })</h5>
         Consulter vos tâches et ne soyez jamais en retard.
     </li>
 </ol>
