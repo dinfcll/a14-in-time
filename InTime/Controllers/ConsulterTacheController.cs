@@ -20,17 +20,18 @@ namespace InTime.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    var lstTache = new List<Tache>();
-                    double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                    string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
-                    List<SqlParameter> Parametres = new List<SqlParameter>
+                    try
+                    {
+                        var lstTache = new List<Tache>();
+                        double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                        string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
+                        List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@DateDebut", DateAuj)
                     };
 
-                    try
-                    {
+
                         SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
                         while (reader.Read())
                         {
@@ -52,6 +53,8 @@ namespace InTime.Controllers
                     {
                         throw new Exception(ex.ToString());
                     }
+
+
                 }
                 else
                 {
@@ -118,7 +121,7 @@ namespace InTime.Controllers
                                 ViewBag.Modif = false;
                             }
 
-                            PreparationPourAffichage(tache);
+                            PreparationPourAffichage(ref tache);
                             InitialiseViewBags();
                             Tache.InitChampsTache(ref tache);
                             ViewData["Tache"] = tache;
@@ -195,7 +198,7 @@ namespace InTime.Controllers
 
                     DateTime date = TraitementDate.UnixTimeStampToDateTime(unixDebut);
 
-                    return RedirectToAction("Index", "Calendrier",new {@annee = date.Year , @mois = (date.Month - 1),@jour = date.Day} );
+                    return RedirectToAction("Index", "Calendrier", new { @annee = date.Year, @mois = (date.Month - 1), @jour = date.Day });
                 }
                 catch (Exception ex)
                 {
@@ -210,6 +213,8 @@ namespace InTime.Controllers
 
         public ActionResult Index(int? id, DateTime? dep, DateTime? fn, double deb = 0, double fin = 0)
         {
+            try
+            {
                 if (id == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -229,7 +234,7 @@ namespace InTime.Controllers
                                 ViewBag.Modif = true;
                             }
                             else
-                             {
+                            {
                                 if (deb > 0 && fin > 0)
                                 {
                                     tache.unixDebut = deb;
@@ -246,7 +251,7 @@ namespace InTime.Controllers
                             }
 
                             PreparationPourAffichage(ref tache);
-                        ViewData["Tache"] = tache;
+                            ViewData["Tache"] = tache;
                         }
                         catch (Exception ex)
                         {
@@ -259,40 +264,52 @@ namespace InTime.Controllers
                     {
                         return View(UrlErreur.Authentification);
                     }
+                }
+            }
+            catch
+            {
+                return View(UrlErreur.Authentification);
             }
         }
 
         public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence = false)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                int Choix = 1;
-                int anneeDebut;
-                int anneeFin;
-                anneeDebut = anneeFin = DateTime.Now.Year;
-
-
-                if (!String.IsNullOrEmpty(ChoixTemps))
+                if (User.Identity.IsAuthenticated)
                 {
-                    if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
+                    int Choix = 1;
+                    int anneeDebut;
+                    int anneeFin;
+                    anneeDebut = anneeFin = DateTime.Now.Year;
+
+
+                    if (!String.IsNullOrEmpty(ChoixTemps))
                     {
-                        Choix = 1;
+                        if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
+                        {
+                            Choix = 1;
+                        }
+                        Int32.TryParse(FinAnn, out anneeFin);
+                        Int32.TryParse(DebAnn, out anneeDebut);
                     }
-                    Int32.TryParse(FinAnn, out anneeFin);
-                    Int32.TryParse(DebAnn, out anneeDebut);
+
+                    ViewBag.Choix = Choix;
+                    ViewBag.anneeDebut = anneeDebut;
+                    ViewBag.anneeFin = anneeFin;
+                    ViewBag.ChoixTemps = Tache.Choix_Historique;
+                    ViewBag.ChoixMoisFin = Tache.les_mois;
+                    ViewBag.ChoixMoisDebut = Tache.les_mois;
+                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
+
+                    return View();
                 }
-
-                ViewBag.Choix = Choix;
-                ViewBag.anneeDebut = anneeDebut;
-                ViewBag.anneeFin = anneeFin;
-                ViewBag.ChoixTemps = Tache.Choix_Historique;
-                ViewBag.ChoixMoisFin = Tache.les_mois;
-                ViewBag.ChoixMoisDebut = Tache.les_mois;
-                ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
-
-                return View();
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
             }
-            else
+            catch
             {
                 return View(UrlErreur.Authentification);
             }
@@ -323,7 +340,7 @@ namespace InTime.Controllers
                     }
                     listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
                     listParametres.Add(new SqlParameter("@TroisMoisArriere", TacheRecDebut));
-                    listParametres.Add(new SqlParameter("@Maintenant",TacheRecFin));
+                    listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
                     break;
                 case 2:
                     try
@@ -387,7 +404,7 @@ namespace InTime.Controllers
                             tache.Mois = Convert.ToString(DateTache.Month);
                             tache.Jour = Convert.ToString(DateTache.Day);
                             lstTache.Add(tache);
-                        } 
+                        }
                         else
                         {
                             List<Tache> result = TraitementDate.TraitementRecurrenceTache(tache, TacheRecDebut, TacheRecFin);
@@ -510,7 +527,7 @@ namespace InTime.Controllers
                 HRappel = Convert.ToString(values[7]),
                 mRappel = Convert.ToString(values[8]),
                 Recurrence = Convert.ToInt32(values[9]),
-                PriorityColor= Convert.ToString(values[10])
+                PriorityColor = Convert.ToString(values[10])
             };
 
             return tache;

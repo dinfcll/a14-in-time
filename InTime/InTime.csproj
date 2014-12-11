@@ -196,10 +196,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjouterTacheController.cs" />
     <Compile Include="Controllers\CalendrierController.cs" />
+    <Compile Include="ConnexionUtilisateur.cs" />
     <Compile Include="Controllers\ConsulterTacheController.cs" />
+    <Compile Include="DummyConnexion.cs" />
     <Compile Include="Controllers\GererCompteController.cs" />
     <Compile Include="Controllers\GererController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="RealConnexion.cs" />
     <Compile Include="Controllers\TacheController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
