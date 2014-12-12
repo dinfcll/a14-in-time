@@ -156,8 +156,6 @@ namespace InTime.Controllers
                     int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                     double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                     double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                    string couleur = (Request.Form.GetValues(16).GetValue(0)).ToString();
-                    Model.PriorityColor = couleur;
                     if (modif == "False")
                     {
                         SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
@@ -198,7 +196,7 @@ namespace InTime.Controllers
 
                     DateTime date = TraitementDate.UnixTimeStampToDateTime(unixDebut);
 
-                    return RedirectToAction("Index", "Calendrier", new { @annee = date.Year, @mois = (date.Month - 1), @jour = date.Day });
+                    return RedirectToAction("Taches", "ConsulterTache");
                 }
                 catch (Exception ex)
                 {
