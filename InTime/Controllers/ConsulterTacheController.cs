@@ -408,6 +408,14 @@ namespace InTime.Controllers
                             List<Tache> result = TraitementDate.TraitementRecurrenceTache(tache, TacheRecDebut, TacheRecFin);
                             if (result != null)
                             {
+                                foreach(Tache tacheRec in result)
+                                {
+                                    string resultat = RechercheDescriptionTache(tacheRec.IdTache, tacheRec.unixDebut);
+                                    if (!String.IsNullOrEmpty(resultat))
+                                    {
+                                        tache.Description = resultat;
+                                    }
+                                }
                                 lstTache.AddRange(result);
                             }
                         }
