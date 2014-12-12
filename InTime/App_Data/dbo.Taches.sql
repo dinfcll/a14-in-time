@@ -9,7 +9,7 @@
     [HRappel]     VARCHAR (2)   NULL,
     [mRappel]     VARCHAR (2)   NULL,
     [Recurrence]  NUMERIC (2,0)  NULL,  
-	[PriorityColor] VARCHAR(8) NULL,
+    [PriorityColor] VARCHAR(8) NULL,
     PRIMARY KEY CLUSTERED ([IdTache] ASC),
     CONSTRAINT [FK_UserProfile_Taches] FOREIGN KEY ([UserId]) REFERENCES [dbo].[UserProfile] ([UserId])
 );
