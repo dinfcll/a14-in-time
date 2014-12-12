@@ -46,14 +46,14 @@ namespace InTime.Models
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
 
             return dtDateTime.AddSeconds(unixTimeStamp);
         }
 
         public static string UnixTimeStampToString(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
 
             return dtDateTime.AddSeconds(unixTimeStamp).ToString("yyyy-MM-dd HH:mm");
         }
@@ -85,6 +85,7 @@ namespace InTime.Models
             try
             {
                 DateTime date = new DateTime(Annee, Mois, Jour, Heure, Minute, 0);
+
                 return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
             }
             catch (Exception ex)
