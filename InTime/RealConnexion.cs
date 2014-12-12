@@ -10,7 +10,7 @@ namespace InTime
     {
         public void CreerUsager(RegisterModel model)
         {
-            WebMatrix.WebData.WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email });
+            WebMatrix.WebData.WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { model.Nom, model.Prenom, model.Email, model.Categorie });
         }
 
         public void LoginUsager(RegisterModel model)

@@ -80,7 +80,8 @@ namespace InTime.Controllers
                 else
                 {
                     string url = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
-                    rows.Add(new { title = tache.NomTache, start = tache.unixDebut, end = tache.unixFin, url = url, backgroundColor = tache.PriorityColor });
+                    rows.Add(new { title = tache.NomTache, start = TraitementDate.DateFormatCalendrier(tache.unixDebut),
+                        end = TraitementDate.DateFormatCalendrier(tache.unixFin), url = url, backgroundColor = tache.PriorityColor });
                 }
             }
 

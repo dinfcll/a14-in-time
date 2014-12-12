@@ -149,7 +149,7 @@
             @Html.TextArea("Description", tache.Description, new { style = "width:95%;", id = "Description" })
             <br />
             Priorité:
-            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor/>
+            <input id="PriorityColor" type="color" name="PriorityColor" size="4" height="30" value=@tache.PriorityColor />
             @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache, @type = "Hidden" })
             @Html.TextBox("Existe", "false", new { @type = "Hidden" })
             <input id="modif" name="modif" type="text" value="False" style="display:none" />

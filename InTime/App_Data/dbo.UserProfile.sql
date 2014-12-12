@@ -4,6 +4,7 @@
     [Nom] VARCHAR(50) NOT NULL, 
     [Prenom] VARCHAR(50) NOT NULL, 
     [Email] VARCHAR(50) NOT NULL, 
+    [Categorie] VARCHAR(50) NOT NULL,
     PRIMARY KEY CLUSTERED ([UserId] ASC),
     UNIQUE NONCLUSTERED ([Email],[UserName] ASC)
 );
