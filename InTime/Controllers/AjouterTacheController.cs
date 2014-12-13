@@ -60,6 +60,11 @@ namespace InTime.Controllers
             }
         }
 
+        public ActionResult trest()
+        {
+            return View();
+        }
+
         private void Validations(Tache model)
         {
             const string strValidationMotContain = "Choisir";

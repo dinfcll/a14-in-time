@@ -1,47 +1,5 @@
 ﻿﻿@model InTime.Models.Tache
 @Styles.Render("~/Content/jqueryui")
-@Scripts.Render("~/bundles/jqueryui")
-
-<script>
-    $(document).ready(function () {
-        $("#Annee").spinner({
-            change: function (event, ui) { JourDuMois(); },
-            min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
-            max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
-            culture: "fr"
-        });
-        $("#Annee").spinner("value",
-            @if (ViewBag.Annee == null)
-            {
-                @InTime.Models.ValeursSpinner.AnneeEnCours
-            }
-            else
-            {
-                @ViewBag.Annee
-            });
-        $("#Annee").width(50);
-        $("#Mois").val(3);
-    });
-
-    var JourDuMois = function () {
-        var params = {};
-        params.Year = $("#Annee").val();
-        params.Month = $('#Mois').val();
-        $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
-            var items = '<option>Choisir un jour</option>';
-            $.each(data, function (i, jour) {
-                items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
-            });
-            $('#Jour').html(items);
-        });
-    }
-
-    $(function () {
-        $('#Mois').change(function () {
-            JourDuMois();
-        });
-    });
-</script>
 
 <ol class="breadcrumb">
     <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
@@ -126,3 +84,45 @@
         <input type="submit" value="Enregistrer" />
     </p>
 }
+
+@Scripts.Render("~/bundles/jqueryui")
+<script>
+   $(document).ready(function () {
+        $("#Annee").spinner({
+            change: function (event, ui) { JourDuMois(); },
+            min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
+            max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
+            culture: "fr"
+        });
+        $("#Annee").spinner("value",
+            @if (ViewBag.Annee == null)
+            {
+                @InTime.Models.ValeursSpinner.AnneeEnCours
+            }
+            else
+            {
+                @ViewBag.Annee
+            });
+        $("#Annee").width(50);
+        $("#Mois").val(3);
+    });
+
+    var JourDuMois = function () {
+        var params = {};
+        params.Year = $("#Annee").val();
+        params.Month = $('#Mois').val();
+        $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+            var items = '<option>Choisir un jour</option>';
+            $.each(data, function (i, jour) {
+                items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+            });
+            $('#Jour').html(items);
+        });
+    }
+
+    $(function () {
+        $('#Mois').change(function () {
+            JourDuMois();
+        });
+    });
+</script>

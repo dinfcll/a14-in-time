@@ -14,7 +14,8 @@ namespace InTime
                         "~/Scripts/fullcalendar.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                        "~/Scripts/jquery-ui.js"));
+                        "~/Scripts/jquery-ui.js",
+                        "~/Scripts/jquery.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
@@ -35,12 +36,12 @@ namespace InTime
 
             bundles.Add(new StyleBundle("~/Content/fullCalendar").Include(
                 "~/Content/fullcalendar.css"));
+
                 
 
             bundles.Add(new StyleBundle("~/Content/jqueryui").Include(
-                        "~/Content/jquery-ui.css",
-                        "~/Content/jquery-ui.structure.css",
-                        "~/Content/jquery-ui.theme.css"));
+                        "~/Content/themes/base/jquery-ui.css"
+                        ));
         }
     }
 }
