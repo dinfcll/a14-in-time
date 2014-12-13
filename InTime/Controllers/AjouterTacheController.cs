@@ -15,8 +15,6 @@ namespace InTime.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                InitialiseLesListBoxes();
-
                 return View();
             }
             else
@@ -36,7 +34,6 @@ namespace InTime.Controllers
 
                     if (!ModelState.IsValid)
                     {
-                        InitialiseLesListBoxes();
                         InitialiseDates(ref model);
 
                         return View("Index");
@@ -141,6 +138,7 @@ namespace InTime.Controllers
                 string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence,PriorityColor)"
                     + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@recurrence,@PriorityColor);";
 
+
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
                     new SqlParameter("@UserId", UserId),
@@ -148,7 +146,7 @@ namespace InTime.Controllers
                     new SqlParameter("@Lieu", Model.Lieu),
                     new SqlParameter("@DateDebut",unixDebut),
                     new SqlParameter("@DateFin",unixFin),
-                    new SqlParameter("@Description", Model.Description),
+                    new SqlParameter("@Description", SqlDbType.VarChar) { Value = Model.Description ?? ""},
                     new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value },
                     new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value },
                     new SqlParameter("@recurrence", Model.Recurrence),
@@ -163,17 +161,6 @@ namespace InTime.Controllers
             }
         }
 
-        private void InitialiseLesListBoxes()
-        {
-            ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
-
-            ViewBag.trancheHeure = new SelectList(Tache.tempsHeure);
-
-            ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
-
-            ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
-        }
-
         private void InitialiseDates(ref Tache nouvTache)
         {
             if (nouvTache.Annee != null &&
@@ -186,6 +173,11 @@ namespace InTime.Controllers
             if (nouvTache.Mois != null)
             {
                 ViewBag.Mois = nouvTache.Mois;
+            }
+
+            if (nouvTache.Annee != null)
+            {
+                ViewBag.Jour = nouvTache.Jour;
             }
         }
 

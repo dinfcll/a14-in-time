@@ -40,35 +40,35 @@
         Année :
         <input id="Annee" name="Annee" width="20">
         Mois :
-        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
+        @Html.DropDownList("Mois", @InTime.Models.Tache.les_mois, "Choisir un mois", new { id = "Mois" })
         @Html.ValidationMessage("Mois", "*")
         Jour :
         <select id="Jour" name="Jour"></select>
         @Html.ValidationMessage("Jour", "*")
         <br />
         Récurrence de la tache :<br />
-        @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
+        @Html.DropDownList("recurrence", @InTime.Models.Tache.options, new { id = "recurrence" })
         <br />
         Heure : <br />
-        Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
+        Début : @Html.DropDownList("HDebut", @InTime.Models.Tache.tempsHeure, "", new { id = "HDebut" })
         @Html.ValidationMessage("dbTacheHeure", "*")
         H
-        @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
+        @Html.DropDownList("mDebut", @InTime.Models.Tache.tempsMinutes, "", new { id = "mDebut" })
         @Html.ValidationMessage("dbTacheMinute", "*")
         Min
         <br />
-        Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
+        Fin : @Html.DropDownList("HFin", @InTime.Models.Tache.tempsHeure, "", new { id = "HFin" })
         @Html.ValidationMessage("finTacheHeure", "*")
         H
-        @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
+        @Html.DropDownList("mFin", @InTime.Models.Tache.tempsMinutes, "", new { id = "mFin" })
         @Html.ValidationMessage("finTacheMinute", "*")
         Min
         <br />
         Avant combien de temps voulez-vous être informé de votre tâche ? <br />
-        @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
+        @Html.DropDownList("HRappel", @InTime.Models.Tache.tempsHeure, "", new { id = "HRappel" })
         @Html.ValidationMessage("rapTacheHeure", "*")
         H
-        @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
+        @Html.DropDownList("mRappel", @InTime.Models.Tache.tempsMinutes, "", new { id = "mRappel" })
         @Html.ValidationMessage("rapTacheMinute", "*")
         Min
         <br />
@@ -87,7 +87,7 @@
 
 @Scripts.Render("~/bundles/jqueryui")
 <script>
-   $(document).ready(function () {
+    $(document).ready(function () {
         $("#Annee").spinner({
             change: function (event, ui) { JourDuMois(); },
             min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
@@ -104,7 +104,11 @@
                 @ViewBag.Annee
             });
         $("#Annee").width(50);
-        $("#Mois").val(3);
+        $("#Mois").val(
+            @if (ViewBag.Mois != null)
+            {
+                @ViewBag.Mois
+            });
     });
 
     var JourDuMois = function () {
@@ -117,6 +121,11 @@
                 items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
             });
             $('#Jour').html(items);
+            $("#Jour").val(
+            @if (ViewBag.Jour != null)
+            {
+                @ViewBag.Jour
+            });
         });
     }
 

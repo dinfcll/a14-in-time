@@ -47,7 +47,6 @@ namespace InTime.Models
 
         public Tache()
         {
-
         }
 
         public Tache(Tache tache)
@@ -72,24 +71,51 @@ namespace InTime.Models
             PriorityColor = tache.PriorityColor;
         }
 
-        public static List<string> tempsHeure
+        public static List<SelectListItem> tempsHeure
         {
             get
             {
-                return new List<string>
+                return new List<SelectListItem>
                 {
-                                    "0","1","2","3","4","5","6","7","8","9","10",
-                                    "11","12","13","14","15","16","17","18","19","20","21",
-                                    "22","23"
-                                  };
+                    new SelectListItem { Text = "0", Value = "0"},
+                    new SelectListItem { Text = "1", Value = "1"},
+                    new SelectListItem { Text = "2", Value = "2"},
+                    new SelectListItem { Text = "3", Value = "3"},
+                    new SelectListItem { Text = "4", Value = "4"},
+                    new SelectListItem { Text = "5", Value = "5"},
+                    new SelectListItem { Text = "6", Value = "6"},
+                    new SelectListItem { Text = "7", Value = "7"},
+                    new SelectListItem { Text = "8", Value = "8"},
+                    new SelectListItem { Text = "9", Value = "9"},
+                    new SelectListItem { Text = "10", Value = "10"},
+                    new SelectListItem { Text = "11", Value = "11"},
+                    new SelectListItem { Text = "12", Value = "12"},
+                    new SelectListItem { Text = "13", Value = "13"},
+                    new SelectListItem { Text = "14", Value = "14"},
+                    new SelectListItem { Text = "15", Value = "15"},
+                    new SelectListItem { Text = "16", Value = "16"},
+                    new SelectListItem { Text = "17", Value = "17"},
+                    new SelectListItem { Text = "18", Value = "18"},
+                    new SelectListItem { Text = "19", Value = "19"},
+                    new SelectListItem { Text = "20", Value = "20"},
+                    new SelectListItem { Text = "21", Value = "21"},
+                    new SelectListItem { Text = "22", Value = "22"},
+                    new SelectListItem { Text = "23", Value = "23"}
+                };
             }
         }
 
-        public static List<string> tempsMinutes
+        public static List<SelectListItem> tempsMinutes
         {
             get
             {
-                return new List<string> { "00", "15", "30", "45" };
+                return new List<SelectListItem> 
+                { 
+                    new SelectListItem { Text = "00", Value = "0"},
+                    new SelectListItem { Text = "15", Value = "15"},
+                    new SelectListItem { Text = "30", Value = "30"},
+                    new SelectListItem { Text = "45", Value = "45"},
+                };
             }
         }
 
