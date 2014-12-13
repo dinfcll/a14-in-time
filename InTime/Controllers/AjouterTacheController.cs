@@ -11,44 +11,17 @@ namespace InTime.Controllers
 {
     public class AjouterTacheController : Controller
     {
-        int StrToInt(string nombre)
-        {
-            return Convert.ToInt32(nombre);
-        }
-
         public ActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
             {
-                InitialiseViewBags();
+                InitialiseLesListBoxes();
 
                 return View();
             }
             else
             {
                 return View(UrlErreur.Authentification);
-            }
-        }
-
-        public JsonResult JourDuMois(int Year, string Month)
-        {
-            if (!String.IsNullOrEmpty(Month))
-            {
-                List<SelectListItem> jours = new List<SelectListItem>();
-                if (!String.IsNullOrEmpty(Month))
-                {
-                    int nDays = DateTime.DaysInMonth(Year, StrToInt(Month));
-                    for (int i = 1; i <= nDays; ++i)
-                    {
-                        jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
-                    }
-                }
-
-                return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(null, JsonRequestBehavior.DenyGet);
             }
         }
 
@@ -63,14 +36,14 @@ namespace InTime.Controllers
 
                     if (!ModelState.IsValid)
                     {
-                        InitialiseViewBags();
+                        InitialiseLesListBoxes();
+                        InitialiseDates(ref model);
 
                         return View("Index");
                     }
                     else
                     {
-                        var couleur = Request.Form.GetValues("Priorité").GetValue(0);
-                        var message = InsertionTache(model, couleur) ? "Reussi" : "Echec";
+                        var message = InsertionTache(model) ? "Reussi" : "Echec";
                         TempData["Message"] = message;
 
                         return RedirectToAction("Index", "AjouterTache");
@@ -98,6 +71,15 @@ namespace InTime.Controllers
                 ModelState.AddModelError("Mois", "Veuillez compléter la date correctement.");
                 ModelState.AddModelError("Annee", "");
                 ModelState.AddModelError("Jour", "");
+            }
+            else
+            {
+                if (new DateTime(StrToInt(model.Annee), StrToInt(model.Mois), StrToInt(model.Jour)) < DateTime.Now.AddDays(-1))
+                {
+                    ModelState.AddModelError("Mois", "Vous ne pouvez pas créer une tâche avec une date inférieure à la date actuelle.");
+                    ModelState.AddModelError("Annee", "");
+                    ModelState.AddModelError("Jour", "");
+                }
             }
 
             if (model.HDebut == null || model.mDebut == null)
@@ -144,11 +126,10 @@ namespace InTime.Controllers
             }
         }
 
-        private bool InsertionTache(Tache Model, object couleur)
+        private bool InsertionTache(Tache Model)
         {
             try
             {
-                Model.PriorityColor = couleur.ToString();
                 int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
                 double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                 double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
@@ -177,7 +158,7 @@ namespace InTime.Controllers
             }
         }
 
-        private void InitialiseViewBags()
+        private void InitialiseLesListBoxes()
         {
             ViewBag.trancheMin = new SelectList(Tache.tempsMinutes);
 
@@ -186,6 +167,48 @@ namespace InTime.Controllers
             ViewBag.MoisAnnee = new SelectList(Tache.les_mois, "Value", "Text");
 
             ViewBag.recurrence = new SelectList(Tache.options, "Value", "Text");
+        }
+
+        private void InitialiseDates(ref Tache nouvTache)
+        {
+            if (nouvTache.Annee != null &&
+                StrToInt(nouvTache.Annee) >= ValeursSpinner.ValeurMinimal &&
+                StrToInt(nouvTache.Annee) <= ValeursSpinner.ValeurMaximal)
+            {
+                ViewBag.Annee = nouvTache.Annee;
+            }
+
+            if (nouvTache.Mois != null)
+            {
+                ViewBag.Mois = nouvTache.Mois;
+            }
+        }
+
+        int StrToInt(string nombre)
+        {
+            return Convert.ToInt32(nombre);
+        }
+
+        public JsonResult JourDuMois(int Year, string Month)
+        {
+            if (!String.IsNullOrEmpty(Month))
+            {
+                List<SelectListItem> jours = new List<SelectListItem>();
+                if (!String.IsNullOrEmpty(Month))
+                {
+                    int nDays = DateTime.DaysInMonth(Year, StrToInt(Month));
+                    for (int i = 1; i <= nDays; ++i)
+                    {
+                        jours.Add(new SelectListItem { Text = Convert.ToString(i), Value = Convert.ToString(i) });
+                    }
+                }
+
+                return Json(new SelectList(jours.ToArray(), "Text", "Value"), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(null, JsonRequestBehavior.DenyGet);
+            }
         }
     }
 }

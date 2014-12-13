@@ -1,143 +1,31 @@
-﻿@using System.Drawing
-@model InTime.Models.Tache
-
-<header>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-</header>
-<ol class="breadcrumb">
-    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
-    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
-    <li class="active">Ajouter Tâches</li>
-</ol>
-@{
-    ViewBag.Title = "Ajouter une nouvelle tâche";
-}
-
-@Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
-
-
-<div>
-    @{
-        if (@TempData["Message"] == "Reussi")
-        {
-            <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
-        }
-        if (@TempData["Message"] == "Echec")
-        {
-            <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
-        }
-    }
-</div>
-
-<h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
-
-@using (Html.BeginForm())
-{
-    <p>
-        Nom de la tâche : <br />
-        @Html.TextBoxFor(model => model.NomTache)
-        @Html.ValidationMessageFor(model => model.NomTache, "*")
-        <br />
-
-
-        Nom du lieu : <br />
-        @Html.TextBoxFor(model => model.Lieu)
-        @Html.ValidationMessageFor(model => model.Lieu, "*")
-        <br />
-
-        Date : <br />
-        Année :
-        <input readonly id="Annee" name="Annee" width="20">
-
-        <script>
-            var annee = parseInt(@InTime.Models.ValeursSpinner.AnneeEnCours);
-            $("#Annee").spinner();
-            $("#Annee").spinner("option", "culture", "fr");
-            $("#Annee").spinner("option", "max", parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal));
-            $("#Annee").spinner("option", "min", parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal));
-            $("#Annee").spinner("value", annee);
-            $("#Annee").width(50);
-
-
-            $('.ui-spinner-up').click(function () {
-                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal)) {
-                    annee += 1;
-                    JourDuMois();
-                }
-            });
-            $('.ui-spinner-down').click(function () {
-                if (annee != parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal)) {
-                    annee -= 1;
-                    JourDuMois();
-                }
-            });
-        </script>
-
-
-        Mois :
-        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
-        <script type="text/javascript">
-            document.getElementById("Mois").selectedIndex = 0
-        </script>
-        @Html.ValidationMessage("Mois", "*")
-
-
-        Jour :
-        <select id="Jour" name="Jour"></select>
-        @Html.ValidationMessage("Jour", "*")
-        <br />
-
-        Récurrence de la tache :<br />
-        @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
-        <br />
-
-
-        Heure : <br />
-        Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
-        @Html.ValidationMessage("dbTacheHeure", "*")
-        H
-        @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
-        @Html.ValidationMessage("dbTacheMinute", "*")
-        Min
-        <br />
-
-        Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
-        @Html.ValidationMessage("finTacheHeure", "*")
-        H
-        @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
-        @Html.ValidationMessage("finTacheMinute", "*")
-        Min
-        <br />
-
-
-        Avant combien de temps voulez-vous être informé de votre tâche ? <br />
-        @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
-        @Html.ValidationMessage("rapTacheHeure", "*")
-        H
-        @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
-        @Html.ValidationMessage("rapTacheMinute", "*")
-        Min
-        <br />
-
-        Description de la tâche : <br />
-        @Html.TextAreaFor(model => model.Description, "*")
-        <br />
-        <form>
-            Priorité:
-            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value="#01DF3A">
-
-            <input type="submit" value="Enregistrer" />
-        </form>
-</p>
-}
-
+﻿﻿@model InTime.Models.Tache
+@Styles.Render("~/Content/jqueryui")
+@Scripts.Render("~/bundles/jqueryui")
 
 <script>
+    $(document).ready(function () {
+        $("#Annee").spinner({
+            change: function (event, ui) { JourDuMois(); },
+            min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
+            max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
+            culture: "fr"
+        });
+        $("#Annee").spinner("value",
+            @if (ViewBag.Annee == null)
+            {
+                @InTime.Models.ValeursSpinner.AnneeEnCours
+            }
+            else
+            {
+                @ViewBag.Annee
+            });
+        $("#Annee").width(50);
+        $("#Mois").val(3);
+    });
+
     var JourDuMois = function () {
         var params = {};
-        params.Year = annee;
+        params.Year = $("#Annee").val();
         params.Month = $('#Mois').val();
         $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
             var items = '<option>Choisir un jour</option>';
@@ -147,14 +35,94 @@
             $('#Jour').html(items);
         });
     }
-</script>
 
-<!--   Initialise notre DropDownList contenant les jours possible   -->
-@Scripts.Render("~/bundles/jquery")
-<script>
     $(function () {
         $('#Mois').change(function () {
             JourDuMois();
         });
     });
 </script>
+
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li class="active">Ajouter Tâches</li>
+</ol>
+
+@{
+    ViewBag.Title = "Ajouter une nouvelle tâche";
+    @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+    if (@TempData["Message"] == "Reussi")
+    {
+        <div>
+            <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
+        </div>
+    }
+    if (@TempData["Message"] == "Echec")
+    {
+        <div>
+            <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
+        </div>
+    }
+}
+
+<h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
+@using (Html.BeginForm())
+{
+    <p>
+        Nom de la tâche : <br />
+        @Html.TextBoxFor(model => model.NomTache)
+        @Html.ValidationMessageFor(model => model.NomTache, "*")
+        <br />
+        Nom du lieu : <br />
+        @Html.TextBoxFor(model => model.Lieu)
+        @Html.ValidationMessageFor(model => model.Lieu, "*")
+        <br />
+        Date : <br />
+        Année :
+        <input id="Annee" name="Annee" width="20">
+        Mois :
+        @Html.DropDownList("Mois", ViewBag.MoisAnnee as SelectList, "Choisir un mois", new { id = "Mois" })
+        @Html.ValidationMessage("Mois", "*")
+        Jour :
+        <select id="Jour" name="Jour"></select>
+        @Html.ValidationMessage("Jour", "*")
+        <br />
+        Récurrence de la tache :<br />
+        @Html.DropDownList("recurrence", ViewBag.recurrence as SelectList, new { id = "recurrence" })
+        <br />
+        Heure : <br />
+        Début : @Html.DropDownList("HDebut", ViewBag.trancheHeure as SelectList, "", new { id = "HDebut" })
+        @Html.ValidationMessage("dbTacheHeure", "*")
+        H
+        @Html.DropDownList("mDebut", ViewBag.trancheMin as SelectList, "", new { id = "mDebut" })
+        @Html.ValidationMessage("dbTacheMinute", "*")
+        Min
+        <br />
+        Fin : @Html.DropDownList("HFin", ViewBag.trancheHeure as SelectList, "", new { id = "HFin" })
+        @Html.ValidationMessage("finTacheHeure", "*")
+        H
+        @Html.DropDownList("mFin", ViewBag.trancheMin as SelectList, "", new { id = "mFin" })
+        @Html.ValidationMessage("finTacheMinute", "*")
+        Min
+        <br />
+        Avant combien de temps voulez-vous être informé de votre tâche ? <br />
+        @Html.DropDownList("HRappel", ViewBag.trancheHeure as SelectList, "", new { id = "HRappel" })
+        @Html.ValidationMessage("rapTacheHeure", "*")
+        H
+        @Html.DropDownList("mRappel", ViewBag.trancheMin as SelectList, "", new { id = "mRappel" })
+        @Html.ValidationMessage("rapTacheMinute", "*")
+        Min
+        <br />
+        Description de la tâche : <br />
+        @Html.TextAreaFor(model => model.Description, "*")
+        <br />
+
+        Priorité:
+        <input id="PriorityColor" type="color" name="PriorityColor" size="4" height="30" value="#01DF3A">
+        <br/>
+        <br/>
+
+        <input type="submit" value="Enregistrer" />
+    </p>
+}
