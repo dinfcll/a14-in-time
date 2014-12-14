@@ -96,7 +96,7 @@ namespace InTime.Controllers
                         listParametres.Add(new SqlParameter("@Date1", TacheRecDebut));
                         listParametres.Add(new SqlParameter("@Date2", TacheRecFin));
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         Select = "";
                     }

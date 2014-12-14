@@ -156,7 +156,7 @@ namespace InTime.Controllers
 
                 return RequeteSql.ExecuteQuery(SqlInsert, listParametres);
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

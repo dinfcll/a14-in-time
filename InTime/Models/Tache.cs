@@ -217,9 +217,9 @@ namespace InTime.Models
             DateTime debut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
             DateTime fin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin);
 
-            tache.mDebut = InitialiseTempsMinute(Convert.ToString(debut.Minute));
-            tache.mFin = InitialiseTempsMinute(Convert.ToString(fin.Minute));
-            tache.mRappel = InitialiseTempsMinute(Convert.ToString(tache.mRappel));
+            tache.mDebut = Convert.ToString(debut.Minute);
+            tache.mFin = Convert.ToString(fin.Minute);
+            tache.mRappel = Convert.ToString(tache.mRappel);
             tache.HDebut = Convert.ToString(debut.Hour);
             tache.HFin = Convert.ToString(fin.Hour);
             tache.Jour = Convert.ToString(debut.Day);
@@ -288,6 +288,54 @@ namespace InTime.Models
             }
 
             tache.RecurrenceAffichage = Tache.Nomrecurrence(tache.Recurrence);
+        }
+
+        private static string TempsRappel(DateTime rappel)
+        {
+            string strPhrase = "Il vous reste ";
+
+            if (rappel < DateTime.Now)
+            {
+                return "La date de rappel est dépassée.";
+            }
+            else
+            {
+                TimeSpan tsTempsRestant = rappel - DateTime.Now;
+                int nNombreJourRestant = tsTempsRestant.Days;
+                if (nNombreJourRestant > 365)
+                {
+                    int nAnnee = (tsTempsRestant.Days / 365);
+                    nNombreJourRestant -= (nAnnee * 365);
+                    strPhrase += String.Format("{0} {1} ", nAnnee, nAnnee == 1 ? "an" : "ans");
+                }
+
+                if (nNombreJourRestant > 30)
+                {
+                    int nMois = (nNombreJourRestant / 30);
+                    nNombreJourRestant -= (nMois * 30);
+                    strPhrase += String.Format("{0} mois ", nMois);
+                }
+
+                if (nNombreJourRestant > 0)
+                {
+                    int nJours = nNombreJourRestant;
+                    strPhrase += String.Format("{0} {1} ", nJours, nJours == 1 ? "jour" : "jours");
+                }
+
+                if (tsTempsRestant.Hours > 0)
+                {
+                    int nHeure = tsTempsRestant.Hours;
+                    strPhrase += String.Format("{0} {1} ", nHeure, nHeure == 1 ? "heure" : "heures");
+                }
+
+                if (tsTempsRestant.Minutes > 0)
+                {
+                    int nMinute = tsTempsRestant.Minutes;
+                    strPhrase += String.Format("{0} {1} ", nMinute, nMinute == 1 ? "minute" : "minutes");
+                }
+
+                return strPhrase + "avant le rappel.";
+            }
         }
     }
 }

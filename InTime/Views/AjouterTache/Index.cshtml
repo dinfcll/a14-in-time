@@ -117,7 +117,7 @@
         var params = {};
         params.Year = $("#Annee").val();
         params.Month = $('#Mois').val();
-        $.getJSON('/AjouterTache/JourDuMois/', params, function (data) {
+        $.getJSON('@Url.Action("JourDuMois", "AjouterTache")', params, function (data) {
             var items = '<option>Choisir un jour</option>';
             $.each(data, function (i, jour) {
                 items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
