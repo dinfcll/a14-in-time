@@ -221,6 +221,7 @@
     <Compile Include="Models\TraitementDate.cs" />
     <Compile Include="Models\UrlErreur.cs" />
     <Compile Include="Models\ValeursSpinner.cs" />
+    <Compile Include="Models\VuePartielPartager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -384,8 +385,8 @@
     <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
     <Content Include="Views\GererCompte\Index.cshtml" />
     <Content Include="Views\ConsulterTache\Historique.cshtml" />
-    <Content Include="Views\ConsulterTache\_TableauDonnees.cshtml" />
-    <Content Include="Views\ConsulterTache\_LapseDeTemps.cshtml" />
+    <Content Include="Views\Shared\_TableauDonnees.cshtml" />
+    <Content Include="Views\Shared\_LapseDeTemps.cshtml" />
     <Content Include="Scripts\moment.min.js" />
   </ItemGroup>
   <ItemGroup>

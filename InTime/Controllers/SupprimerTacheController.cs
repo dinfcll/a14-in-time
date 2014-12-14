@@ -30,14 +30,22 @@ namespace InTime.Controllers
                                 new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                                 new SqlParameter("@IdTache",id)
                             };
-                            RequeteSql.ExecuteQuery(SqlDelete, Parametres);
 
-                            return RedirectToAction("Taches", "ConsulterTache");
+                            if (RequeteSql.ExecuteQuery(SqlDelete, Parametres))
+                            {
+                                TempData["Suppression"] = Messages.RequeteSql.Reussi;
+                            }
+                            else
+                            {
+                                TempData["Suppression"] = Messages.RequeteSql.Echec;
+                            }                       
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            throw new Exception(ex.ToString());
+                            TempData["Suppression"] = Messages.RequeteSql.Echec;
                         }
+
+                        return RedirectToAction("Taches", "ConsulterTache");
                     }
                     else
                     {

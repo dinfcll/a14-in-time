@@ -6,23 +6,27 @@
 
 <div>
     @{
-        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
+        if (TempData["Suppression"] != null)
         {
-            <h2><font color="green">Votre tâche a été supprimée.</font></h2>
+            if ((int)TempData["Suppression"] == (int)InTime.Models.Messages.RequeteSql.Reussi)
+            {
+                <h2><font color="green">Votre tâche a été supprimée.</font></h2>
+            }
+            else
+            {
+                <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été supprimée.</font></h2>
+            }
         }
-
+        
         if (TempData["Modification"] != null)
         {
-            if ((InTime.Models.RequeteSql.Message)Enum.Parse(typeof(InTime.Models.RequeteSql.Message), TempData["Modification"].ToString()) == InTime.Models.RequeteSql.Message.Modif)
+            if ((int)TempData["Modification"] == (int)InTime.Models.Messages.RequeteSql.Reussi)
             {
                 <h2><font color="green">Votre tâche a été modifiée.</font></h2>
             }
             else
             {
-                if ((InTime.Models.RequeteSql.Message)Enum.Parse(typeof(InTime.Models.RequeteSql.Message), TempData["Modification"].ToString()) == InTime.Models.RequeteSql.Message.Echec)
-                {
                     <h2><font color="red">Une erreur s'est produite. Vos modifications sont invalides.</font></h2>
-                }
             }
         }
     }
@@ -35,4 +39,4 @@
 </ol>
 <h2>Voici vos tâches</h2>
 
-@Html.Partial("_TableauDonnees")
+@Html.Partial(@InTime.Models.VuePartielPartager.TableauDonnees)

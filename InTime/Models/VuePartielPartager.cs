@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace InTime.Models
+{
+    public static class VuePartielPartager
+    {
+        public const string LapseDeTemps = "~/Views/Shared/_LapseDeTemps.cshtml";
+        public const string TableauDonnees = "~/Views/Shared/_TableauDonnees.cshtml";
+    }
+}
