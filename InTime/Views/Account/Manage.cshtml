@@ -8,13 +8,9 @@
     <li>@Html.ActionLink("Gérer Compte", "Index", "GererCompte")</li>
     <li class="active">Modifier votre mot de passe</li>
 </ol>
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-</hgroup>
 
 <p class="message-success">@ViewBag.StatusMessage</p>
 
-<p>Vous êtes connecté en tant que <strong>@User.Identity.Name</strong>.</p>
 
 @if (ViewBag.HasLocalPassword)
 {

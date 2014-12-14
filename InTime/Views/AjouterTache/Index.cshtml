@@ -10,21 +10,23 @@
 @{
     ViewBag.Title = "Ajouter une nouvelle tâche";
     @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
-    if (@TempData["Message"] == "Reussi")
+    if (TempData["Message"] != null)
     {
-        <div>
-            <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
-        </div>
-    }
-    if (@TempData["Message"] == "Echec")
-    {
-        <div>
-            <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
-        </div>
+        if ((int)TempData["Message"] == (int)@InTime.Models.Messages.RequeteSql.Reussi)
+        {
+            <div>
+                <h2><font color="green">Votre tâche a été enregistrée.</font></h2>
+            </div>
+        }
+        if ((int)TempData["Message"] == (int)@InTime.Models.Messages.RequeteSql.Echec)
+        {
+            <div>
+                <h2><font color="red">Une erreur s'est produite. Votre tâche n'a pas été sauvegardée."</font></h2>
+            </div>
+        }
     }
 }
 
-<h2>Veuillez entrer les informations de votre nouvelle tâche</h2>
 @using (Html.BeginForm())
 {
     <p>
@@ -78,8 +80,8 @@
 
         Priorité:
         <input id="PriorityColor" type="color" name="PriorityColor" size="4" height="30" value="#01DF3A">
-        <br/>
-        <br/>
+        <br />
+        <br />
 
         <input type="submit" value="Enregistrer" />
     </p>

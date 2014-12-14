@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
 using System.Web.Security;
+using System.Web.WebPages.Html;
 
 namespace InTime.Models
 {
@@ -39,12 +40,12 @@ namespace InTime.Models
 
     public class LocalPasswordModel
     {
-        [Required]
+        [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
         [DataType(DataType.Password)]
         [Display(Name = "Mot de passe actuel")]
         public string OldPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Le nouveau mot de passe est obligatoire.")]
         [StringLength(100, ErrorMessage = "La chaîne {0} doit comporter au moins {2} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Nouveau mot de passe")]
@@ -72,14 +73,13 @@ namespace InTime.Models
         public bool RememberMe { get; set; }
     }
 
-    
     public class RegisterModel
     {
-        [Required]
+        [Required(ErrorMessage = "Le nom d'utilisateur est obligatoire.")]
         [Display(Name = "Nom d'utilisateur")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
         [StringLength(100, ErrorMessage = "La chaîne {0} doit comporter au moins {2} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Mot de passe")]
@@ -90,17 +90,70 @@ namespace InTime.Models
         [Compare("Password", ErrorMessage = "Le mot de passe et le mot de passe de confirmation ne correspondent pas.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Le prenom est obligatoire.")]
         public string Prenom { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Le nom est obligatoire.")]
         public string Nom { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "L'adresse courriel est obligatoire.")]
         [RegularExpression(@".*@.*")]
         public string Email { get; set; }
         public string Categorie { get; set; }
         public string TypeConnec{ get; set; }
+
+        public static List<SelectListItem> ChoixCategories
+        {
+            get
+            {
+                return new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Travail", Value = "Travail"},
+                    new SelectListItem { Text = "École", Value = "École"},
+                    new SelectListItem { Text = "Général", Value = "Général"}
+                };
+            }
+        }
+
+        public static int ColumnUsername
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
+        public static int ColumnNom
+        {
+            get
+            {
+                return 2;
+            }
+        }
+
+        public static int ColumnPrenom
+        {
+            get
+            {
+                return 3;
+            }
+        }
+
+        public static int ColumnCourriel
+        {
+            get
+            {
+                return 4;
+            }
+        }
+
+        public static int ColumnCategorie
+        {
+            get
+            {
+                return 5;
+            }
+        }
     }
 
     public class ExternalLogin

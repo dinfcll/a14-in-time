@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using InTime.Models;
 using System.Data.SqlClient;
 using System.Data;
-using Microsoft.Ajax.Utilities;
 
 
 namespace InTime.Controllers
@@ -40,7 +39,7 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        var message = InsertionTache(model) ? "Reussi" : "Echec";
+                        var message = InsertionTache(model) ? Messages.RequeteSql.Reussi : Messages.RequeteSql.Echec;
                         TempData["Message"] = message;
 
                         return RedirectToAction("Index", "AjouterTache");
