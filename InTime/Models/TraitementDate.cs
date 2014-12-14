@@ -41,7 +41,7 @@ namespace InTime.Models
         public static double DateTimeToUnixTimestamp()
         {
             DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            return (dt - new DateTime(1970, 1, 1)).TotalSeconds;
+            return (dt - new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local)).TotalSeconds;
         }
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
@@ -88,7 +88,7 @@ namespace InTime.Models
 
                 return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
             }
-            catch (Exception ex)
+            catch 
             {
                 return null;
             }

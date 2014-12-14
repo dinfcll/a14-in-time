@@ -2,16 +2,9 @@
 
 @{
     ViewBag.Title = "Consultation de votre tâche";
+    var tache = (Tache)ViewData["Tache"];
 }
 
-<script>
-    $(window).load(function () {
-        $(function () {
-            $("[id^=Consultation").attr('readonly', 'true');
-            $("[id^=Consultation").css('background-color', '#DEDEDE');
-        });
-    });
-</script>
 <ol class="breadcrumb">
     <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
     <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
@@ -19,10 +12,6 @@
     <li class="active">Détails</li>
 </ol>
     <h2>Voici votre tâche</h2>
-
-    @{
-        var tache = (Tache)ViewData["Tache"];
-    }
 
     <p>
         Nom de la tâche :
@@ -53,17 +42,25 @@
         <br />
         @Html.TextArea("Desc", tache.Description, new { disabled = "disabled", id = "Consultation" })
         <br />
-        <form>
-            Priorité:
-            <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor disabled="true">
-        </form>
+        Priorité:
+       <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor disabled="disabled">
     </p>
 
     @if (ViewBag.Modif == true)
     {
         <input type="button" value="Modifier Description"
-               onclick="location.href = '@Url.Action("ModifTache","ConsulterTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
+               onclick="location.href = '@Url.Action("Modification","ModifierTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
     
     }
     <input type="button" value="Retourner au calendrier"
        onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
+
+
+<script>
+    $(window).load(function () {
+        $(function () {
+            $("[id^=Consultation").attr('readonly', 'true');
+            $("[id^=Consultation").css('background-color', '#DEDEDE');
+        });
+    });
+</script>

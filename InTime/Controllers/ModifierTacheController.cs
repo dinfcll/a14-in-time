@@ -71,7 +71,7 @@ namespace InTime.Controllers
                 {
 
 
-                    if (!Validations(Model))
+                    if (!Validations(Model) && modif == "False")
                     {
                         TempData["Modification"] = Messages.RequeteSql.Echec;
                     }

@@ -82,6 +82,8 @@ namespace InTime.Models
 
         public static String RechercheDescSupplTache(int id, double Debut)
         {
+            DateTime Test = TraitementDate.UnixTimeStampToDateTime(Debut);
+            DateTime Test2 = TraitementDate.UnixTimeStampToDateTime(1417352400);
             string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
             List<SqlParameter> Parametres = new List<SqlParameter>
                             {

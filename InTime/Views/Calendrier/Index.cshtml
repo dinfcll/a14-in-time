@@ -2,18 +2,21 @@
     ViewBag.Title = "Calendrier";
 }
 
+@Scripts.Render("~/bundles/fullcalendar")
+@Styles.Render("~/Content/fullCalendar")
+
 
 <ol class="breadcrumb">
     <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
     <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
     <li class="active">Calendrier</li>
 </ol>
+
 <div id='calendar'></div>
 
 <script>
     $(document).ready(function () {
         $('#calendar').fullCalendar({
-            // put your options and callbacks here
             header: {
                 left: 'prev,next today',
                 center: 'title',
