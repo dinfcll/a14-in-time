@@ -61,41 +61,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
-            }
-        }
-
-        public ActionResult SuppTache(int? id)
-        {
-            try
-            {
-                if (User.Identity.IsAuthenticated)
-                {
-                    try
-                    {
-                        string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
-                        List<SqlParameter> Parametres = new List<SqlParameter>
-                    {
-                        new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
-                        new SqlParameter("@IdTache",id)
-                    };
-                        RequeteSql.ExecuteQuery(SqlDelete, Parametres);
-
-                        return RedirectToAction("Taches", "ConsulterTache");
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.ToString());
-                    }
-                }
-                else
-                {
-                    return View(UrlErreur.Authentification);
-                }
-            }
-            catch
-            {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -105,7 +71,7 @@ namespace InTime.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return View(UrlErreur.ErreurGeneral);
                 }
                 else
                     if (User.Identity.IsAuthenticated)
@@ -145,7 +111,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -217,7 +183,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -278,7 +244,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -321,7 +287,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 

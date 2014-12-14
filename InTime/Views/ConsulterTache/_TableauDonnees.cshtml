@@ -65,7 +65,7 @@
             <td>
                 @if (ViewBag.Title != "Historique")
                 {
-                    @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
+                    @Html.ActionLink("Supprimer", "Index", "SupprimerTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
                 }
             </td>
         </tr>

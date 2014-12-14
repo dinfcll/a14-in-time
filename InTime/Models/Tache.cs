@@ -231,6 +231,18 @@ namespace InTime.Models
                     return "1";
             }
         }
+
+        public const int columnIdTache = 0;
+        public const int columnUserId = 1;
+        public const int columnNomTache = 2;
+        public const int columnLieu = 3;
+        public const int columnDesc = 4;
+        public const int columnDateDeb = 5;
+        public const int columnDateFin = 6;
+        public const int columnHRappel = 7;
+        public const int columnMRappel = 8;
+        public const int columnRec = 9;
+        public const int columnColor = 10;
     }
 }
 

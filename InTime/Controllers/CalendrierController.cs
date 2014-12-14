@@ -27,7 +27,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -55,7 +55,7 @@ namespace InTime.Controllers
                 }
                 reader.Close();
             }
-            catch (Exception ex)
+            catch
             {
                 return Json(null);
             }
@@ -92,12 +92,12 @@ namespace InTime.Controllers
         {
             var tache = new Tache()
             {
-                IdTache = Convert.ToInt32(values[0]),
-                NomTache = Convert.ToString(values[2]),
-                unixDebut = Convert.ToDouble(values[5]),
-                unixFin = Convert.ToDouble(values[6]),
-                Recurrence = Convert.ToInt32(values[9]),
-                PriorityColor = Convert.ToString(values[10])
+                IdTache = Convert.ToInt32(values[Tache.columnIdTache]),
+                NomTache = Convert.ToString(values[Tache.columnNomTache]),
+                unixDebut = Convert.ToDouble(values[Tache.columnDateDeb]),
+                unixFin = Convert.ToDouble(values[Tache.columnDateFin]),
+                Recurrence = Convert.ToInt32(values[Tache.columnRec]),
+                PriorityColor = Convert.ToString(values[Tache.columnColor])
             };
 
             return tache;

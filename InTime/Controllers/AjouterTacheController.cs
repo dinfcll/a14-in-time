@@ -25,7 +25,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -59,7 +59,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.ErreurSourceInconnu);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 

@@ -9,11 +9,11 @@
         var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
         if (TempData["Message"] != null)
         {
-            if ((int)TempData["Message"] == (int)InTime.Models.RequeteSql.Message.Reussi)
+            if ((int)TempData["Message"] == (int)InTime.Models.Messages.RequeteSql.Reussi)
             {
                 <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
             }
-            if ((int)TempData["Message"] == (int)InTime.Models.RequeteSql.Message.Echec)
+            if ((int)TempData["Message"] == (int)InTime.Models.Messages.RequeteSql.Echec)
             {
                 <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
             }

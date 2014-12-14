@@ -12,8 +12,6 @@ namespace InTime.Models
 {
     public static class RequeteSql
     {
-        public enum Message { Reussi, Echec, Modif };
-
         public const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EQUIPE-02;Integrated Security=True";
 
         public static SqlConnection ConnexionBD(SqlConnection con)
