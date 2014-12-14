@@ -79,6 +79,47 @@ namespace InTime.Models
                 return false;
             }
         }
+
+        public static String RechercheDescSupplTache(int id, double Debut)
+        {
+            string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
+            List<SqlParameter> Parametres = new List<SqlParameter>
+                            {
+                                new SqlParameter("@Id", id),
+                                new SqlParameter("@Debut", Debut)
+                            };
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return Convert.ToString(values[4]);
+            }
+
+            return null;
+        }
+
+
+        public static Tache RechercherTache(int id)
+        {
+            string queryString = "SELECT * FROM Taches where IdTache=@Id";
+            List<SqlParameter> Parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
+
+            SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return Tache.ObtenirTache(values);
+            }
+
+            return null;
+        }
     }
 }
 

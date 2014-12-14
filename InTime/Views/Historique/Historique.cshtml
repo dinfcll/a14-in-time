@@ -2,32 +2,32 @@
 @{
     ViewBag.Title = "Historique";
 }
+
 <ol class="breadcrumb">
     <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
     <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
     <li class="active">Historique</li>
 </ol>
+
 <h2>Historique des tâches</h2>
 
-@using (Html.BeginForm("Historique", "ConsulterTache", FormMethod.Get))
+@using (Html.BeginForm("Historique", "Historique", FormMethod.Get))
 {
     <p>
-        @Html.DropDownList("ChoixTemps")  
-          Afficher les tâches récurrentes :
+        @Html.DropDownList("ChoixTemps")
+        Afficher les tâches récurrentes :
         @Html.CheckBox("Recurrence")
     </p>
-    
+
 
     <div id="Partiel" style="display:none">
-        @Html.Partial("_LapseDeTemps")
+        @Html.Partial(InTime.Models.VuePartielPartager.LapseDeTemps)
     </div>
 }
 
 <script>
     document.getElementById("ChoixTemps").selectedIndex = (@ViewBag.Choix - 1)
 </script>
-
-
 
 <script>
     $('select, input').on('change', function (e) {
@@ -44,7 +44,7 @@
     });
 </script>
 
-@Html.Partial("_TableauDonnees")
+@Html.Partial(InTime.Models.VuePartielPartager.TableauDonnees)
 
 
 @if (ViewBag.Choix == 2)

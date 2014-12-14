@@ -54,12 +54,12 @@
                 }
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin })
+                @Html.ActionLink("Détails", "Index","ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin },null)
             </td>
             <td>
                 @if (ViewBag.Title != "Historique")
                 {
-                    @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache })
+                    @Html.ActionLink("Modifier", "ModifTache","ConsulterTache", new { id = item.IdTache },null)
                 }
             </td>
             <td>

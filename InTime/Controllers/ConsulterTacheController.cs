@@ -37,7 +37,7 @@ namespace InTime.Controllers
                         {
                             Object[] values = new Object[reader.FieldCount];
                             reader.GetValues(values);
-                            var tache = ObtenirTache(values);
+                            var tache = Tache.ObtenirTache(values);
                             DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
                             tache.Annee = Convert.ToString(DateTache.Year);
                             tache.Mois = Convert.ToString(DateTache.Month);
@@ -67,6 +67,7 @@ namespace InTime.Controllers
 
         public ActionResult ModifTache(int? id, double? dep, double? fn, bool? Existe)
         {
+            int idTache;
             try
             {
                 if (id == null)
@@ -78,13 +79,14 @@ namespace InTime.Controllers
                     {
                         try
                         {
-                            Tache tache = RechercherTache(id);
+                            idTache = id.GetValueOrDefault();
+                            Tache tache = RequeteSql.RechercherTache(idTache);
 
                             if (dep != null && fn != null)
                             {
                                 tache.unixDebut = Convert.ToDouble(dep);
                                 tache.unixFin = Convert.ToDouble(fn);
-                                tache.Description = RechercheDescriptionTache(id, tache.unixDebut) ?? tache.Description;
+                                tache.Description = RequeteSql.RechercheDescSupplTache(idTache, tache.unixDebut) ?? tache.Description;
                                 ViewBag.Modif = true;
                             }
                             else
@@ -191,9 +193,10 @@ namespace InTime.Controllers
         {
             try
             {
+                int idTache;
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    return View(UrlErreur.ErreurGeneral);
                 }
                 else
                 {
@@ -201,7 +204,8 @@ namespace InTime.Controllers
                     {
                         try
                         {
-                            Tache tache = RechercherTache(id);
+                            idTache = id.GetValueOrDefault();
+                            Tache tache = RequeteSql.RechercherTache(idTache);
 
                             if (dep != null && fn != null)
                             {
@@ -219,7 +223,7 @@ namespace InTime.Controllers
                                 ViewBag.Modif = false;
                             }
 
-                            string result = RechercheDescriptionTache(id, tache.unixDebut);
+                            string result = RequeteSql.RechercheDescSupplTache(idTache, tache.unixDebut);
                             if (!String.IsNullOrEmpty(result))
                             {
                                 ViewBag.Existe = true;
@@ -246,207 +250,6 @@ namespace InTime.Controllers
             {
                 return View(UrlErreur.ErreurGeneral);
             }
-        }
-
-        public ActionResult Historique(string ChoixTemps, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence = false)
-        {
-            try
-            {
-                if (User.Identity.IsAuthenticated)
-                {
-                    int Choix = 1;
-                    int anneeDebut;
-                    int anneeFin;
-                    anneeDebut = anneeFin = DateTime.Now.Year;
-
-
-                    if (!String.IsNullOrEmpty(ChoixTemps))
-                    {
-                        if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
-                        {
-                            Choix = 1;
-                        }
-                        Int32.TryParse(FinAnn, out anneeFin);
-                        Int32.TryParse(DebAnn, out anneeDebut);
-                    }
-
-                    ViewBag.Choix = Choix;
-                    ViewBag.anneeDebut = anneeDebut;
-                    ViewBag.anneeFin = anneeFin;
-                    ViewBag.ChoixTemps = Tache.Choix_Historique;
-                    ViewBag.ChoixMoisFin = Tache.les_mois;
-                    ViewBag.ChoixMoisDebut = Tache.les_mois;
-                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
-
-                    return View();
-                }
-                else
-                {
-                    return View(UrlErreur.Authentification);
-                }
-            }
-            catch
-            {
-                return View(UrlErreur.ErreurGeneral);
-            }
-        }
-
-        private List<Tache> TraitementChoixHistorique(int Choix, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence)
-        {
-            string Select = "";
-            var lstTache = new List<Tache>();
-            List<SqlParameter> listParametres = new List<SqlParameter>();
-            double TacheRecDebut = 0;
-            double TacheRecFin = 0;
-
-            switch (Choix)
-            {
-                case 0:
-                    break;
-                case 1:
-                    TacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now.AddMonths(-3));
-                    TacheRecFin = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now);
-                    if (!Recurrence)
-                    {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0;";
-                    }
-                    else
-                    {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
-                    }
-                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                    listParametres.Add(new SqlParameter("@TroisMoisArriere", TacheRecDebut));
-                    listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
-                    break;
-                case 2:
-                    try
-                    {
-                        DateTime Date1 = new DateTime(Convert.ToInt32(DebAnn), Convert.ToInt32(ChoixMoisDebut), 1);
-                        DateTime Date2 = new DateTime(Convert.ToInt32(FinAnn), Convert.ToInt32(ChoixMoisFin), 1);
-                        Date2 = Date2.AddMonths(1);
-                        Date2 = Date2.AddDays(-1);
-                        TacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(Date1);
-                        TacheRecFin = TraitementDate.DateTimeToUnixTimestamp(Date2);
-
-                        if (!Recurrence)
-                        {
-                            Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0;";
-                        }
-                        else
-                        {
-                            Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0) OR Recurrence > 0);";
-                        }
-                        listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                        listParametres.Add(new SqlParameter("@Date1", TacheRecDebut));
-                        listParametres.Add(new SqlParameter("@Date2", TacheRecFin));
-                    }
-                    catch (Exception ex)
-                    {
-                        Select = "";
-                    }
-                    break;
-                case 3:
-                    TacheRecDebut = TraitementDate.DebutCalendrier();
-                    TacheRecFin = TraitementDate.DateTimeToUnixTimestamp();
-                    if (!Recurrence)
-                    {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant AND Recurrence = 0;";
-                    }
-                    else
-                    {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
-                    }
-                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                    listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
-                    break;
-                default:
-                    break;
-            }
-
-            try
-            {
-                if (!String.IsNullOrEmpty(Select))
-                {
-                    SqlDataReader reader = RequeteSql.Select(Select, listParametres);
-                    while (reader.Read())
-                    {
-                        Object[] values = new Object[reader.FieldCount];
-                        reader.GetValues(values);
-                        var tache = ObtenirTache(values);
-                        if (tache.Recurrence == (int)TraitementDate.recurrence.Aucune)
-                        {
-                            DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-                            tache.Annee = Convert.ToString(DateTache.Year);
-                            tache.Mois = Convert.ToString(DateTache.Month);
-                            tache.Jour = Convert.ToString(DateTache.Day);
-                            lstTache.Add(tache);
-                        }
-                        else
-                        {
-                            List<Tache> result = TraitementDate.TraitementRecurrenceTache(tache, TacheRecDebut, TacheRecFin);
-                            if (result != null)
-                            {
-                                foreach(Tache tacheRec in result)
-                                {
-                                    string resultat = RechercheDescriptionTache(tacheRec.IdTache, tacheRec.unixDebut);
-                                    if (!String.IsNullOrEmpty(resultat))
-                                    {
-                                        tache.Description = resultat;
-                                    }
-                                }
-                                lstTache.AddRange(result);
-                            }
-                        }
-                    }
-                    reader.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                lstTache = new List<Tache>();
-            }
-
-            return lstTache;
-        }
-
-        private Tache RechercherTache(int? id)
-        {
-            string queryString = "SELECT * FROM Taches where IdTache=@Id";
-            List<SqlParameter> Parametre = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", id)
-                        };
-
-            SqlDataReader reader = RequeteSql.Select(queryString, Parametre);
-            while (reader.Read())
-            {
-                Object[] values = new Object[reader.FieldCount];
-                reader.GetValues(values);
-
-                return ObtenirTache(values);
-            }
-
-            return null;
-        }
-
-        private String RechercheDescriptionTache(int? id, double Debut)
-        {
-            string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
-            List<SqlParameter> Parametres = new List<SqlParameter>
-                            {
-                                new SqlParameter("@Id", id),
-                                new SqlParameter("@Debut", Debut)
-                            };
-            SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-            while (reader.Read())
-            {
-                Object[] values = new Object[reader.FieldCount];
-                reader.GetValues(values);
-
-                return Convert.ToString(values[4]);
-            }
-
-            return null;
         }
 
         private string TempsRappel(DateTime rappel)
@@ -495,26 +298,6 @@ namespace InTime.Controllers
 
                 return strPhrase + "avant le rappel.";
             }
-        }
-
-        private Tache ObtenirTache(Object[] values)
-        {
-            var tache = new Tache()
-            {
-                IdTache = Convert.ToInt32(values[0]),
-                UserId = Convert.ToInt32(values[1]),
-                NomTache = Convert.ToString(values[2]),
-                Lieu = Convert.ToString(values[3]),
-                Description = Convert.ToString(values[4]),
-                unixDebut = Convert.ToDouble(values[5]),
-                unixFin = Convert.ToDouble(values[6]),
-                HRappel = Convert.ToString(values[7]),
-                mRappel = Convert.ToString(values[8]),
-                Recurrence = Convert.ToInt32(values[9]),
-                PriorityColor = Convert.ToString(values[10])
-            };
-
-            return tache;
         }
 
         private void InitialiseViewBags()

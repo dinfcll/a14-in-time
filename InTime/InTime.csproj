@@ -199,6 +199,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjouterTacheController.cs" />
     <Compile Include="Controllers\CalendrierController.cs" />
+    <Compile Include="Controllers\HistoriqueController.cs" />
     <Compile Include="Controllers\SupprimerTacheController.cs" />
     <Compile Include="Models\ConnexionUtilisateur.cs" />
     <Compile Include="Controllers\ConsulterTacheController.cs" />
@@ -384,10 +385,10 @@
     <Content Include="Views\Shared\DisplayTemplates\MenuHelperModel.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
     <Content Include="Views\GererCompte\Index.cshtml" />
-    <Content Include="Views\ConsulterTache\Historique.cshtml" />
     <Content Include="Views\Shared\_TableauDonnees.cshtml" />
     <Content Include="Views\Shared\_LapseDeTemps.cshtml" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Views\Historique\Historique.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

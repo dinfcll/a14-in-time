@@ -7,6 +7,18 @@ namespace InTime.Models
 {
     public class Tache
     {
+        public const int columnIdTache = 0;
+        public const int columnUserId = 1;
+        public const int columnNomTache = 2;
+        public const int columnLieu = 3;
+        public const int columnDesc = 4;
+        public const int columnDateDeb = 5;
+        public const int columnDateFin = 6;
+        public const int columnHRappel = 7;
+        public const int columnMRappel = 8;
+        public const int columnRec = 9;
+        public const int columnColor = 10;
+
         public int IdTache { get; set; }
         public int UserId { get; set; }
 
@@ -232,17 +244,24 @@ namespace InTime.Models
             }
         }
 
-        public const int columnIdTache = 0;
-        public const int columnUserId = 1;
-        public const int columnNomTache = 2;
-        public const int columnLieu = 3;
-        public const int columnDesc = 4;
-        public const int columnDateDeb = 5;
-        public const int columnDateFin = 6;
-        public const int columnHRappel = 7;
-        public const int columnMRappel = 8;
-        public const int columnRec = 9;
-        public const int columnColor = 10;
+        public static Tache ObtenirTache(Object[] values)
+        {
+            var tache = new Tache()
+            {
+                IdTache = Convert.ToInt32(values[columnIdTache]),
+                UserId = Convert.ToInt32(values[columnUserId]),
+                NomTache = Convert.ToString(values[columnNomTache]),
+                Lieu = Convert.ToString(values[columnLieu]),
+                Description = Convert.ToString(values[columnDesc]),
+                unixDebut = Convert.ToDouble(values[columnDateDeb]),
+                unixFin = Convert.ToDouble(values[columnDateFin]),
+                HRappel = Convert.ToString(values[columnHRappel]),
+                mRappel = Convert.ToString(values[columnMRappel]),
+                Recurrence = Convert.ToInt32(values[columnRec]),
+                PriorityColor = Convert.ToString(values[columnColor])
+            };
+
+            return tache;
+        }
     }
 }
-
