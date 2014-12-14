@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTime", "InTime\InTime.csproj", "{E766F00E-F295-48D1-BAFC-2F62938FA7A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestConnexion", "UnitTestConnexion\UnitTestConnexion.csproj", "{6EA1E490-460A-4150-B3AE-4D5B266A6DD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUnitaireInTime", "UnitTestConnexion\TestUnitaireInTime.csproj", "{6EA1E490-460A-4150-B3AE-4D5B266A6DD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,7 +14,7 @@ namespace InTime.Controllers
     {
         CultureInfo culture = new CultureInfo("fr-CA");
 
-        public ActionResult Taches(string strMessValidation)
+        public ActionResult Taches()
         {
             try
             {
@@ -53,8 +53,6 @@ namespace InTime.Controllers
                     {
                         throw new Exception(ex.ToString());
                     }
-
-
                 }
                 else
                 {
@@ -63,34 +61,41 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
         public ActionResult SuppTache(int? id)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                try
+                if (User.Identity.IsAuthenticated)
                 {
-                    string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
-                    List<SqlParameter> Parametres = new List<SqlParameter>
+                    try
+                    {
+                        string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                        List<SqlParameter> Parametres = new List<SqlParameter>
                     {
                         new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@IdTache",id)
                     };
-                    RequeteSql.ExecuteQuery(SqlDelete, Parametres);
+                        RequeteSql.ExecuteQuery(SqlDelete, Parametres);
 
-                    return RedirectToAction("Taches", "ConsulterTache");
+                        return RedirectToAction("Taches", "ConsulterTache");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new Exception(ex.ToString());
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -140,72 +145,79 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
         [HttpPost]
         public ActionResult Modification(Tache Model, string modif, bool Existe)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                try
+                if (User.Identity.IsAuthenticated)
                 {
-                    string SqlCommande;
-                    List<SqlParameter> listParametres = new List<SqlParameter>();
-                    int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
-                    double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
-                    double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                    if (modif == "False")
+                    try
                     {
-                        SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
-                        + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
-                        + "recurrence=@recurrence, PriorityColor=@PriorityColor WHERE UserId=@UserId AND IdTache=@IdTache;";
-                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
-                        listParametres.Add(new SqlParameter("@UserId", UserId));
-                        listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
-                        listParametres.Add(new SqlParameter("@Lieu", Model.Lieu));
-                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
-                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
-                        listParametres.Add(new SqlParameter("@Description", Model.Description));
-                        listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
-                        listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
-                        listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
-                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
-                    }
-                    else
-                    {
-                        if (!Existe)
+                        string SqlCommande;
+                        List<SqlParameter> listParametres = new List<SqlParameter>();
+                        int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                        double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
+                        double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
+                        if (modif == "False")
                         {
-                            SqlCommande = "INSERT INTO InfoSupplTacheRecurrente (IdTache,DateDebut,DateFin,Description)"
-                            + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                            SqlCommande = "UPDATE Taches set NomTache=@NomTache,Lieu=@Lieu,Description=@Description,"
+                            + "DateDebut=@DateDebut,DateFin=@DateFin,HRappel=@HRappel,mRappel=@mRappel,"
+                            + "recurrence=@recurrence, PriorityColor=@PriorityColor WHERE UserId=@UserId AND IdTache=@IdTache;";
+                            listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                            listParametres.Add(new SqlParameter("@UserId", UserId));
+                            listParametres.Add(new SqlParameter("@NomTache", Model.NomTache));
+                            listParametres.Add(new SqlParameter("@Lieu", Model.Lieu));
+                            listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                            listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                            listParametres.Add(new SqlParameter("@Description", Model.Description));
+                            listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
+                            listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
+                            listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
+                            listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                         }
                         else
                         {
-                            SqlCommande = "UPDATE InfoSupplTacheRecurrente SET Description=@Description WHERE IdTache=@IdTache "
-                                + "AND DateDebut=@DateDebut AND DateFin=@DateFin;";
+                            if (!Existe)
+                            {
+                                SqlCommande = "INSERT INTO InfoSupplTacheRecurrente (IdTache,DateDebut,DateFin,Description)"
+                                + " VALUES (@IdTache,@DateDebut,@DateFin,@Description);";
+                            }
+                            else
+                            {
+                                SqlCommande = "UPDATE InfoSupplTacheRecurrente SET Description=@Description WHERE IdTache=@IdTache "
+                                    + "AND DateDebut=@DateDebut AND DateFin=@DateFin;";
+                            }
+                            listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
+                            listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
+                            listParametres.Add(new SqlParameter("@DateFin", unixFin));
+                            listParametres.Add(new SqlParameter("@Description", Model.Description));
+                            listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                         }
-                        listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
-                        listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
-                        listParametres.Add(new SqlParameter("@DateFin", unixFin));
-                        listParametres.Add(new SqlParameter("@Description", Model.Description));
-                        listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
+                        var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
+                        TempData["Modification"] = message;
+
+                        DateTime date = TraitementDate.UnixTimeStampToDateTime(unixDebut);
+
+                        return RedirectToAction("Taches", "ConsulterTache");
                     }
-                    var message = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? "Modif" : "Echec";
-                    TempData["Modification"] = message;
-
-                    DateTime date = TraitementDate.UnixTimeStampToDateTime(unixDebut);
-
-                    return RedirectToAction("Taches", "ConsulterTache");
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new Exception(ex.ToString());
+                    return View(UrlErreur.Authentification);
                 }
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -266,7 +278,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -309,7 +321,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 

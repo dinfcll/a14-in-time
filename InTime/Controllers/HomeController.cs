@@ -1,7 +1,6 @@
-﻿using System;
-using System.Web.Mvc;
-using InTime.Models;
+﻿using InTime.Models;
 using System.Data.SqlClient;
+using System.Web.Mvc;
 
 namespace InTime.Controllers
 {
@@ -19,9 +18,8 @@ namespace InTime.Controllers
 
                     Session[User.Identity.Name] = id;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new Exception(ex.ToString());
                 }
                 finally
                 {
@@ -55,7 +53,7 @@ namespace InTime.Controllers
                     mailer.Send();
                     TempData["message"] = "Envoyer";
                 }
-                catch (Exception ex)
+                catch
                 {
                     TempData["message"] = "Echec";
                 }

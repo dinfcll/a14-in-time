@@ -6,9 +6,6 @@ namespace InTime.Controllers
 {
     public class TacheController : Controller
     {
-        //
-        // GET: /Tache/
-
         public ActionResult TacheForm()
         {
             try
@@ -29,7 +26,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 

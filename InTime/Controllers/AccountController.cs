@@ -194,36 +194,43 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
         public ActionResult Renseignements(int? Affichage)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-
-                if (!ObtenirRensUtil())
+                if (User.Identity.IsAuthenticated)
                 {
-                    return HttpNotFound();
-                }
 
-                Messages.ChampsBloquer Aff;
-                if (Affichage != null && Affichage == 1)
-                {
-                    Aff = Messages.ChampsBloquer.Oui;
+                    if (!ObtenirRensUtil())
+                    {
+                        return HttpNotFound();
+                    }
+
+                    Messages.ChampsBloquer Aff;
+                    if (Affichage != null && Affichage == 1)
+                    {
+                        Aff = Messages.ChampsBloquer.Oui;
+                    }
+                    else
+                    {
+                        Aff = Messages.ChampsBloquer.Non;
+                    }
+                    TempData["Affichage"] = Aff;
+
+                    return View();
                 }
                 else
                 {
-                    Aff = Messages.ChampsBloquer.Non;
+                    return View(UrlErreur.Authentification);
                 }
-                TempData["Affichage"] = Aff;
-
-                return View();
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -268,7 +275,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -299,7 +306,7 @@ namespace InTime.Controllers
                 ViewBag.Categorie = profile.Categorie;
 
             }
-            catch(Exception ex)
+            catch
             {
                 return false;
             }
@@ -376,9 +383,8 @@ namespace InTime.Controllers
                 int id = RequeteSql.RechercheID(con, UserName);
                 InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Journee);
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
+            catch
+            {   
             }
             finally
             {

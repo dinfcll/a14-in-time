@@ -12,13 +12,20 @@ namespace InTime.Controllers
     {
         public ActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                return View();
+                if (User.Identity.IsAuthenticated)
+                {
+                    return View();
+                }
+                else
+                {
+                    return View(UrlErreur.Authentification);
+                }
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
         }
 
@@ -52,13 +59,8 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurSourceInconnu);
             }
-        }
-
-        public ActionResult trest()
-        {
-            return View();
         }
 
         private void Validations(Tache model)
