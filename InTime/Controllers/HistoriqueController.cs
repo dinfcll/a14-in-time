@@ -21,7 +21,6 @@ namespace InTime.Controllers
                     int anneeFin;
                     anneeDebut = anneeFin = DateTime.Now.Year;
 
-
                     if (!String.IsNullOrEmpty(ChoixTemps))
                     {
                         if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
@@ -31,13 +30,8 @@ namespace InTime.Controllers
                         Int32.TryParse(FinAnn, out anneeFin);
                         Int32.TryParse(DebAnn, out anneeDebut);
                     }
-
-                    ViewBag.Choix = Choix;
                     ViewBag.anneeDebut = anneeDebut;
                     ViewBag.anneeFin = anneeFin;
-                    ViewBag.ChoixTemps = Tache.Choix_Historique;
-                    ViewBag.ChoixMoisFin = Tache.les_mois;
-                    ViewBag.ChoixMoisDebut = Tache.les_mois;
                     ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
 
                     return View();
@@ -52,7 +46,6 @@ namespace InTime.Controllers
                 return View(UrlErreur.ErreurGeneral);
             }
         }
-
 
         private List<Tache> TraitementChoixHistorique(int Choix, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence)
         {
@@ -164,7 +157,7 @@ namespace InTime.Controllers
                     reader.Close();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 lstTache = new List<Tache>();
             }

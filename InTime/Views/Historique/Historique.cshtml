@@ -14,7 +14,7 @@
 @using (Html.BeginForm("Historique", "Historique", FormMethod.Get))
 {
     <p>
-        @Html.DropDownList("ChoixTemps")
+        @Html.DropDownList("ChoixTemps",@InTime.Models.Tache.Choix_Historique)
         Afficher les tâches récurrentes :
         @Html.CheckBox("Recurrence")
     </p>
@@ -26,7 +26,6 @@
 }
 
 <script>
-    document.getElementById("ChoixTemps").selectedIndex = (@ViewBag.Choix - 1)
 </script>
 
 <script>
@@ -42,15 +41,11 @@
         var form = $(event.target).parents('form');
         form.submit();
     });
+
+    if ($("#ChoixTemps").val() == 2) {
+        $('#Partiel').show();
+    }
 </script>
 
 @Html.Partial(InTime.Models.VuePartielPartager.TableauDonnees)
-
-
-@if (ViewBag.Choix == 2)
-{
-    <script>
-        $('#Partiel').show();
-    </script>
-}
 
