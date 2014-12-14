@@ -263,5 +263,31 @@ namespace InTime.Models
 
             return tache;
         }
+
+        public static void PreparationPourAffichage(ref Tache tache)
+        {
+            DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+            tache.Annee = Convert.ToString(DateDebut.Year);
+            tache.Mois = Convert.ToString(DateDebut.Month - 1);
+            tache.Jour = Convert.ToString(DateDebut.Day);
+
+            tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+            tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                );
+            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+
+            if (DateRappel == DateDebut)
+            {
+                tache.DateRappelCalendrier = "Aucun";
+            }
+            else
+            {
+                tache.DateRappelCalendrier = TempsRappel(DateRappel);
+            }
+
+            tache.RecurrenceAffichage = Tache.Nomrecurrence(tache.Recurrence);
+        }
     }
 }

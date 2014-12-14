@@ -200,6 +200,7 @@
     <Compile Include="Controllers\AjouterTacheController.cs" />
     <Compile Include="Controllers\CalendrierController.cs" />
     <Compile Include="Controllers\HistoriqueController.cs" />
+    <Compile Include="Controllers\ModifierTacheController.cs" />
     <Compile Include="Controllers\SupprimerTacheController.cs" />
     <Compile Include="Models\ConnexionUtilisateur.cs" />
     <Compile Include="Controllers\ConsulterTacheController.cs" />
@@ -374,7 +375,6 @@
     <Content Include="Views\ConsulterTache\Index.cshtml" />
     <Content Include="Views\Calendrier\Index.cshtml" />
     <Content Include="Views\ConsulterTache\Taches.cshtml" />
-    <Content Include="Views\ConsulterTache\Modification.cshtml" />
     <Content Include="Views\Account\Renseignements.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\SiteMapTitleHelperModel.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\SiteMapPathHelperModel.cshtml" />
@@ -389,6 +389,7 @@
     <Content Include="Views\Shared\_LapseDeTemps.cshtml" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Views\Historique\Historique.cshtml" />
+    <Content Include="Views\ModifierTache\Modification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
