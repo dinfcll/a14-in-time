@@ -207,7 +207,7 @@ namespace InTime.Controllers
 
                     if (!ObtenirRensUtil())
                     {
-                        return HttpNotFound();
+                        return View(UrlErreur.ErreurGeneral);
                     }
 
                     Messages.ChampsBloquer aff;
@@ -247,7 +247,7 @@ namespace InTime.Controllers
                     {
                         if (!ObtenirRensUtil())
                         {
-                            return HttpNotFound();
+                            return View(UrlErreur.ErreurGeneral);
                         }
 
                         return View();
@@ -294,6 +294,7 @@ namespace InTime.Controllers
                 while (reader.Read())
                 {
                     Object[] values = new Object[reader.FieldCount];
+                    reader.GetValues(values);
                     profile = new RegisterModel
                     {
                         Nom = Convert.ToString(values[RegisterModel.ColumnNom]),
@@ -303,7 +304,7 @@ namespace InTime.Controllers
                     };
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }
