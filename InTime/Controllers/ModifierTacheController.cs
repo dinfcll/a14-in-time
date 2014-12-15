@@ -44,9 +44,9 @@ namespace InTime.Controllers
                             Tache.InitChampsTache(ref tache);
                             ViewData["Tache"] = tache;
                         }
-                        catch (Exception ex)
+                        catch 
                         {
-                            throw new Exception(ex.ToString());
+                            return View(UrlErreur.ErreurGeneral);
                         }
 
                         return View();
@@ -95,7 +95,7 @@ namespace InTime.Controllers
                                 listParametres.Add(new SqlParameter("@Lieu", Model.Lieu));
                                 listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                                 listParametres.Add(new SqlParameter("@DateFin", unixFin));
-                                listParametres.Add(new SqlParameter("@Description", Model.Description));
+                                listParametres.Add(new SqlParameter("@Description", SqlDbType.VarChar) { Value = Model.Description ?? "" });
                                 listParametres.Add(new SqlParameter("@HRappel", SqlDbType.VarChar) { Value = Model.HRappel ?? (object)DBNull.Value });
                                 listParametres.Add(new SqlParameter("@mRappel", SqlDbType.VarChar) { Value = Model.mRappel ?? (object)DBNull.Value });
                                 listParametres.Add(new SqlParameter("@recurrence", Model.Recurrence));
@@ -116,7 +116,7 @@ namespace InTime.Controllers
                                 listParametres.Add(new SqlParameter("@IdTache", Model.IdTache));
                                 listParametres.Add(new SqlParameter("@DateDebut", unixDebut));
                                 listParametres.Add(new SqlParameter("@DateFin", unixFin));
-                                listParametres.Add(new SqlParameter("@Description", Model.Description));
+                                listParametres.Add(new SqlParameter("@Description", SqlDbType.VarChar) { Value = Model.Description ?? "" });
                                 listParametres.Add(new SqlParameter("@PriorityColor", Model.PriorityColor));
                             }
                             TempData["Modification"] = RequeteSql.ExecuteQuery(SqlCommande, listParametres) ? Messages.RequeteSql.Reussi : Messages.RequeteSql.Echec;

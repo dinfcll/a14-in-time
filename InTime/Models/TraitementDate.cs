@@ -19,6 +19,11 @@ namespace InTime.Models
             return (DebutCalen - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
+        public static double UnixXHeure(int NbreHeure)
+        {
+            return 60 * 60 * NbreHeure;
+        }
+
         public static double UnixXJour(int NbreJours)
         {
             return 60 * 60 * 24 * NbreJours;
@@ -41,19 +46,19 @@ namespace InTime.Models
         public static double DateTimeToUnixTimestamp()
         {
             DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            return (dt - new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local)).TotalSeconds;
+            return (dt - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1);
 
             return dtDateTime.AddSeconds(unixTimeStamp);
         }
 
         public static string UnixTimeStampToString(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1);
 
             return dtDateTime.AddSeconds(unixTimeStamp).ToString("yyyy-MM-dd HH:mm");
         }
@@ -61,7 +66,7 @@ namespace InTime.Models
         public static DateTime DateDebut(Tache tache)
         {
             DateTime date = new DateTime(Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                    Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0, DateTimeKind.Local);
+                    Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0);
 
             return date;
         }
@@ -69,7 +74,7 @@ namespace InTime.Models
         public static DateTime DateFin(Tache tache)
         {
             DateTime date = new DateTime(Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                    Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0, DateTimeKind.Local);
+                    Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0);
 
             return date;
         }
