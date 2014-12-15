@@ -54,18 +54,25 @@
                 }
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin })
-            </td>
-            <td>
                 @if (ViewBag.Title != "Historique")
                 {
-                    @Html.ActionLink("Modifier", "ModifTache", new { id = item.IdTache })
+                    @Html.ActionLink("Détails", "Index","ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin, Detail = true },null)
+                }
+                else
+                {
+                    @Html.ActionLink("Détails", "Index", "ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin, Historique = true }, null)
                 }
             </td>
             <td>
                 @if (ViewBag.Title != "Historique")
                 {
-                    @Html.ActionLink("Supprimer", "SuppTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
+                    @Html.ActionLink("Modifier", "Modification","ModifierTache", new { id = item.IdTache },null)
+                }
+            </td>
+            <td>
+                @if (ViewBag.Title != "Historique")
+                {
+                    @Html.ActionLink("Supprimer", "Index", "SupprimerTache", new { id = item.IdTache }, new { onclick = "return confirm('Voulez-vous supprimer cette tâche?');" })
                 }
             </td>
         </tr>

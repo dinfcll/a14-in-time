@@ -1,10 +1,6 @@
-﻿using InTime.Models;
-using InTime.Controllers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InTime.Controllers;
 
-namespace InTime
+namespace InTime.Models
 {
     public class RealConnexion : ConnexionUtilisateur
     {
@@ -20,8 +16,8 @@ namespace InTime
 
         public void Cookie(string username)
         {
-            AccountController Account = new AccountController();
-            Account.CookieNomUtilisateur(username);
+            AccountController account = new AccountController();
+            account.CookieNomUtilisateur(username);
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿@Styles.Render("~/Content/jqueryui")
+
+   Début:<br />
+    Année :
+<input readonly id="DebAnn" name="DebAnn" width="20">
+
+    Mois :
+@Html.DropDownList("ChoixMoisDebut", @InTime.Models.Tache.les_mois) <br />
+
+    Fin:<br />
+    Année :
+<input readonly id="FinAnn" name="FinAnn" width="20">
+
+    Mois :
+@Html.DropDownList("ChoixMoisFin", @InTime.Models.Tache.les_mois) <br />
+
+
+@Scripts.Render("~/bundles/jqueryui")
+<script>
+    var FinAnn = parseInt(@ViewBag.anneeFin);
+    var DebAnn = parseInt(@ViewBag.anneeDebut);
+    $("#FinAnn").spinner({
+        min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
+        max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
+        culture: "fr"
+    });
+    $("#FinAnn").spinner("value", FinAnn);
+    $("#FinAnn").width(50);
+
+
+    $("#DebAnn").spinner({
+        min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
+        max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
+        culture: "fr"
+    });
+    $("#DebAnn").spinner("value", DebAnn);
+    $("#DebAnn").width(50);
+</script>

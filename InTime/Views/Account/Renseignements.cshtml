@@ -6,13 +6,17 @@
 
 <div>
     @{
-        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Reussi)
+        var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
+        if (TempData["Message"] != null)
         {
-            <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
-        }
-        if (ViewBag.Message == InTime.Models.RequeteSql.Message.Echec)
-        {
-            <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
+            if ((int)TempData["Message"] == (int)InTime.Models.Messages.RequeteSql.Reussi)
+            {
+                <h2><font color="green">Vos renseignements ont été modifiés </font></h2>
+            }
+            if ((int)TempData["Message"] == (int)InTime.Models.Messages.RequeteSql.Echec)
+            {
+                <h2><font color="red">Une erreur s'est produite. Vos modifications n'ont pas été sauvegardées.</font></h2>
+            }
         }
     }
 </div>
@@ -24,9 +28,6 @@
     <li class="active">Modifier vos renseignements personnels</li>
 </ol>
 <h2>Vos renseignements personnels</h2>
-@{
-    var information = (InTime.Models.RegisterModel)ViewData["utilisateur"];
-}
 
 @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
 
@@ -48,50 +49,50 @@
             <br />
             @Html.TextBoxFor(model => model.Email, new { Value = information.Email ?? "", id = "Consultation" })
             @Html.ValidationMessageFor(model => model.Email, "*")
-        </p>
-        <form name="frmlistbox">
-            <p>
-                Usage principal de votre calendirer:
-                <select name="choixcategories">
-                    <option selected="selected" disabled="disabled">@information.Categorie</option>
-                    <option value="Travail">Travail</option>
-                    <option value="École">École</option>
-                    <option value="Général">Général</option>
-                </select>
-            </p>
-        </form>
-        <p>
+
+            <br /> <br />
+            Usage principal de votre calendirer:
+            @Html.DropDownListFor(model => model.Categorie, new SelectList(InTime.Models.RegisterModel.ChoixCategories, "text", "value"), new { id = "cat" })
+
             <div style="display:inline-block">
                 <input id="Sauv" type="submit" value="Sauvegarder" />
                 <input id="Mod" type="button" value="Modifier vos renseignements" style="display:none" />
                 <input type="button" value="Retour" onclick="location.href = '@Url.Action("TacheForm","Tache",null)'" />
             </div>
-            <br/>
-            <br/>
+            <br />
+            <br />
             <input type="button" value="Modifier votre mot de passe" onclick="location.href = '@Url.Action("Manage","Account",null)'" />
         </p>
     </article>
 }
 
-@if (ViewBag.Affichage == 1)
+<script>
+    $("#cat").val(@ViewBag.Categorie);
+</script>
+
+@if (TempData["Affichage"] != null)
 {
-    <script>
-        $("#Sauv").css("display", "none");
-        $("#Mod").css("display", "inherit");
-        $("[id^=Consultation").attr('readonly', 'true');
-        $("[id^=Consultation").css('background-color', '#DEDEDE');
-        $("#Mod").click(function () {
-            $("[id^=Consultation").removeAttr('readonly');
-            $("[id^=Consultation").css('background-color', 'white');
-            $("#Sauv").css("display", "inherit");
-            $("#Mod").css("display", "none");
-            var listbox = $('select[name="choixcategories"]');
-            listbox.prop('disabled', false);
-            
-        });
-        $(function () {
-            var listbox = $('select[name="choixcategories"]');
-            listbox.prop('disabled', true);
-        });
-    </script>
+    if ((int)TempData["Affichage"] == (int)InTime.Models.Messages.ChampsBloquer.Oui)
+    {
+        <script>
+            $(document).ready(function () {
+                $("#Sauv").css("display", "none");
+                $("#Mod").css("display", "inherit");
+                $("[id^=Consultation").attr('readonly', 'true');
+                $("[id^=Consultation").css('background-color', '#DEDEDE');
+                $("#cat").attr("disabled", "true");
+                $("#cat").css('background-color', '#DEDEDE');
+
+                $("#Mod").click(function () {
+                    $("[id^=Consultation").removeAttr('readonly');
+                    $("[id^=Consultation").css('background-color', 'white');
+                    $("#Sauv").css("display", "inherit");
+                    $("#Mod").css("display", "none");
+                    $("#cat").removeAttr("disabled");
+                    $("#cat").css('background-color', 'white');
+                });
+
+            });
+        </script>
+    }
 }

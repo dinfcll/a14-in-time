@@ -7,6 +7,18 @@ namespace InTime.Models
 {
     public class Tache
     {
+        public const int columnIdTache = 0;
+        public const int columnUserId = 1;
+        public const int columnNomTache = 2;
+        public const int columnLieu = 3;
+        public const int columnDesc = 4;
+        public const int columnDateDeb = 5;
+        public const int columnDateFin = 6;
+        public const int columnHRappel = 7;
+        public const int columnMRappel = 8;
+        public const int columnRec = 9;
+        public const int columnColor = 10;
+
         public int IdTache { get; set; }
         public int UserId { get; set; }
 
@@ -47,7 +59,6 @@ namespace InTime.Models
 
         public Tache()
         {
-
         }
 
         public Tache(Tache tache)
@@ -72,24 +83,51 @@ namespace InTime.Models
             PriorityColor = tache.PriorityColor;
         }
 
-        public static List<string> tempsHeure
+        public static List<SelectListItem> tempsHeure
         {
             get
             {
-                return new List<string>
+                return new List<SelectListItem>
                 {
-                                    "0","1","2","3","4","5","6","7","8","9","10",
-                                    "11","12","13","14","15","16","17","18","19","20","21",
-                                    "22","23"
-                                  };
+                    new SelectListItem { Text = "0", Value = "0"},
+                    new SelectListItem { Text = "1", Value = "1"},
+                    new SelectListItem { Text = "2", Value = "2"},
+                    new SelectListItem { Text = "3", Value = "3"},
+                    new SelectListItem { Text = "4", Value = "4"},
+                    new SelectListItem { Text = "5", Value = "5"},
+                    new SelectListItem { Text = "6", Value = "6"},
+                    new SelectListItem { Text = "7", Value = "7"},
+                    new SelectListItem { Text = "8", Value = "8"},
+                    new SelectListItem { Text = "9", Value = "9"},
+                    new SelectListItem { Text = "10", Value = "10"},
+                    new SelectListItem { Text = "11", Value = "11"},
+                    new SelectListItem { Text = "12", Value = "12"},
+                    new SelectListItem { Text = "13", Value = "13"},
+                    new SelectListItem { Text = "14", Value = "14"},
+                    new SelectListItem { Text = "15", Value = "15"},
+                    new SelectListItem { Text = "16", Value = "16"},
+                    new SelectListItem { Text = "17", Value = "17"},
+                    new SelectListItem { Text = "18", Value = "18"},
+                    new SelectListItem { Text = "19", Value = "19"},
+                    new SelectListItem { Text = "20", Value = "20"},
+                    new SelectListItem { Text = "21", Value = "21"},
+                    new SelectListItem { Text = "22", Value = "22"},
+                    new SelectListItem { Text = "23", Value = "23"}
+                };
             }
         }
 
-        public static List<string> tempsMinutes
+        public static List<SelectListItem> tempsMinutes
         {
             get
             {
-                return new List<string> { "00", "15", "30", "45" };
+                return new List<SelectListItem> 
+                { 
+                    new SelectListItem { Text = "00", Value = "0"},
+                    new SelectListItem { Text = "15", Value = "15"},
+                    new SelectListItem { Text = "30", Value = "30"},
+                    new SelectListItem { Text = "45", Value = "45"},
+                };
             }
         }
 
@@ -179,9 +217,9 @@ namespace InTime.Models
             DateTime debut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
             DateTime fin = TraitementDate.UnixTimeStampToDateTime(tache.unixFin);
 
-            tache.mDebut = InitialiseTempsMinute(Convert.ToString(debut.Minute));
-            tache.mFin = InitialiseTempsMinute(Convert.ToString(fin.Minute));
-            tache.mRappel = InitialiseTempsMinute(Convert.ToString(tache.mRappel));
+            tache.mDebut = Convert.ToString(debut.Minute);
+            tache.mFin = Convert.ToString(fin.Minute);
+            tache.mRappel = Convert.ToString(tache.mRappel);
             tache.HDebut = Convert.ToString(debut.Hour);
             tache.HFin = Convert.ToString(fin.Hour);
             tache.Jour = Convert.ToString(debut.Day);
@@ -189,22 +227,98 @@ namespace InTime.Models
             tache.Annee = Convert.ToString(debut.Year);
         }
 
-        private static string InitialiseTempsMinute(string Temps)
+        public static Tache ObtenirTache(Object[] values)
         {
-            switch (Temps)
+            var tache = new Tache()
             {
-                case "0":
-                    return "1";
-                case "15":
-                    return "2";
-                case "30":
-                    return "3";
-                case "45":
-                    return "4";
-                default:
-                    return "1";
+                IdTache = Convert.ToInt32(values[columnIdTache]),
+                UserId = Convert.ToInt32(values[columnUserId]),
+                NomTache = Convert.ToString(values[columnNomTache]),
+                Lieu = Convert.ToString(values[columnLieu]),
+                Description = Convert.ToString(values[columnDesc]),
+                unixDebut = Convert.ToDouble(values[columnDateDeb]),
+                unixFin = Convert.ToDouble(values[columnDateFin]),
+                HRappel = Convert.ToString(values[columnHRappel]),
+                mRappel = Convert.ToString(values[columnMRappel]),
+                Recurrence = Convert.ToInt32(values[columnRec]),
+                PriorityColor = Convert.ToString(values[columnColor])
+            };
+
+            return tache;
+        }
+
+        public static void PreparationPourAffichage(ref Tache tache)
+        {
+            DateTime dateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+            tache.Annee = Convert.ToString(dateDebut.Year);
+            tache.Mois = Convert.ToString(dateDebut.Month - 1);
+            tache.Jour = Convert.ToString(dateDebut.Day);
+
+            tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
+            tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
+            TimeSpan tsRappel = new TimeSpan(
+                Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
+                );
+            DateTime dateRappel = dateDebut.Subtract(tsRappel);
+
+            if (dateRappel == dateDebut)
+            {
+                tache.DateRappelCalendrier = "Aucun";
+            }
+            else
+            {
+                tache.DateRappelCalendrier = TempsRappel(dateRappel);
+            }
+
+            tache.RecurrenceAffichage = Nomrecurrence(tache.Recurrence);
+        }
+
+        private static string TempsRappel(DateTime rappel)
+        {
+            string strPhrase = "Il vous reste ";
+
+            if (rappel < DateTime.Now)
+            {
+                return "La date de rappel est dépassée.";
+            }
+            else
+            {
+                TimeSpan tsTempsRestant = rappel - DateTime.Now;
+                int nNombreJourRestant = tsTempsRestant.Days;
+                if (nNombreJourRestant > 365)
+                {
+                    int nAnnee = (tsTempsRestant.Days / 365);
+                    nNombreJourRestant -= (nAnnee * 365);
+                    strPhrase += String.Format("{0} {1} ", nAnnee, nAnnee == 1 ? "an" : "ans");
+                }
+
+                if (nNombreJourRestant > 30)
+                {
+                    int nMois = (nNombreJourRestant / 30);
+                    nNombreJourRestant -= (nMois * 30);
+                    strPhrase += String.Format("{0} mois ", nMois);
+                }
+
+                if (nNombreJourRestant > 0)
+                {
+                    int nJours = nNombreJourRestant;
+                    strPhrase += String.Format("{0} {1} ", nJours, nJours == 1 ? "jour" : "jours");
+                }
+
+                if (tsTempsRestant.Hours > 0)
+                {
+                    int nHeure = tsTempsRestant.Hours;
+                    strPhrase += String.Format("{0} {1} ", nHeure, nHeure == 1 ? "heure" : "heures");
+                }
+
+                if (tsTempsRestant.Minutes > 0)
+                {
+                    int nMinute = tsTempsRestant.Minutes;
+                    strPhrase += String.Format("{0} {1} ", nMinute, nMinute == 1 ? "minute" : "minutes");
+                }
+
+                return strPhrase + "avant le rappel.";
             }
         }
     }
 }
-

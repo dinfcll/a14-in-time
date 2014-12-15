@@ -18,12 +18,12 @@
         <legend>Formulaire de connexion</legend>
         <ol>
             <li>
-                @Html.LabelFor(m => m.UserName)
+                @Html.LabelFor(m => m.UserName) <br/>
                 @Html.TextBoxFor(m => m.UserName)
                 @Html.ValidationMessageFor(m => m.UserName)
             </li>
             <li>
-                @Html.LabelFor(m => m.Password)
+                @Html.LabelFor(m => m.Password) <br/>
                 @Html.PasswordFor(m => m.Password)
                 @Html.ValidationMessageFor(m => m.Password)
             </li>
@@ -35,10 +35,11 @@
         <input type="submit" value="Se connecter" />
     </fieldset>
     <p>
-        @Html.ActionLink("S'inscrire", "Register") si vous n’avez pas de compte.
+        @Html.ActionLink("S'inscrire", "Register", null, new { style = "color:blue;" }) si vous n’avez pas de compte.
     </p>
 }
 </section>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

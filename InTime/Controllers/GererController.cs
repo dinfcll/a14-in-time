@@ -5,9 +5,6 @@ namespace InTime.Controllers
 {
     public class GererController : Controller
     {
-        //
-        // GET: /Gerer/
-
         public ActionResult GererForm()
         {
             try
@@ -23,7 +20,7 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 

@@ -1,11 +1,4 @@
-﻿using InTime.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InTime
+﻿namespace InTime.Models
 {
     public class DummyConnexion : ConnexionUtilisateur
     {

@@ -1,0 +1,139 @@
+﻿@model InTime.Models.Tache
+@Styles.Render("~/Content/jqueryui")
+
+@{
+    ViewBag.Title = "Modification";
+    var tache = (InTime.Models.Tache)ViewData["Tache"];
+}
+
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li>@Html.ActionLink("Consulter tâches", "Taches", "ConsulterTache")</li>
+    <li class="active">Modifier</li>
+</ol>
+
+
+@Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+@using (Html.BeginForm("Modification", "ModifierTache"))
+{
+    <div id="div1">
+        <div id="div2">
+            <h2>@tache.NomTache</h2>
+            Nom de la tâche : <br />
+            @Html.TextBox("NomTache", tache.NomTache, new { id = "NomTache" })
+            <br />
+
+            Nom du lieu : <br />
+            @Html.TextBox("Lieu", tache.Lieu, new { id = "Lieu" })
+            <br />
+
+            Date : <br />
+            Année :
+            <input readonly id="Annee" name="Annee" width="20">
+
+            Mois :
+            @Html.DropDownList("Mois", @InTime.Models.Tache.les_mois, "Choisir un mois", new { id = "Mois" })
+            <br />
+
+            Jour :
+            <select id="Jour" name="Jour"></select>
+            <br />
+
+            Récurrence de la tache :<br />
+            @Html.DropDownList("recurrence", @InTime.Models.Tache.options, new { id = "recurrence" })
+            <br />
+
+            Heure : <br />
+            Début : @Html.DropDownList("HDebut", @InTime.Models.Tache.tempsHeure, "", new { id = "HDebut" })
+            H
+
+            @Html.DropDownList("mDebut", @InTime.Models.Tache.tempsMinutes, "", new { id = "mDebut" })
+            Min<br />
+
+            Fin : @Html.DropDownList("HFin", @InTime.Models.Tache.tempsHeure, "", new { id = "HFin" })
+            H
+
+            @Html.DropDownList("mFin", @InTime.Models.Tache.tempsMinutes, "", new { id = "mFin" })
+            Min<br />
+
+            Avant combien de temps voulez-vous être informé de votre tâche ? <br />
+            @Html.DropDownList("HRappel", @InTime.Models.Tache.tempsHeure, "", new { id = "HRappel" })
+            H
+
+            @Html.DropDownList("mRappel", @InTime.Models.Tache.tempsMinutes, "", new { id = "mRappel" })
+            Min<br />
+
+            Priorité:
+            <input id="PriorityColor" type="color" name="PriorityColor" size="4" height="30" value=@tache.PriorityColor />
+            <br />
+        </div>
+
+        Description de la tâche : <br />
+        @Html.TextArea("Description", tache.Description, new { style = "width:95%;", id = "Description" })
+        <br />
+
+        @Html.TextBoxFor(model => model.IdTache, new { id = "IdTache", Value = tache.IdTache, @type = "Hidden" })
+        @Html.TextBox("Existe", "false", new { @type = "Hidden" })
+
+        <input id="modif" name="modif" type="text" value="False" style="display:none" />
+        <input style="float:left; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
+
+        <input id="annulerConsulter" type="button" value="Annuler"
+               onclick="location.href = '@Url.Action("Taches","ConsulterTache")'" />
+        <input id="annulerHistorique" type="button" value="Annuler" style="display:none"
+               onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = (Convert.ToInt32(tache.Mois)-1), @jour = tache.Jour})'" />
+        </div>
+}
+
+@if (@ViewBag.Modif)
+{
+    <script>
+        $('#div2').css('display','none');
+        $("#modif").val("True");
+        $('#annulerConsulter').css('display','none');
+        $("#annulerHistorique").css('display','');
+    </script>
+}
+
+<script>
+    $(document).ready(function () {
+        $("#Annee").spinner({
+            change: function (event, ui) { JourDuMois(); },
+            min: parseInt(@InTime.Models.ValeursSpinner.ValeurMinimal),
+            max: parseInt(@InTime.Models.ValeursSpinner.ValeurMaximal),
+            culture: "fr"
+        });
+        $("#Annee").spinner("value",@tache.Annee);
+        $("#Annee").width(50);
+        $("#Mois").val(@tache.Mois);
+        $("#recurrence").val(@tache.Recurrence);
+        $("#HDebut").val((@tache.HDebut));
+        $("#mDebut").val(@tache.mDebut);
+        $("#HFin").val((@tache.HFin));
+        $("#mFin").val(@tache.mFin);
+        $("#HRappel").val((@tache.HRappel));
+        $("#mRappel").val(@tache.mRappel);
+        JourDuMois();
+    });
+
+    var JourDuMois = function () {
+        var params = {};
+        params.Year = $("#Annee").val();
+        params.Month = $('#Mois').val();
+        $.getJSON('@Url.Action("JourDuMois", "AjouterTache")', params, function (data) {
+            var items = '<option>Choisir un jour</option>';
+            $.each(data, function (i, jour) {
+                items += "<option value='" + jour.Value + "'>" + jour.Text + "</option>";
+            });
+            $('#Jour').html(items);
+            $("#Jour").val(@tache.Jour);
+        });
+    }
+
+    $(function () {
+        $('#Mois').change(function () {
+            JourDuMois();
+        });
+    });
+</script>

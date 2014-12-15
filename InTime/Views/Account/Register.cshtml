@@ -1,6 +1,6 @@
 ﻿@model InTime.Models.RegisterModel
 @{
-    ViewBag.Title = "S'inscrire"; 
+    ViewBag.Title = "S'inscrire";
 }
 
 <hgroup class="title">
@@ -8,47 +8,47 @@
     <h2>Créez un nouveau compte.</h2>
 </hgroup>
 
-@using (Html.BeginForm()) {
+@using (Html.BeginForm())
+{
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-    
+
     <fieldset>
         <legend>Formulaire d'inscription</legend>
         <ol>
             <li>
-                @Html.LabelFor(m => m.Prenom)
+                @Html.LabelFor(m => m.Prenom) <br />
                 @Html.TextBoxFor(m => m.Prenom)
             </li>
             <li>
-                @Html.LabelFor(m => m.Nom)
+                @Html.LabelFor(m => m.Nom) <br />
                 @Html.TextBoxFor(m => m.Nom)
             </li>
             <li>
-                @Html.LabelFor(m => m.Email)
+                @Html.LabelFor(m => m.Email)<br />
                 @Html.TextBoxFor(m => m.Email)
             </li>
             <li>
-                @Html.LabelFor(m => m.UserName)
+                @Html.LabelFor(m => m.UserName)<br />
                 @Html.TextBoxFor(m => m.UserName)
             </li>
             <li>
-                @Html.LabelFor(m => m.Password)
+                @Html.LabelFor(m => m.Password)<br />
                 @Html.PasswordFor(m => m.Password)
             </li>
             <li>
-                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.LabelFor(m => m.ConfirmPassword)<br />
                 @Html.PasswordFor(m => m.ConfirmPassword)
             </li>
-        </ol>
-            <p>
-                Usage principal de votre calendirer:
+            <li>
+                <b style="font-size: 16px">Usage principal de votre calendirer:</b> <br />
                 <select name="Categorie" id="Categorie">
                     <option value="Travail">Travail</option>
                     <option value="École">École</option>
                     <option value="Général">Général</option>
                 </select>
-            </p>
-            <br><br>
+            </li>
+        </ol>
         <input type="submit" value="S'inscrire" />
     </fieldset>
 }

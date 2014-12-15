@@ -1,7 +1,6 @@
-﻿using System;
-using System.Web.Mvc;
-using InTime.Models;
+﻿using InTime.Models;
 using System.Data.SqlClient;
+using System.Web.Mvc;
 
 namespace InTime.Controllers
 {
@@ -14,14 +13,14 @@ namespace InTime.Controllers
                 SqlConnection con = null;
                 try
                 {
-                    con = RequeteSql.ConnexionBD(con);
+                    con = RequeteSql.ConnexionBD();
                     int id = RequeteSql.RechercheID(con, User.Identity.Name);
 
                     Session[User.Identity.Name] = id;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new Exception(ex.ToString());
+                    return View(UrlErreur.ErreurGeneral);
                 }
                 finally
                 {
@@ -55,7 +54,7 @@ namespace InTime.Controllers
                     mailer.Send();
                     TempData["message"] = "Envoyer";
                 }
-                catch (Exception ex)
+                catch
                 {
                     TempData["message"] = "Echec";
                 }

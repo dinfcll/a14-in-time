@@ -5,53 +5,56 @@
 }
 
 
-    <h1>Nous rejoindre</h1>
-    <article>
-        <section>
-            <h3>Téléphone</h3>
-            <p>
-                418 833-5110 <br />
-                Du lundi au vendredi: de 8h00 à 17h
-            </p>
-        </section>
-
-        <br />
-        <hr />
-
-        <section>
-            @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
-            <div>
-                @{
-                    if (TempData["message"] == @InTime.Models.Messages.Envoyer)
-                    {
-                        <h2><font color="green">Votre message a été envoyé.</font></h2>
-                    }
-                    else
-                    {
-                        if (TempData["message"] == @InTime.Models.Messages.Echec)
-                        {
-                            <h2><font color="red">Une erreur s’est produite. Votre commentaire n’a pas été transmis.</font></h2>
-                        }
-                    }
-}
-            </div>
-            <h3>Nous laisser un commentaire</h3>
-            @using (Html.BeginForm())
+<h1>Nous rejoindre</h1>
+<article>
+    <section id="loginForm" style="width:450px">
+        <h3>Nous laisser un commentaire</h3>
+        @Html.ValidationSummary("Vous devez corriger les erreurs suivantes :")
+        @{
+            if (TempData["message"] == @InTime.Models.Messages.Envoyer)
             {
-                <p>
-                    Sujet : <br />
-                    @Html.TextBoxFor(model => model.Subject)
-                    @Html.ValidationMessageFor(model => model.Subject, "*")
-                    <br />
-
-                    Message : <br />
-                    @Html.TextAreaFor(model => model.Body, "*")
-                    @Html.ValidationMessageFor(model => model.Body, "*")
-                    <br />
-
-                    <input type="submit" value="Envoyer" />
-                </p>
+                <h2><font color="green">Votre message a été envoyé.</font></h2>
             }
-        </section>
+            else
+            {
+                if (TempData["message"] == @InTime.Models.Messages.Echec)
+                {
+                    <h2><font color="red">Une erreur s’est produite. Votre commentaire n’a pas été transmis.</font></h2>
+                }
+            }
+        }
+        @using (Html.BeginForm())
+        {
+            <fieldset>
+                <ol>
+                    <li>
+                Sujet : <br />
+                @Html.TextBoxFor(model => model.Subject)
+                @Html.ValidationMessageFor(model => model.Subject, "*")
+                <br />
+                        </li>
+                    <li>
 
-    </article>
+                Message : <br />
+                @Html.TextAreaFor(model => model.Body, new { cols = 40, rows = 9, @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Body, "*")
+                <br />
+                        </li>
+
+                    </ol>
+
+                <input type="submit" value="Envoyer" />
+            </fieldset>
+        }
+        
+    </section>
+
+    <section>
+        <h3>Téléphone</h3>
+        <p>
+            418 833-5110 <br />
+            Du lundi au vendredi: de 8h00 à 17h
+        </p>
+    </section>
+
+</article>

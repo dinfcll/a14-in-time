@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace InTime.Models
+﻿namespace InTime.Models
 {
     public static class Messages
     {
+        public enum RequeteSql { Reussi, Echec };
+        public enum ChampsBloquer { Non, Oui };
         public static string Envoyer
         {
             get

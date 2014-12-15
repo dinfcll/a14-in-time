@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.Http.Routing;
-using System.Web.Routing;
 
 namespace InTime.Models
 {
@@ -15,22 +12,27 @@ namespace InTime.Models
 
         public static double DebutCalendrier()
         {
-            DateTime DebutCalen = new DateTime(2014,1,1);
-            return (DebutCalen - new DateTime(1970, 1, 1)).TotalSeconds;
+            DateTime debutCalen = new DateTime(2014,1,1);
+            return (debutCalen - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
-        public static double UnixXJour(int NbreJours)
+        public static double UnixXHeure(int nbreHeure)
         {
-            return 60 * 60 * 24 * NbreJours;
+            return 60 * 60 * nbreHeure;
         }
 
-        public static double UnixXMois(double unixTime, int NbreMois)
+        public static double UnixXJour(int nbreJours)
+        {
+            return 60 * 60 * 24 * nbreJours;
+        }
+
+        public static double UnixXMois(double unixTime, int nbreMois)
         {
 
-            DateTime DateInitial = UnixTimeStampToDateTime(unixTime);
-            DateTime DateFinal = DateInitial.AddMonths(NbreMois);
+            DateTime dateInitial = UnixTimeStampToDateTime(unixTime);
+            DateTime dateFinal = dateInitial.AddMonths(nbreMois);
 
-            return 60 * 60 * 24 * (DateFinal - DateInitial).TotalDays;
+            return 60 * 60 * 24 * (dateFinal - dateInitial).TotalDays;
         }
 
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
@@ -46,14 +48,14 @@ namespace InTime.Models
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            DateTime dtDateTime = new DateTime(1970, 1, 1);
 
             return dtDateTime.AddSeconds(unixTimeStamp);
         }
 
         public static string UnixTimeStampToString(double unixTimeStamp)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            DateTime dtDateTime = new DateTime(1970, 1, 1);
 
             return dtDateTime.AddSeconds(unixTimeStamp).ToString("yyyy-MM-dd HH:mm");
         }
@@ -61,7 +63,7 @@ namespace InTime.Models
         public static DateTime DateDebut(Tache tache)
         {
             DateTime date = new DateTime(Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                    Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0, DateTimeKind.Local);
+                    Convert.ToInt32(tache.HDebut), Convert.ToInt32(tache.mDebut), 0);
 
             return date;
         }
@@ -69,39 +71,19 @@ namespace InTime.Models
         public static DateTime DateFin(Tache tache)
         {
             DateTime date = new DateTime(Convert.ToInt32(tache.Annee), Convert.ToInt32(tache.Mois), Convert.ToInt32(tache.Jour),
-                    Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0, DateTimeKind.Local);
+                    Convert.ToInt32(tache.HFin), Convert.ToInt32(tache.mFin), 0);
 
             return date;
         }
 
-        public static string DateFormatCalendrier(string Annee, string Mois, string Jour, string Heure, string Minute)
-        {
-            return String.Format("{0}-{1}-{2}T{3}:{4}:00-05:00",
-                   Annee, Mois, Jour, Heure, Minute);
-        }
-
-        public static string DateFormatCalendrier(int Annee, int Mois, int Jour, int Heure, int Minute)
-        {
-            try
-            {
-                DateTime date = new DateTime(Annee, Mois, Jour, Heure, Minute, 0);
-
-                return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
         public static string DateFormatCalendrier(double unix)
         {
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Local);
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
 
             return dtDateTime.AddSeconds(unix).ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
 
-        private static List<string[]> DatesTacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
+        private static List<string[]> DatesTacheRecurrente(Tache tache, double start, double end, int bond, int type)
         {
             List<string[]> date = new List<string[]>();
             double tacheDebut = tache.unixDebut;
@@ -110,7 +92,7 @@ namespace InTime.Models
 
             if (tacheDebut < start)
             {
-                if (Type == 2)
+                if (type == 2)
                 {
                     while ((tacheDebut < start))
                     {
@@ -119,7 +101,7 @@ namespace InTime.Models
                 }
                 else
                 {
-                    if (Bond == 1 || Type == 1)
+                    if (bond == 1 || type == 1)
                     {
                         while ((tacheDebut + UnixXMois(tacheDebut, 12) < start))
                         {
@@ -127,16 +109,16 @@ namespace InTime.Models
                         }
                     }
 
-                    if (Type == 1)
+                    if (type == 1)
                     {
                         while (tacheDebut < start)
                         {
-                            tacheDebut += UnixXMois(tacheDebut, Bond);
+                            tacheDebut += UnixXMois(tacheDebut, bond);
                         }
                     }
                     else
                     {
-                        if (Bond == 1)
+                        if (bond == 1)
                         {
                             while ((tacheDebut + UnixXMois(tacheDebut, 1) < start))
                             {
@@ -145,7 +127,7 @@ namespace InTime.Models
                         }
                         while (tacheDebut < start)
                         {
-                            tacheDebut += UnixXJour(Bond);
+                            tacheDebut += UnixXJour(bond);
                         }
                     }
                 }
@@ -162,20 +144,20 @@ namespace InTime.Models
 
                     date.Add(new string[] { tache.NomTache, dateDebutCalen, dateFinCalen, Convert.ToString(tache.IdTache) });
 
-                    if (Type == 2)
+                    if (type == 2)
                     {
                         tacheDebut += UnixXMois(tacheDebut, 12);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
 
-                    if (Type == 1)
+                    if (type == 1)
                     {
-                        tacheDebut += UnixXMois(tacheDebut, Bond);
+                        tacheDebut += UnixXMois(tacheDebut, bond);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
                     else
                     {
-                        tacheDebut += UnixXJour(Bond);
+                        tacheDebut += UnixXJour(bond);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
                 }
@@ -184,7 +166,7 @@ namespace InTime.Models
             return date;
         }
 
-        private static List<Tache> TacheRecurrente(Tache tache, double start, double end, int Bond, int Type)
+        private static List<Tache> TacheRecurrente(Tache tache, double start, double end, int bond, int type)
         {
             List<Tache> taches = new List<Tache>();
             double tacheDebut = tache.unixDebut;
@@ -193,7 +175,7 @@ namespace InTime.Models
 
             if (tacheDebut < start)
             {
-                if (Type == 2)
+                if (type == 2)
                 {
                     while ((tacheDebut < start))
                     {
@@ -202,7 +184,7 @@ namespace InTime.Models
                 }
                 else
                 {
-                    if (Bond == 1 || Type == 1)
+                    if (bond == 1 || type == 1)
                     {
                         while ((tacheDebut + UnixXMois(tacheDebut, 12) < start))
                         {
@@ -210,16 +192,16 @@ namespace InTime.Models
                         }
                     }
 
-                    if (Type == 1)
+                    if (type == 1)
                     {
                         while (tacheDebut < start)
                         {
-                            tacheDebut += UnixXMois(tacheDebut, Bond);
+                            tacheDebut += UnixXMois(tacheDebut, bond);
                         }
                     }
                     else
                     {
-                        if (Bond == 1)
+                        if (bond == 1)
                         {
                             while ((tacheDebut + UnixXMois(tacheDebut, 1) < start))
                             {
@@ -228,7 +210,7 @@ namespace InTime.Models
                         }
                         while (tacheDebut < start)
                         {
-                            tacheDebut += UnixXJour(Bond);
+                            tacheDebut += UnixXJour(bond);
                         }
                     }
                 }
@@ -240,28 +222,28 @@ namespace InTime.Models
             {
                 while (tacheDebut < end)
                 {
-                    DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tacheDebut);
-                    tache.Annee = Convert.ToString(DateTache.Year);
-                    tache.Mois = Convert.ToString(DateTache.Month);
-                    tache.Jour = Convert.ToString(DateTache.Day);
+                    DateTime dateTache = UnixTimeStampToDateTime(tacheDebut);
+                    tache.Annee = Convert.ToString(dateTache.Year);
+                    tache.Mois = Convert.ToString(dateTache.Month);
+                    tache.Jour = Convert.ToString(dateTache.Day);
                     tache.unixDebut = tacheDebut;
                     tache.unixFin = tacheFin;
                     taches.Add(new Tache(tache));
 
-                    if (Type == 2)
+                    if (type == 2)
                     {
                         tacheDebut += UnixXMois(tacheDebut, 12);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
 
-                    if (Type == 1)
+                    if (type == 1)
                     {
-                        tacheDebut += UnixXMois(tacheDebut, Bond);
+                        tacheDebut += UnixXMois(tacheDebut, bond);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
                     else
                     {
-                        tacheDebut += UnixXJour(Bond);
+                        tacheDebut += UnixXJour(bond);
                         tacheFin = tacheDebut + differenceDebutFin;
                     }
                 }
@@ -272,35 +254,35 @@ namespace InTime.Models
 
         public static List<string[]> TraitementRecurrence(Tache tache, double start, double end)
         {
-            TraitementDate.recurrence recurrence =
-                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            recurrence recurrence =
+                        (recurrence)Enum.ToObject(typeof(recurrence), tache.Recurrence);
             List<string[]> result = null;
 
             switch (recurrence)
             {
-                case TraitementDate.recurrence.ChaqueJour:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 0);
+                case recurrence.ChaqueJour:
+                    result = DatesTacheRecurrente(tache, start, end, 1, 0);
                     break;
-                case TraitementDate.recurrence.ChaqueSemaine:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 7, 0);
+                case recurrence.ChaqueSemaine:
+                    result = DatesTacheRecurrente(tache, start, end, 7, 0);
                     break;
-                case TraitementDate.recurrence.DeuxSemaines:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 14, 0);
+                case recurrence.DeuxSemaines:
+                    result = DatesTacheRecurrente(tache, start, end, 14, 0);
                     break;
-                case TraitementDate.recurrence.TroisSemaine:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 21, 0);
+                case recurrence.TroisSemaine:
+                    result = DatesTacheRecurrente(tache, start, end, 21, 0);
                     break;
-                case TraitementDate.recurrence.ChaqueMois:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 1, 1);
+                case recurrence.ChaqueMois:
+                    result = DatesTacheRecurrente(tache, start, end, 1, 1);
                     break;
-                case TraitementDate.recurrence.TroisMois:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 3, 1);
+                case recurrence.TroisMois:
+                    result = DatesTacheRecurrente(tache, start, end, 3, 1);
                     break;
-                case TraitementDate.recurrence.QuatreMois:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 4, 1);
+                case recurrence.QuatreMois:
+                    result = DatesTacheRecurrente(tache, start, end, 4, 1);
                     break;
-                case TraitementDate.recurrence.ChaqueAnnee:
-                    result = TraitementDate.DatesTacheRecurrente(tache, start, end, 0, 2);
+                case recurrence.ChaqueAnnee:
+                    result = DatesTacheRecurrente(tache, start, end, 0, 2);
                     break;
             }
 
@@ -310,35 +292,35 @@ namespace InTime.Models
 
         public static List<Tache> TraitementRecurrenceTache(Tache tache, double start, double end)
         {
-            TraitementDate.recurrence recurrence =
-                        (TraitementDate.recurrence)Enum.ToObject(typeof(TraitementDate.recurrence), tache.Recurrence);
+            recurrence recurrence =
+                        (recurrence)Enum.ToObject(typeof(recurrence), tache.Recurrence);
             List<Tache> result = null;
 
             switch (recurrence)
             {
-                case TraitementDate.recurrence.ChaqueJour:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 0);
+                case recurrence.ChaqueJour:
+                    result = TacheRecurrente(tache, start, end, 1, 0);
                     break;
-                case TraitementDate.recurrence.ChaqueSemaine:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 7, 0);
+                case recurrence.ChaqueSemaine:
+                    result = TacheRecurrente(tache, start, end, 7, 0);
                     break;
-                case TraitementDate.recurrence.DeuxSemaines:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 14, 0);
+                case recurrence.DeuxSemaines:
+                    result = TacheRecurrente(tache, start, end, 14, 0);
                     break;
-                case TraitementDate.recurrence.TroisSemaine:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 21, 0);
+                case recurrence.TroisSemaine:
+                    result = TacheRecurrente(tache, start, end, 21, 0);
                     break;
-                case TraitementDate.recurrence.ChaqueMois:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 1, 1);
+                case recurrence.ChaqueMois:
+                    result = TacheRecurrente(tache, start, end, 1, 1);
                     break;
-                case TraitementDate.recurrence.TroisMois:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 3, 1);
+                case recurrence.TroisMois:
+                    result = TacheRecurrente(tache, start, end, 3, 1);
                     break;
-                case TraitementDate.recurrence.QuatreMois:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 4, 1);
+                case recurrence.QuatreMois:
+                    result = TacheRecurrente(tache, start, end, 4, 1);
                     break;
-                case TraitementDate.recurrence.ChaqueAnnee:
-                    result = TraitementDate.TacheRecurrente(tache, start, end, 0, 2);
+                case recurrence.ChaqueAnnee:
+                    result = TacheRecurrente(tache, start, end, 0, 2);
                     break;
             }
 

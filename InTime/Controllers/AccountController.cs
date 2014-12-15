@@ -4,7 +4,6 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using InTime.Filters;
@@ -75,18 +74,18 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        ConnexionUtilisateur Connexion;
+                        ConnexionUtilisateur connexion;
                         if (model.TypeConnec == null)
                         {
-                            Connexion = new RealConnexion();
+                            connexion = new RealConnexion();
                         }
                         else
                         {
-                            Connexion = new DummyConnexion();
+                            connexion = new DummyConnexion();
                         }
-                        Connexion.CreerUsager(model);
-                        Connexion.LoginUsager(model);
-                        Connexion.Cookie(model.UserName);
+                        connexion.CreerUsager(model);
+                        connexion.LoginUsager(model);
+                        connexion.Cookie(model.UserName);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -100,25 +99,6 @@ namespace InTime.Controllers
             return View();
         }
 
-        private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
-        {
-            String query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
-
-            List<SqlParameter> listParametres = new List<SqlParameter>
-                {
-                    new SqlParameter("@UserName", NomUtilisateur),
-                    new SqlParameter("@Email", adresseCourriel)
-                };
-
-            SqlDataReader reader = RequeteSql.Select(query, listParametres);
-            if (reader.Read())
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Disassociate(string provider, string providerUserId)
@@ -129,7 +109,7 @@ namespace InTime.Controllers
             if (ownerAccount == User.Identity.Name)
             {
                 using (var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
+                    new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
                 {
                     bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
                     if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
@@ -214,50 +194,43 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
         public ActionResult Renseignements(int? Affichage)
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                RegisterModel userProfile = null;
-
-                string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-                List<SqlParameter> Parametres = new List<SqlParameter> {
-                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
-                        };
-                SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-
-                while (reader.Read())
+                if (User.Identity.IsAuthenticated)
                 {
-                    Object[] values = new Object[reader.FieldCount];
-                    int fieldCounts = reader.GetValues(values);
-                    userProfile = new RegisterModel()
+
+                    if (!ObtenirRensUtil())
                     {
-                        Nom = Convert.ToString(values[2]),
-                        Prenom = Convert.ToString(values[3]),
-                        Email = Convert.ToString(values[4]),
-                        Categorie = Convert.ToString(values[5])
-                    };
-                }
-                ViewData["utilisateur"] = userProfile;
+                        return HttpNotFound();
+                    }
 
-                if (Affichage != null)
-                {
-                    ViewBag.Affichage = Affichage;
+                    Messages.ChampsBloquer aff;
+                    if (Affichage != null && Affichage == 1)
+                    {
+                        aff = Messages.ChampsBloquer.Oui;
+                    }
+                    else
+                    {
+                        aff = Messages.ChampsBloquer.Non;
+                    }
+                    TempData["Affichage"] = aff;
+
+                    return View();
                 }
                 else
                 {
-                    ViewBag.Affichage = 0;
+                    return View(UrlErreur.Authentification);
                 }
-
-                return View();
             }
-            else
+            catch
             {
-                return View(UrlErreur.Authentification);
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
@@ -272,57 +245,25 @@ namespace InTime.Controllers
                     ModelState.Remove("Username");
                     if (!ModelState.IsValid)
                     {
-                        RegisterModel userProfile = null;
-                        string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-                        List<SqlParameter> Parametres = new List<SqlParameter>
-                        {
-                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
-                        };
-
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
-                        while (reader.Read())
-                        {
-                            Object[] values = new Object[reader.FieldCount];
-                            int fieldCounts = reader.GetValues(values);
-                            userProfile = new RegisterModel()
-                        {
-                            Nom = Convert.ToString(values[2]),
-                            Prenom = Convert.ToString(values[3]),
-                            Email = Convert.ToString(values[4]),
-                            Categorie = Convert.ToString(values[5])
-                        };
-                        }
-
-                        if (userProfile == null)
+                        if (!ObtenirRensUtil())
                         {
                             return HttpNotFound();
                         }
-
-                        ViewData["utilisateur"] = userProfile;
 
                         return View();
                     }
                     else
                     {
-
                         if (ModifRenseig(model, Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name))))
                         {
-                            ViewBag.Message = RequeteSql.Message.Reussi;
+                            TempData["Message"] = Messages.RequeteSql.Reussi;
                         }
                         else
                         {
-                            ViewBag.Message = RequeteSql.Message.Echec;
+                            TempData["Message"] = Messages.RequeteSql.Echec;
                         }
-
-                        RegisterModel userProfile = new RegisterModel()
-                    {
-                        Nom = model.Nom,
-                        Prenom = model.Prenom,
-                        Email = model.Email,
-                        Categorie = model.Categorie
-                    };
-
-                        ViewData["utilisateur"] = userProfile;
+                        ViewData["utilisateur"] = model;
+                        TempData["Affichage"] = Messages.ChampsBloquer.Oui;
 
                         return View();
                     }
@@ -334,27 +275,64 @@ namespace InTime.Controllers
             }
             catch
             {
-                return View("~/Views/ErreurAuthentification.cshtml");
+                return View(UrlErreur.ErreurGeneral);
             }
         }
 
-        private bool ModifRenseig(RegisterModel model, int UserId)
+        private bool ObtenirRensUtil()
         {
-            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email, Categorie = @Categorie WHERE UserId = @Id;";
-            model.Categorie = Request.Form.GetValues("choixcategories").GetValue(0).ToString();
-            List<SqlParameter> Parametres = new List<SqlParameter>
+            RegisterModel profile = null;
+            try
+            {
+                const string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+                List<SqlParameter> parametres = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", Cookie.ObtenirCookie(User.Identity.Name))
+                        };
+
+                SqlDataReader reader = RequeteSql.Select(queryString, parametres);
+                while (reader.Read())
+                {
+                    Object[] values = new Object[reader.FieldCount];
+                    profile = new RegisterModel
+                    {
+                        Nom = Convert.ToString(values[RegisterModel.ColumnNom]),
+                        Prenom = Convert.ToString(values[RegisterModel.ColumnPrenom]),
+                        Email = Convert.ToString(values[RegisterModel.ColumnCourriel]),
+                        Categorie = Convert.ToString(values[RegisterModel.ColumnCategorie])
+                    };
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (profile == null)
+            {
+                return false;
+            }
+            ViewData["utilisateur"] = profile;
+
+            return true;
+        }
+
+        private bool ModifRenseig(RegisterModel model, int userId)
+        {
+            const string sqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email, Categorie = @Categorie WHERE UserId = @Id;";
+
+            List<SqlParameter> parametres = new List<SqlParameter>
             {
                 new SqlParameter("@Nom", model.Nom),
                 new SqlParameter("@Prenom", model.Prenom),
                 new SqlParameter("@Email", model.Email),
-                new SqlParameter("@Id", UserId),
+                new SqlParameter("@Id", userId),
                 new SqlParameter("@Categorie",model.Categorie)
             };
 
-            return RequeteSql.ExecuteQuery(SqlUpdate, Parametres);
+            return RequeteSql.ExecuteQuery(sqlUpdate, parametres);
         }
 
-        #region Applications auxiliaires
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -367,6 +345,25 @@ namespace InTime.Controllers
             }
         }
 
+        private bool UtilisateurPresent(string nomUtilisateur, string adresseCourriel)
+        {
+            const string query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
+
+            List<SqlParameter> listParametres = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserName", nomUtilisateur),
+                    new SqlParameter("@Email", adresseCourriel)
+                };
+
+            SqlDataReader reader = RequeteSql.Select(query, listParametres);
+            if (reader.Read())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public enum ManageMessageId
         {
             ChangePasswordSuccess,
@@ -374,18 +371,14 @@ namespace InTime.Controllers
             RemoveLoginSuccess,
         }
 
-        public void CookieNomUtilisateur(string UserName)
+        public void CookieNomUtilisateur(string userName)
         {
             SqlConnection con = null;
             try
             {
-                con = RequeteSql.ConnexionBD(con);
-                int id = RequeteSql.RechercheID(con, UserName);
-                InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Journee);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
+                con = RequeteSql.ConnexionBD();
+                int id = RequeteSql.RechercheID(con, userName);
+                Cookie.CreationCookie(userName, Convert.ToString(id), Cookie.Journee);
             }
             finally
             {
@@ -431,6 +424,5 @@ namespace InTime.Controllers
                     return "Une erreur inconnue s'est produite. Vérifiez votre entrée et réessayez. Si le problème persiste, contactez votre administrateur système.";
             }
         }
-        #endregion
     }
 }

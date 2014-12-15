@@ -1,70 +1,58 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Calendrier";
 }
 
-@section Scripts
-{
-    <script src="@Url.Content("~/Scripts/moment-min.js")"></script>
-}
+@Scripts.Render("~/bundles/fullcalendar")
+@Styles.Render("~/Content/fullCalendar")
 
 
-<head>
+<ol class="breadcrumb">
+    <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+    <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
+    <li class="active">Calendrier</li>
+</ol>
 
-    <title>Calendrier</title>
-    <script>
+<div id='calendar'></div>
 
-        $(document).ready(function () {
-            $('#calendar').fullCalendar({
-                // put your options and callbacks here
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay',
-                },
-                defaultView: 'agendaWeek',
-                editable: true,
-                allDaySlot: false,
-                selectable: true,
-                allDayDefault: false,
-                slotMinutes: 15,
-                monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
-                    "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-                monthNamesShort: ['Janv', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-                dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-                dayNamesShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Vend', 'Sam'],
-                buttonText: {
-                    today: 'Aujourd\'hui',
-                    month: 'Mois',
-                    week: 'Semaine',
-                    day: 'Jour'
-                },
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay',
+            },
+            defaultView: 'agendaWeek',
+            editable: true,
+            allDaySlot: false,
+            selectable: true,
+            allDayDefault: false,
+            slotMinutes: 15,
+            monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
+                "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+            monthNamesShort: ['Janv', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+            dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+            dayNamesShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Vend', 'Sam'],
+            buttonText: {
+                today: 'Aujourd\'hui',
+                month: 'Mois',
+                week: 'Semaine',
+                day: 'Jour'
+            },
 
-                events: {
-                    url: '@Url.Action("Taches","Calendrier")'
-                }
-            });
+            events: {
+                url: '@Url.Action("Taches","Calendrier")'
+            }
         });
+    });
 
+</script>
+
+@if (ViewBag.annee != 0)
+{
+    <script>
+        $(window).load(function () {
+            $('#calendar').fullCalendar('gotoDate', @ViewBag.annee, @ViewBag.mois,@ViewBag.jour);
+        })
     </script>
-
-    @if (ViewBag.annee != 0)
-    {
-        <script>
-            $(window).load(function () {
-                $('#calendar').fullCalendar('gotoDate', @ViewBag.annee, @ViewBag.mois,@ViewBag.jour);
-            })
-        </script>
-    }
-
-
-</head>
-
-<body>
-    <ol class="breadcrumb">
-        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
-        <li>@Html.ActionLink("Tâches", "TacheForm", "Tache")</li>
-        <li class="active">Calendrier</li>
-    </ol>
-    <div id='calendar'></div>
-</body>
-
+}

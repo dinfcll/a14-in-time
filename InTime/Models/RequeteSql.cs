@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using InTime.Models;
 using System.Data.SqlClient;
-using System.Configuration;
-using System.Data;
 
 namespace InTime.Models
 {
     public static class RequeteSql
     {
-        public enum Message { Reussi, Echec, Modif };
-
         public const string connectionString = @"Data Source=EQUIPE-02\SQLEXPRESS;Initial Catalog=InTime;Integrated Security=True";
 
-        public static SqlConnection ConnexionBD(SqlConnection con)
+        public static SqlConnection ConnexionBD()
         {
-            con = new SqlConnection(connectionString);
+            SqlConnection con = new SqlConnection(connectionString);
             con.Open();
 
             return con;
@@ -26,33 +19,28 @@ namespace InTime.Models
 
         public static int RechercheID(SqlConnection con, string username)
         {
-            string SqlrId = "SELECT * FROM UserProfile where UserName=@NomUtilisateur;";
+            const string sqlrId = "SELECT * FROM UserProfile where UserName=@NomUtilisateur;";
 
-            SqlCommand cmdId = new SqlCommand(SqlrId, con);
-            List<SqlParameter> Parametres = new List<SqlParameter>
+            SqlCommand cmdId = new SqlCommand(sqlrId, con);
+            List<SqlParameter> parametres = new List<SqlParameter>
             {
                 new SqlParameter("@NomUtilisateur",username)
             };
-
-            if (Parametres != null)
-            {
-                cmdId.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
-            }
+            cmdId.Parameters.AddRange(parametres.ToArray<SqlParameter>());
 
             return (Int32)cmdId.ExecuteScalar();
         }
 
-        public static SqlDataReader Select(string Query, List<SqlParameter> Parametres)
+        public static SqlDataReader Select(string query, List<SqlParameter> parametres)
         {
-            SqlConnection con = null;
             try
             {
-                con = RequeteSql.ConnexionBD(con);
-                SqlCommand cmdQuery = new SqlCommand(Query, con);
+                SqlConnection con = ConnexionBD();
+                SqlCommand cmdQuery = new SqlCommand(query, con);
 
-                if (Parametres != null)
+                if (parametres != null)
                 {
-                    cmdQuery.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
+                    cmdQuery.Parameters.AddRange(parametres.ToArray<SqlParameter>());
                 }
                 SqlDataReader reader = cmdQuery.ExecuteReader();
 
@@ -64,23 +52,61 @@ namespace InTime.Models
             }
         }
 
-        public static bool ExecuteQuery(string Query, List<SqlParameter> Parametres)
+        public static bool ExecuteQuery(string query, List<SqlParameter> parametres)
         {
-            SqlConnection con = null;
             try
             {
-                con = RequeteSql.ConnexionBD(con);
-                SqlCommand cmd = new SqlCommand(Query, con);
-                cmd.Parameters.AddRange(Parametres.ToArray<SqlParameter>());
+                SqlConnection con = ConnexionBD();
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddRange(parametres.ToArray<SqlParameter>());
                 cmd.ExecuteNonQuery();
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
         }
+
+        public static String RechercheDescSupplTache(int id, double debut)
+        {
+            const string queryString = "SELECT * FROM InfoSupplTacheRecurrente WHERE IdTache=@Id AND DateDebut=@Debut";
+            List<SqlParameter> parametres = new List<SqlParameter>
+                            {
+                                new SqlParameter("@Id", id),
+                                new SqlParameter("@Debut", debut)
+                            };
+            SqlDataReader reader = Select(queryString, parametres);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return Convert.ToString(values[4]);
+            }
+
+            return null;
+        }
+
+        public static Tache RechercherTache(int id)
+        {
+            const string queryString = "SELECT * FROM Taches where IdTache=@Id";
+            List<SqlParameter> parametre = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", id)
+                        };
+
+            SqlDataReader reader = Select(queryString, parametre);
+            while (reader.Read())
+            {
+                Object[] values = new Object[reader.FieldCount];
+                reader.GetValues(values);
+
+                return Tache.ObtenirTache(values);
+            }
+
+            return null;
+        }
     }
 }
-
