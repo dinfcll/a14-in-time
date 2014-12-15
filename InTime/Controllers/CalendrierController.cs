@@ -37,10 +37,10 @@ namespace InTime.Controllers
 
             try
             {
-                string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
+                const string queryString = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>=@DateDebut AND DateFin<=@DateFin) OR Recurrence > 0);";
                 List<SqlParameter> param = new List<SqlParameter>
                     {
-                        new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@Id", Cookie.ObtenirCookie(User.Identity.Name)),
                         new SqlParameter("@DateDebut", start),
                         new SqlParameter("@DateFin", end)
                     };
@@ -61,7 +61,7 @@ namespace InTime.Controllers
             }
 
             var rows = new List<object>();
-            UrlHelper UrlH = new UrlHelper(this.ControllerContext.RequestContext);
+            UrlHelper urlH = new UrlHelper(ControllerContext.RequestContext);
 
             foreach (Tache tache in lstTache)
             {
@@ -72,14 +72,14 @@ namespace InTime.Controllers
                     {
                         foreach (string[] str in result)
                         {
-                            string url = UrlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
+                            string url = urlH.Action("Index", "ConsulterTache", new { @id = str[3], dep = str[1], fn = str[2] });
                             rows.Add(new { title = str[0], start = str[1], end = str[2], url = url, id = str[3], backgroundColor = tache.PriorityColor });
                         }
                     }
                 }
                 else
                 {
-                    string url = UrlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
+                    string url = urlH.Action("Index", "ConsulterTache", new { @id = tache.IdTache });
                     rows.Add(new { title = tache.NomTache, start = TraitementDate.DateFormatCalendrier(tache.unixDebut),
                         end = TraitementDate.DateFormatCalendrier(tache.unixFin), url = url, backgroundColor = tache.PriorityColor });
                 }

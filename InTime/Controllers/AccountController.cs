@@ -74,18 +74,18 @@ namespace InTime.Controllers
                     }
                     else
                     {
-                        ConnexionUtilisateur Connexion;
+                        ConnexionUtilisateur connexion;
                         if (model.TypeConnec == null)
                         {
-                            Connexion = new RealConnexion();
+                            connexion = new RealConnexion();
                         }
                         else
                         {
-                            Connexion = new DummyConnexion();
+                            connexion = new DummyConnexion();
                         }
-                        Connexion.CreerUsager(model);
-                        Connexion.LoginUsager(model);
-                        Connexion.Cookie(model.UserName);
+                        connexion.CreerUsager(model);
+                        connexion.LoginUsager(model);
+                        connexion.Cookie(model.UserName);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -109,7 +109,7 @@ namespace InTime.Controllers
             if (ownerAccount == User.Identity.Name)
             {
                 using (var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.Serializable }))
+                    new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
                 {
                     bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
                     if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
@@ -210,16 +210,16 @@ namespace InTime.Controllers
                         return HttpNotFound();
                     }
 
-                    Messages.ChampsBloquer Aff;
+                    Messages.ChampsBloquer aff;
                     if (Affichage != null && Affichage == 1)
                     {
-                        Aff = Messages.ChampsBloquer.Oui;
+                        aff = Messages.ChampsBloquer.Oui;
                     }
                     else
                     {
-                        Aff = Messages.ChampsBloquer.Non;
+                        aff = Messages.ChampsBloquer.Non;
                     }
-                    TempData["Affichage"] = Aff;
+                    TempData["Affichage"] = aff;
 
                     return View();
                 }
@@ -284,17 +284,16 @@ namespace InTime.Controllers
             RegisterModel profile = null;
             try
             {
-                string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
-                List<SqlParameter> Parametres = new List<SqlParameter>
+                const string queryString = "SELECT * FROM UserProfile where UserId=@Id;";
+                List<SqlParameter> parametres = new List<SqlParameter>
                         {
-                            new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name))
+                            new SqlParameter("@Id", Cookie.ObtenirCookie(User.Identity.Name))
                         };
 
-                SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+                SqlDataReader reader = RequeteSql.Select(queryString, parametres);
                 while (reader.Read())
                 {
                     Object[] values = new Object[reader.FieldCount];
-                    int fieldCounts = reader.GetValues(values);
                     profile = new RegisterModel
                     {
                         Nom = Convert.ToString(values[RegisterModel.ColumnNom]),
@@ -303,8 +302,6 @@ namespace InTime.Controllers
                         Categorie = Convert.ToString(values[RegisterModel.ColumnCategorie])
                     };
                 }
-                ViewBag.Categorie = profile.Categorie;
-
             }
             catch
             {
@@ -320,20 +317,20 @@ namespace InTime.Controllers
             return true;
         }
 
-        private bool ModifRenseig(RegisterModel model, int UserId)
+        private bool ModifRenseig(RegisterModel model, int userId)
         {
-            string SqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email, Categorie = @Categorie WHERE UserId = @Id;";
+            const string sqlUpdate = "UPDATE UserProfile Set Nom = @Nom, Prenom = @Prenom, Email = @Email, Categorie = @Categorie WHERE UserId = @Id;";
 
-            List<SqlParameter> Parametres = new List<SqlParameter>
+            List<SqlParameter> parametres = new List<SqlParameter>
             {
                 new SqlParameter("@Nom", model.Nom),
                 new SqlParameter("@Prenom", model.Prenom),
                 new SqlParameter("@Email", model.Email),
-                new SqlParameter("@Id", UserId),
+                new SqlParameter("@Id", userId),
                 new SqlParameter("@Categorie",model.Categorie)
             };
 
-            return RequeteSql.ExecuteQuery(SqlUpdate, Parametres);
+            return RequeteSql.ExecuteQuery(sqlUpdate, parametres);
         }
 
         private ActionResult RedirectToLocal(string returnUrl)
@@ -348,13 +345,13 @@ namespace InTime.Controllers
             }
         }
 
-        private bool UtilisateurPresent(string NomUtilisateur, string adresseCourriel)
+        private bool UtilisateurPresent(string nomUtilisateur, string adresseCourriel)
         {
-            String query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
+            const string query = "SELECT * FROM UserProfile WHERE UserName=@Username OR Email=@Email;";
 
             List<SqlParameter> listParametres = new List<SqlParameter>
                 {
-                    new SqlParameter("@UserName", NomUtilisateur),
+                    new SqlParameter("@UserName", nomUtilisateur),
                     new SqlParameter("@Email", adresseCourriel)
                 };
 
@@ -374,17 +371,14 @@ namespace InTime.Controllers
             RemoveLoginSuccess,
         }
 
-        public void CookieNomUtilisateur(string UserName)
+        public void CookieNomUtilisateur(string userName)
         {
             SqlConnection con = null;
             try
             {
-                con = RequeteSql.ConnexionBD(con);
-                int id = RequeteSql.RechercheID(con, UserName);
-                InTime.Models.Cookie.CreationCookie(UserName, Convert.ToString(id), InTime.Models.Cookie.Journee);
-            }
-            catch
-            {   
+                con = RequeteSql.ConnexionBD();
+                int id = RequeteSql.RechercheID(con, userName);
+                Cookie.CreationCookie(userName, Convert.ToString(id), Cookie.Journee);
             }
             finally
             {

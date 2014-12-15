@@ -13,13 +13,14 @@ namespace InTime.Controllers
                 SqlConnection con = null;
                 try
                 {
-                    con = RequeteSql.ConnexionBD(con);
+                    con = RequeteSql.ConnexionBD();
                     int id = RequeteSql.RechercheID(con, User.Identity.Name);
 
                     Session[User.Identity.Name] = id;
                 }
                 catch
                 {
+                    return View(UrlErreur.ErreurGeneral);
                 }
                 finally
                 {

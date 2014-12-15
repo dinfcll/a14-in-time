@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace InTime.Controllers
@@ -13,7 +11,6 @@ namespace InTime.Controllers
     {
         public ActionResult Modification(int? id, double? dep, double? fn, bool? Existe)
         {
-            int idTache;
             try
             {
                 if (id == null)
@@ -25,7 +22,7 @@ namespace InTime.Controllers
                     {
                         try
                         {
-                            idTache = id.GetValueOrDefault();
+                            int idTache = id.GetValueOrDefault();
                             Tache tache = RequeteSql.RechercherTache(idTache);
 
                             if (dep != null && fn != null)

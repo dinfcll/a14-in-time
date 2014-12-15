@@ -1,9 +1,6 @@
 ﻿using InTime.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace InTime.Controllers
@@ -24,14 +21,14 @@ namespace InTime.Controllers
                     {
                         try
                         {
-                            string SqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
-                            List<SqlParameter> Parametres = new List<SqlParameter>
+                            const string sqlDelete = "DELETE FROM Taches WHERE UserId=@UserId AND IdTache=@IdTache";
+                            List<SqlParameter> parametres = new List<SqlParameter>
                             {
-                                new SqlParameter("@UserId",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
+                                new SqlParameter("@UserId",Cookie.ObtenirCookie(User.Identity.Name)),
                                 new SqlParameter("@IdTache",id)
                             };
 
-                            if (RequeteSql.ExecuteQuery(SqlDelete, Parametres))
+                            if (RequeteSql.ExecuteQuery(sqlDelete, parametres))
                             {
                                 TempData["Suppression"] = Messages.RequeteSql.Reussi;
                             }

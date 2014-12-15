@@ -133,16 +133,16 @@ namespace InTime.Controllers
         {
             try
             {
-                int UserId = Int32.Parse(InTime.Models.Cookie.ObtenirCookie(User.Identity.Name));
+                int userId = Int32.Parse(Cookie.ObtenirCookie(User.Identity.Name));
                 double unixDebut = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateDebut(Model));
                 double unixFin = TraitementDate.DateTimeToUnixTimestamp(TraitementDate.DateFin(Model));
-                string SqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence,PriorityColor)"
+                const string sqlInsert = "INSERT INTO Taches (UserId,NomTache,Lieu,Description,DateDebut,DateFin,HRappel,mRappel,recurrence,PriorityColor)"
                     + " VALUES (@UserId,@NomTache,@Lieu,@Description,@DateDebut,@DateFin,@HRappel,@mRappel,@recurrence,@PriorityColor);";
 
 
                 List<SqlParameter> listParametres = new List<SqlParameter>
                 {
-                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@UserId", userId),
                     new SqlParameter("@NomTache", Model.NomTache),
                     new SqlParameter("@Lieu", Model.Lieu),
                     new SqlParameter("@DateDebut",unixDebut),
@@ -154,7 +154,7 @@ namespace InTime.Controllers
                     new SqlParameter("@PriorityColor", Model.PriorityColor)
                 };
 
-                return RequeteSql.ExecuteQuery(SqlInsert, listParametres);
+                return RequeteSql.ExecuteQuery(sqlInsert, listParametres);
             }
             catch
             {

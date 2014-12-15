@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InTime.Models
 {
@@ -31,11 +26,11 @@ namespace InTime.Models
             ToEmail = "marcmarcmarc123@hotmail.com";
         }
 
-        public GMail (string sujet, string contenu, bool Html)
+        public GMail (string sujet, string contenu, bool html)
         {
             Subject = sujet;
             Body = contenu;
-            IsHtml = Html;
+            IsHtml = html;
         }
 
         public GMail()

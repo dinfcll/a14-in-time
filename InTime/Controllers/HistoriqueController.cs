@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace InTime.Controllers
@@ -16,23 +14,22 @@ namespace InTime.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    int Choix = 1;
-                    int anneeDebut;
-                    int anneeFin;
-                    anneeDebut = anneeFin = DateTime.Now.Year;
+                    int choix = 1;
+                    int anneeDebut = DateTime.Now.Year;
+                    int anneeFin = DateTime.Now.Year;
 
                     if (!String.IsNullOrEmpty(ChoixTemps))
                     {
-                        if (!Int32.TryParse(ChoixTemps, out Choix) || Choix == 0)
+                        if (!Int32.TryParse(ChoixTemps, out choix) || choix == 0)
                         {
-                            Choix = 1;
+                            choix = 1;
                         }
                         Int32.TryParse(FinAnn, out anneeFin);
                         Int32.TryParse(DebAnn, out anneeDebut);
                     }
                     ViewBag.anneeDebut = anneeDebut;
                     ViewBag.anneeFin = anneeFin;
-                    ViewBag.Taches = TraitementChoixHistorique(Choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
+                    ViewBag.Taches = TraitementChoixHistorique(choix, FinAnn, DebAnn, ChoixMoisFin, ChoixMoisDebut, Recurrence);
 
                     return View();
                 }
@@ -49,81 +46,82 @@ namespace InTime.Controllers
 
         private List<Tache> TraitementChoixHistorique(int Choix, string FinAnn, string DebAnn, string ChoixMoisFin, string ChoixMoisDebut, bool Recurrence)
         {
-            string Select = "";
+            string select = "";
             var lstTache = new List<Tache>();
             List<SqlParameter> listParametres = new List<SqlParameter>();
-            double TacheRecDebut = 0;
-            double TacheRecFin = 0;
+            double tacheRecDebut = 0;
+            double tacheRecFin = 0;
 
             switch (Choix)
             {
                 case 0:
                     break;
                 case 1:
-                    TacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now.AddMonths(-3));
-                    TacheRecFin = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now);
+                    tacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now.AddMonths(-3));
+                    tacheRecFin = TraitementDate.DateTimeToUnixTimestamp(DateTime.Now);
                     if (!Recurrence)
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0;";
+                        select = "SELECT * FROM Taches where UserId=@Id AND DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0;";
                     }
                     else
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
+                        select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut>@TroisMoisArriere AND DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
                     }
-                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                    listParametres.Add(new SqlParameter("@TroisMoisArriere", TacheRecDebut));
-                    listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
+                    listParametres.Add(new SqlParameter("@Id",Cookie.ObtenirCookie(User.Identity.Name)));
+                    listParametres.Add(new SqlParameter("@TroisMoisArriere", tacheRecDebut));
+                    listParametres.Add(new SqlParameter("@Maintenant", tacheRecFin));
                     break;
                 case 2:
                     try
                     {
-                        DateTime Date1 = new DateTime(Convert.ToInt32(DebAnn), Convert.ToInt32(ChoixMoisDebut), 1);
-                        DateTime Date2 = new DateTime(Convert.ToInt32(FinAnn), Convert.ToInt32(ChoixMoisFin), 1);
-                        Date2 = Date2.AddMonths(1);
-                        Date2 = Date2.AddDays(-1);
-                        TacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(Date1);
-                        TacheRecFin = TraitementDate.DateTimeToUnixTimestamp(Date2);
+                        DateTime date1 = new DateTime(Convert.ToInt32(DebAnn), Convert.ToInt32(ChoixMoisDebut), 1);
+                        DateTime date2 = new DateTime(Convert.ToInt32(FinAnn), Convert.ToInt32(ChoixMoisFin), 1);
+                        date2 = date2.AddMonths(1);
+                        date2 = date2.AddDays(-1);
+                        tacheRecDebut = TraitementDate.DateTimeToUnixTimestamp(date1);
+                        tacheRecFin = TraitementDate.DateTimeToUnixTimestamp(date2);
 
                         if (!Recurrence)
                         {
-                            Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0;";
+                            select = "SELECT * FROM Taches where UserId=@Id AND DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0;";
                         }
                         else
                         {
-                            Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0) OR Recurrence > 0);";
+                            select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut >= @Date1 AND DateDebut <= @Date2 AND Recurrence = 0) OR Recurrence > 0);";
                         }
-                        listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                        listParametres.Add(new SqlParameter("@Date1", TacheRecDebut));
-                        listParametres.Add(new SqlParameter("@Date2", TacheRecFin));
+                        listParametres.Add(new SqlParameter("@Id", Cookie.ObtenirCookie(User.Identity.Name)));
+                        listParametres.Add(new SqlParameter("@Date1", tacheRecDebut));
+                        listParametres.Add(new SqlParameter("@Date2", tacheRecFin));
                     }
                     catch
                     {
-                        Select = "";
+                        select = "";
                     }
                     break;
                 case 3:
-                    TacheRecDebut = TraitementDate.DebutCalendrier();
-                    TacheRecFin = TraitementDate.DateTimeToUnixTimestamp();
+                    tacheRecDebut = TraitementDate.DebutCalendrier();
+                    tacheRecFin = TraitementDate.DateTimeToUnixTimestamp();
                     if (!Recurrence)
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant AND Recurrence = 0;";
+                        select = "SELECT * FROM Taches where UserId=@Id AND DateDebut < @Maintenant AND Recurrence = 0;";
                     }
                     else
                     {
-                        Select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
+                        select = "SELECT * FROM Taches where UserId=@Id AND ((DateDebut < @Maintenant AND Recurrence = 0) OR Recurrence > 0);";
                     }
-                    listParametres.Add(new SqlParameter("@Id", InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)));
-                    listParametres.Add(new SqlParameter("@Maintenant", TacheRecFin));
+                    listParametres.Add(new SqlParameter("@Id", Cookie.ObtenirCookie(User.Identity.Name)));
+                    listParametres.Add(new SqlParameter("@Maintenant", tacheRecFin));
                     break;
                 default:
+                    select = "";
                     break;
             }
 
             try
             {
-                if (!String.IsNullOrEmpty(Select))
+                if (!String.IsNullOrEmpty(select))
                 {
-                    SqlDataReader reader = RequeteSql.Select(Select, listParametres);
+                    SqlDataReader reader = RequeteSql.Select(select, listParametres);
                     while (reader.Read())
                     {
                         Object[] values = new Object[reader.FieldCount];
@@ -131,15 +129,15 @@ namespace InTime.Controllers
                         var tache = Tache.ObtenirTache(values);
                         if (tache.Recurrence == (int)TraitementDate.recurrence.Aucune)
                         {
-                            DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-                            tache.Annee = Convert.ToString(DateTache.Year);
-                            tache.Mois = Convert.ToString(DateTache.Month);
-                            tache.Jour = Convert.ToString(DateTache.Day);
+                            DateTime dateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                            tache.Annee = Convert.ToString(dateTache.Year);
+                            tache.Mois = Convert.ToString(dateTache.Month);
+                            tache.Jour = Convert.ToString(dateTache.Day);
                             lstTache.Add(tache);
                         }
                         else
                         {
-                            List<Tache> result = TraitementDate.TraitementRecurrenceTache(tache, TacheRecDebut, TacheRecFin);
+                            List<Tache> result = TraitementDate.TraitementRecurrenceTache(tache, tacheRecDebut, tacheRecFin);
                             if (result != null)
                             {
                                 foreach (Tache tacheRec in result)

@@ -227,23 +227,6 @@ namespace InTime.Models
             tache.Annee = Convert.ToString(debut.Year);
         }
 
-        private static string InitialiseTempsMinute(string Temps)
-        {
-            switch (Temps)
-            {
-                case "0":
-                    return "1";
-                case "15":
-                    return "2";
-                case "30":
-                    return "3";
-                case "45":
-                    return "4";
-                default:
-                    return "1";
-            }
-        }
-
         public static Tache ObtenirTache(Object[] values)
         {
             var tache = new Tache()
@@ -266,28 +249,28 @@ namespace InTime.Models
 
         public static void PreparationPourAffichage(ref Tache tache)
         {
-            DateTime DateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-            tache.Annee = Convert.ToString(DateDebut.Year);
-            tache.Mois = Convert.ToString(DateDebut.Month - 1);
-            tache.Jour = Convert.ToString(DateDebut.Day);
+            DateTime dateDebut = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+            tache.Annee = Convert.ToString(dateDebut.Year);
+            tache.Mois = Convert.ToString(dateDebut.Month - 1);
+            tache.Jour = Convert.ToString(dateDebut.Day);
 
             tache.HRappel = (String.IsNullOrEmpty(tache.HRappel)) ? "00" : tache.HRappel;
             tache.mRappel = (String.IsNullOrEmpty(tache.mRappel)) ? "00" : tache.mRappel;
             TimeSpan tsRappel = new TimeSpan(
                 Convert.ToInt32(tache.HRappel), Convert.ToInt32(tache.mRappel), 0
                 );
-            DateTime DateRappel = DateDebut.Subtract(tsRappel);
+            DateTime dateRappel = dateDebut.Subtract(tsRappel);
 
-            if (DateRappel == DateDebut)
+            if (dateRappel == dateDebut)
             {
                 tache.DateRappelCalendrier = "Aucun";
             }
             else
             {
-                tache.DateRappelCalendrier = TempsRappel(DateRappel);
+                tache.DateRappelCalendrier = TempsRappel(dateRappel);
             }
 
-            tache.RecurrenceAffichage = Tache.Nomrecurrence(tache.Recurrence);
+            tache.RecurrenceAffichage = Nomrecurrence(tache.Recurrence);
         }
 
         private static string TempsRappel(DateTime rappel)

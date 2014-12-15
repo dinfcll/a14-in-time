@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Web;
-using System.Web.Security;
 
 namespace InTime.Models
 {
     public static class Cookie
     {
-        public static void CreationCookie(string Utilisateur, string Valeur, TimeSpan TempsSurvie)
+        public static void CreationCookie(string utilisateur, string valeur, TimeSpan tempsSurvie)
         {
             
             //On rajoute une valeur a la fin, car MVC cree un cookie au nom de l'utilisateur.
-            HttpCookie Cookie = new HttpCookie(Utilisateur+"1", Valeur);
+            HttpCookie cookie = new HttpCookie(utilisateur+"1", valeur);
 
-            if (HttpContext.Current.Request.Cookies[Utilisateur+"1"] != null)
+            if (HttpContext.Current.Request.Cookies[utilisateur+"1"] != null)
             {
-                var cookieOld = HttpContext.Current.Request.Cookies[Utilisateur+"1"];
-                cookieOld.Expires = DateTime.Now.Add(TempsSurvie);
-                cookieOld.Value = Cookie.Value;
+                var cookieOld = HttpContext.Current.Request.Cookies[utilisateur+"1"];
+                cookieOld.Expires = DateTime.Now.Add(tempsSurvie);
+                cookieOld.Value = cookie.Value;
                 HttpContext.Current.Response.Cookies.Add(cookieOld);
             }
             else
             {
-                Cookie.Expires = DateTime.Now.Add(TempsSurvie);
-                HttpContext.Current.Response.Cookies.Add(Cookie);
+                cookie.Expires = DateTime.Now.Add(tempsSurvie);
+                HttpContext.Current.Response.Cookies.Add(cookie);
             }
         }
 
@@ -42,10 +41,10 @@ namespace InTime.Models
             }
         }
 
-        public static string ObtenirCookie(string NomCookie)
+        public static string ObtenirCookie(string nomCookie)
         {
             string value = "";
-            HttpCookie cookie = HttpContext.Current.Request.Cookies[NomCookie+"1"];
+            HttpCookie cookie = HttpContext.Current.Request.Cookies[nomCookie+"1"];
 
             if (cookie != null)
             {

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Net;
 using System.Web.Mvc;
 using InTime.Models;
-using System.Globalization;
 using System.Data.SqlClient;
 
 
@@ -12,8 +9,6 @@ namespace InTime.Controllers
 {
     public class ConsulterTacheController : Controller
     {
-        CultureInfo culture = new CultureInfo("fr-CA");
-
         public ActionResult Taches()
         {
             try
@@ -23,25 +18,25 @@ namespace InTime.Controllers
                     try
                     {
                         var lstTache = new List<Tache>();
-                        double DateAuj = TraitementDate.DateTimeToUnixTimestamp();
-                        string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
-                        List<SqlParameter> Parametres = new List<SqlParameter>
+                        double dateAuj = TraitementDate.DateTimeToUnixTimestamp();
+                        const string queryString = "SELECT * FROM Taches where UserId=@Id AND (DateDebut>=@DateDebut OR Recurrence >= 0)";
+                        List<SqlParameter> parametres = new List<SqlParameter>
                     {
-                        new SqlParameter("@Id",InTime.Models.Cookie.ObtenirCookie(User.Identity.Name)),
-                        new SqlParameter("@DateDebut", DateAuj)
+                        new SqlParameter("@Id",Cookie.ObtenirCookie(User.Identity.Name)),
+                        new SqlParameter("@DateDebut", dateAuj)
                     };
 
 
-                        SqlDataReader reader = RequeteSql.Select(queryString, Parametres);
+                        SqlDataReader reader = RequeteSql.Select(queryString, parametres);
                         while (reader.Read())
                         {
                             Object[] values = new Object[reader.FieldCount];
                             reader.GetValues(values);
                             var tache = Tache.ObtenirTache(values);
-                            DateTime DateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
-                            tache.Annee = Convert.ToString(DateTache.Year);
-                            tache.Mois = Convert.ToString(DateTache.Month);
-                            tache.Jour = Convert.ToString(DateTache.Day);
+                            DateTime dateTache = TraitementDate.UnixTimeStampToDateTime(tache.unixDebut);
+                            tache.Annee = Convert.ToString(dateTache.Year);
+                            tache.Mois = Convert.ToString(dateTache.Month);
+                            tache.Jour = Convert.ToString(dateTache.Day);
                             lstTache.Add(tache);
                         }
                         reader.Close();
@@ -69,7 +64,7 @@ namespace InTime.Controllers
         {
             try
             {
-                int idTache;
+                
                 if (id == null)
                 {
                     return View(UrlErreur.ErreurGeneral);
@@ -80,7 +75,7 @@ namespace InTime.Controllers
                     {
                         try
                         {
-                            idTache = id.GetValueOrDefault();
+                            int idTache = id.GetValueOrDefault();
                             Tache tache = RequeteSql.RechercherTache(idTache);
 
                             if (dep != null && fn != null)
