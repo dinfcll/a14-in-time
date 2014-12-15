@@ -122,7 +122,7 @@ namespace UnitTestConnexion
         public void AccesHistoriqueSansEtreConnecté()
         {
             //Given
-            ConsulterTacheController controller = new ConsulterTacheController();
+            HistoriqueController controller = new HistoriqueController();
             //When
             ViewResult result = controller.Historique(null,null,null,null,null) as ViewResult;
             //Then
@@ -143,9 +143,9 @@ namespace UnitTestConnexion
         public void AccesModificationSansEtreConnecté()
         {
             //Given
-            ConsulterTacheController controller = new ConsulterTacheController();
+            ModifierTacheController controller = new ModifierTacheController();
             //When
-            ViewResult result = controller.ModifTache(2,null,null,null) as ViewResult;
+            ViewResult result = controller.Modification(2, null, null, null) as ViewResult;
             //Then
             Assert.AreEqual(UrlErreur.ErreurGeneral, result.ViewName);
         }
