@@ -49,9 +49,9 @@ namespace InTime.Controllers
 
                         return View();
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        throw new Exception(ex.ToString());
+                        return View(UrlErreur.ErreurGeneral);
                     }
                 }
                 else
@@ -65,7 +65,7 @@ namespace InTime.Controllers
             }
         }
 
-        public ActionResult Index(int? id, DateTime? dep, DateTime? fn, double deb = 0, double fin = 0)
+        public ActionResult Index(int? id, DateTime? dep, DateTime? fn,bool? Detail,bool? Historique, double deb = 0, double fin = 0)
         {
             try
             {
@@ -107,11 +107,20 @@ namespace InTime.Controllers
                             }
 
                             Tache.PreparationPourAffichage(ref tache);
+
+                            if (Detail != null && Detail == true)
+                            {
+                                ViewBag.Detail = true;
+                            }
+                            if (Historique != null && Historique == true)
+                            {
+                                ViewBag.Historique = true;
+                            }
                             ViewData["Tache"] = tache;
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            throw new Exception(ex.ToString());
+                            return View(UrlErreur.ErreurGeneral);
                         }
 
                         return View();

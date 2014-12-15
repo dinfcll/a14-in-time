@@ -54,7 +54,14 @@
                 }
             </td>
             <td>
-                @Html.ActionLink("Détails", "Index","ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin },null)
+                @if (ViewBag.Title != "Historique")
+                {
+                    @Html.ActionLink("Détails", "Index","ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin, Detail = true },null)
+                }
+                else
+                {
+                    @Html.ActionLink("Détails", "Index", "ConsulterTache", new { id = item.IdTache, deb = item.unixDebut, fin = item.unixFin, Historique = true }, null)
+                }
             </td>
             <td>
                 @if (ViewBag.Title != "Historique")

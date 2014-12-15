@@ -14,8 +14,7 @@ namespace InTime
                         "~/Scripts/fullcalendar.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                        "~/Scripts/jquery-ui.js",
-                        "~/Scripts/jquery.js"));
+                        "~/Scripts/jquery-ui.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",

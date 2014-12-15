@@ -135,7 +135,7 @@ namespace UnitTestConnexion
             int idTache = 2;
             ConsulterTacheController controller = new ConsulterTacheController();
             //When
-            ViewResult result = controller.Index(idTache,null,null) as ViewResult;
+            ViewResult result = controller.Index(idTache,null,null,null,null) as ViewResult;
             //Then
             Assert.AreEqual(UrlErreur.ErreurGeneral, result.ViewName);
         }

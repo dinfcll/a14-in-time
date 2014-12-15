@@ -11,49 +11,65 @@
     <li>@Html.ActionLink("Consulter Tâches", "Taches", "ConsulterTache")</li>
     <li class="active">Détails</li>
 </ol>
-    <h2>Voici votre tâche</h2>
+<h2>Voici votre tâche</h2>
 
-    <p>
-        Nom de la tâche :
-        <br />
-        @Html.TextBox("Nom", tache.NomTache, new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Nom du lieu :
-        <br />
-        @Html.TextBox("Lieu", tache.Lieu, new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Récurrence de la tâche :
-        <br />
-        @Html.TextBox("Recurrence", tache.RecurrenceAffichage, new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Début  de la tâche :
-        <br />
-        @Html.TextBox("DebutTache", TraitementDate.UnixTimeStampToString(tache.unixDebut), new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Fin de la tâche :
-        <br />
-        @Html.TextBox("FinTache", TraitementDate.UnixTimeStampToString(tache.unixFin), new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Rappel :
-        <br />
-        @Html.TextBox("Rappel", tache.DateRappelCalendrier, new { disabled = "disabled", @style = "width: 500px;", id = "Consultation" })
-        <br />
-        Description de la tâche :
-        <br />
-        @Html.TextArea("Desc", tache.Description, new { disabled = "disabled", id = "Consultation" })
-        <br />
-        Priorité:
-       <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor disabled="disabled">
-    </p>
+<p>
+    Nom de la tâche :
+    <br />
+    @Html.TextBox("Nom", tache.NomTache, new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Nom du lieu :
+    <br />
+    @Html.TextBox("Lieu", tache.Lieu, new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Récurrence de la tâche :
+    <br />
+    @Html.TextBox("Recurrence", tache.RecurrenceAffichage, new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Début  de la tâche :
+    <br />
+    @Html.TextBox("DebutTache", TraitementDate.UnixTimeStampToString(tache.unixDebut), new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Fin de la tâche :
+    <br />
+    @Html.TextBox("FinTache", TraitementDate.UnixTimeStampToString(tache.unixFin), new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Rappel :
+    <br />
+    @Html.TextBox("Rappel", tache.DateRappelCalendrier, new { disabled = "disabled", @style = "width: 500px;", id = "Consultation" })
+    <br />
+    Description de la tâche :
+    <br />
+    @Html.TextArea("Desc", tache.Description, new { disabled = "disabled", id = "Consultation" })
+    <br />
+    Priorité:
+    <input id="PrioriteCouleur" type="color" name="Priorité" size="4" height="30" value=@tache.PriorityColor disabled="disabled">
+</p>
 
-    @if (ViewBag.Modif == true)
+@if (ViewBag.Modif == true)
+{
+    <input type="button" value="Modifier Description"
+           onclick="location.href = '@Url.Action("Modification","ModifierTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
+}
+
+@if (ViewBag.Detail != null && ViewBag.Detail == true)
+{
+    <input type="button" value="Retour"
+           onclick="location.href = '@Url.Action("Taches","ConsulterTache")'" />
+}
+else
+{
+    if (ViewBag.Historique != null && ViewBag.Historique == true)
     {
-        <input type="button" value="Modifier Description"
-               onclick="location.href = '@Url.Action("Modification","ModifierTache", new {@id = tache.IdTache,@dep = tache.unixDebut, @fn = tache.unixFin, @Existe = @ViewBag.Existe})'" />
-    
+        <input type="button" value="Retourner au calendrier"
+               onclick="location.href = '@Url.Action("Historique","Historique")'" />
     }
-    <input type="button" value="Retourner au calendrier"
-       onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
+    else
+    {
+        <input type="button" value="Retourner au calendrier"
+               onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
+    }
+}
 
 
 <script>

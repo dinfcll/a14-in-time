@@ -1,6 +1,5 @@
 ﻿@model InTime.Models.Tache
 @Styles.Render("~/Content/jqueryui")
-@Scripts.Render("~/bundles/jqueryui")
 
 @{
     ViewBag.Title = "Modification";
@@ -79,9 +78,12 @@
 
         <input id="modif" name="modif" type="text" value="False" style="display:none" />
         <input style="float:left; margin-right:12px;" type="submit" name="Modifier" value="Modifier" />
-        <input type="button" value="Annuler"
-               onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = tache.Mois, @jour = tache.Jour})'" />
-    </div>
+
+        <input id="annulerConsulter" type="button" value="Annuler"
+               onclick="location.href = '@Url.Action("Taches","ConsulterTache")'" />
+        <input id="annulerHistorique" type="button" value="Annuler" style="display:none"
+               onclick="location.href = '@Url.Action("Index","Calendrier", new {@annee = tache.Annee ,@mois = (Convert.ToInt32(tache.Mois)-1), @jour = tache.Jour})'" />
+        </div>
 }
 
 @if (@ViewBag.Modif)
@@ -89,6 +91,8 @@
     <script>
         $('#div2').css('display','none');
         $("#modif").val("True");
+        $('#annulerConsulter').css('display','none');
+        $("#annulerHistorique").css('display','');
     </script>
 }
 
